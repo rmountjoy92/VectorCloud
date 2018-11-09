@@ -7,7 +7,6 @@ contribute.
 
 ## Soon
 * create a login function to prevent unauthorized access
-* create a battery info page and remove battery stats from home page
 * create icons to represent the different battery levels and charging status
 * add network state, pose, status output to status
 * add more buttons to home screen for more robot functions(dock with cube, etc)

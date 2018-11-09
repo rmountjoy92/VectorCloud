@@ -68,6 +68,22 @@ def dock():
     return redirect("/")
 
 
+@app.route("/dock_cube")
+def dock_cube():
+    args = anki_vector.util.parse_command_args()
+    with anki_vector.Robot(args.serial) as robot:
+        robot.behavior.drive_off_charger()
+        robot.world.connect_cube()
+        if robot.world.connected_light_cube:
+            dock_response = robot.behavior.dock_with_cube(
+                robot.world.connected_light_cube)
+            robot.behavior.set_lift_height(100.0)
+            time.sleep(5)
+            robot.behavior.set_lift_height(0,  max_speed=10.0)
+            robot.world.disconnect_cube()
+    return redirect("/")
+
+
 @app.route("/control")
 def control():
     return render_template('control.html', title='Control')

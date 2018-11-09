@@ -33,6 +33,15 @@
             <div class="navbar-nav">
               <a class="nav-item nav-link disabled" >Vector version: {{ vector_status['status_version'] }}</a>
             </div>
+            {% if vector_status['status_charging'] == True %}
+              <img src="/static/battery_charging.svg" width="3%" height="3%">
+            {% elif vector_status['status_battery_level'] == 2 %}
+              <img src="/static/battery_full.svg" width="3%" height="3%">
+            {% elif vector_status['status_battery_level'] == 1 %}
+              <img src="/static/battery_med.svg" width="3%" height="3%">
+            {% elif vector_status['status_battery_level'] == 0 %}
+              <img src="/static/battery_low.svg" width="3%" height="3%">
+            {% endif %}
           </div>
         </div>
       </nav>
