@@ -81,7 +81,7 @@ def dock_cube():
             time.sleep(5)
             robot.behavior.set_lift_height(0,  max_speed=10.0)
             robot.world.disconnect_cube()
-    return redirect("/")
+    return redirect("/cube")
 
 
 @app.route("/control")
@@ -94,7 +94,18 @@ def cube():
     p = multiprocessing.Process(target=get_stats, args=(output,))
     p.start()
     vector_status = output.get()
-    return render_template('cube.html', vector_status=vector_status, title='Cube')
+    return render_template(
+        'cube.html', vector_status=vector_status, title='Cube')
+    p.join()
+
+
+@app.route("/battery")
+def battery():
+    p = multiprocessing.Process(target=get_stats, args=(output,))
+    p.start()
+    vector_status = output.get()
+    return render_template(
+        'battery.html', vector_status=vector_status, title='Battery')
     p.join()
 
 

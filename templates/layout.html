@@ -33,15 +33,27 @@
             <div class="navbar-nav">
               <a class="nav-item nav-link disabled" >Vector version: {{ vector_status['status_version'] }}</a>
             </div>
-            {% if vector_status['status_charging'] == True %}
-              <img src="/static/battery_charging.svg" width="3%" height="3%">
-            {% elif vector_status['status_battery_level'] == 2 %}
-              <img src="/static/battery_full.svg" width="3%" height="3%">
-            {% elif vector_status['status_battery_level'] == 1 %}
-              <img src="/static/battery_med.svg" width="3%" height="3%">
-            {% elif vector_status['status_battery_level'] == 0 %}
-              <img src="/static/battery_low.svg" width="3%" height="3%">
-            {% endif %}
+              {% if vector_status['status_charging'] == True %}
+                <a href="/battery">
+                <img src="/static/battery_charging.svg" width="7%" height="7%">
+                </a>
+              {% elif vector_status['status_voltage'] > 3.85 %}
+                <a href="/battery">
+                <img src="/static/battery_full.svg" width="7%" height="7%">
+                </a>
+              {% elif 3.75 <= vector_status['status_voltage'] <= 3.85 %}
+                <a href="/battery">
+                <img src="/static/battery_med.svg" width="7%" height="7%">
+                </a>
+              {% elif 3.6 <= vector_status['status_voltage'] < 3.75 %}
+                <a href="/battery">
+                <img src="/static/battery_low.svg" width="7%" height="7%">
+                </a>
+              {% elif vector_status['status_voltage'] < 3.6 %}
+                <a href="/battery">
+                <img src="/static/battery_empty.svg" width="7%" height="7%">
+                </a>
+              {% endif %}
           </div>
         </div>
       </nav>
