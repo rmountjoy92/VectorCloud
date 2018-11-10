@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
 
-from flask import Flask, render_template, url_for, redirect
+from flask import Flask, render_template, url_for, redirect, flash
+from forms import CommandForm
 import multiprocessing
 import time
 import anki_vector
 
 
 app = Flask(__name__)
+
+app.config['SECRET_KEY'] = '66532a62c4048f976e22a39638b6f10e'
 
 output = multiprocessing.Queue()
 
@@ -43,17 +46,25 @@ def get_stats(output):
 
 
 @app.route("/")
-@app.route("/home")
+@app.route("/home", methods=['GET', 'POST'])
 def home():
+    form = CommandForm()
+    if form.validate_on_submit():
+        args = anki_vector.util.parse_command_args()
+        with anki_vector.Robot(args.serial) as robot:
+            exec(form.command.data)
+        flash('Command Executed!', 'success')
+        return redirect("/")
     p = multiprocessing.Process(target=get_stats, args=(output,))
     p.start()
     vector_status = output.get()
-    return render_template('home.html', vector_status=vector_status)
+    return render_template('home.html', vector_status=vector_status, form=form)
     p.join()
 
 
 @app.route("/undock")
 def undock():
+    flash('Undock Command Complete!', 'success')
     args = anki_vector.util.parse_command_args()
     with anki_vector.Robot(args.serial) as robot:
         robot.behavior.drive_off_charger()
@@ -62,6 +73,7 @@ def undock():
 
 @app.route("/dock")
 def dock():
+    flash('Dock Command Complete!', 'success')
     args = anki_vector.util.parse_command_args()
     with anki_vector.Robot(args.serial) as robot:
         robot.behavior.drive_on_charger()

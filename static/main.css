@@ -79,3 +79,11 @@ a.article-title:hover {
 .account-heading {
   font-size: 2.5rem;
 }
+
+.form-control {
+  background-color: #29353B; border-width: 0px;
+}
+
+.form-control:focus {
+  border-width: 2px; border-color: #00EE93; background-color: #29353B; color: #ffffff;
+}

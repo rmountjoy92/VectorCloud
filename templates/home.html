@@ -1,12 +1,34 @@
 {% extends "layout.html" %}
 {% block content %}
-        <article class="media content-section">
-          <div class="media-body">
-            <div class="article-metadata">
-              <a class="mr-2" >Vector Commands</a>
+    <div class="content-section">
+        <form method="POST" action="/home">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <legend class="border-bottom border-dark mb-4">Vector Commands</legend>
+                <div class="form-group">
+                    {{ form.command.label(class="form-control-label") }}
+
+                    {% if form.command.errors %}
+                        {{ form.command(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.command.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.command(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+            </fieldset>
+            <div class="form-group">
+                {{ form.submit(class="btn btn-dark") }}
+                <p></p>
+                <div class="border-top border-dark mb-4">
+                    <p></p>
+                    <a href="/undock" class="btn btn-dark" role="button">Undock</a>
+                    <a href="/dock" class="btn btn-dark" role="button">Dock</a>
+                </div>
             </div>
-            <a href="/undock" class="btn btn-dark" role="button">Undock</a>
-            <a href="/dock" class="btn btn-dark" role="button">Dock</a>
-          </div>
-        </article>
+        </form>
+    </div>
 {% endblock content %}
