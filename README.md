@@ -9,11 +9,11 @@ contribute.
 * document code
 * create how to install/run section in readme
 * create a login function to prevent unauthorized access
-* create icons to represent the different battery levels and charging status
 * add network state, pose, status output to status
-* add more buttons to home screen for more robot functions(dock with cube, etc)
+* add more buttons to home screen for more robot functions
 * animations list page with links with ability to click to animate vector (all thousands of them) with search option.
 * create a text box to type in text to display on vector's face
+* add sidebar of robot commands for easy copy and pasting
 
 
 ## Eventually
@@ -21,7 +21,6 @@ contribute.
 * create a way to easily add new scripts and be able to run them with click of an icon.
 * create a 'control' page that contains the remote control SDK example
 * plugin manager
-* create an text box to type in vector commands just like the interactive shell SDK example
 * manage photos and videos
 * interaction with cube lights
 * learn the 'events' module and integrate it in some way
