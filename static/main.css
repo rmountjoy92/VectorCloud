@@ -81,7 +81,7 @@ a.article-title:hover {
 }
 
 .form-control {
-  background-color: #29353B; border-width: 0px;
+  background-color: #29353B; border-width: 0px; color: #ffffff;
 }
 
 .form-control:focus {

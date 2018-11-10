@@ -50,10 +50,15 @@ def get_stats(output):
 def home():
     form = CommandForm()
     if form.validate_on_submit():
-        args = anki_vector.util.parse_command_args()
-        with anki_vector.Robot(args.serial) as robot:
-            exec(form.command.data)
-        flash('Command Executed!', 'success')
+        try:
+            args = anki_vector.util.parse_command_args()
+            with anki_vector.Robot(args.serial) as robot:
+                command_output = eval(form.command.data)
+            if command_output:
+                command_output = str(command_output)
+                flash(command_output, 'success')
+        except NameError:
+            flash('Command not found!', 'warning')
         return redirect("/")
     p = multiprocessing.Process(target=get_stats, args=(output,))
     p.start()
