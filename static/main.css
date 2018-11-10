@@ -87,3 +87,7 @@ a.article-title:hover {
 .form-control:focus {
   border-width: 2px; border-color: #00EE93; background-color: #29353B; color: #ffffff;
 }
+
+.list-group-item {
+  background-color: #29353B;
+}

@@ -6,7 +6,7 @@ from wtforms.validators import DataRequired, Length, Email, EqualTo
 
 
 class CommandForm(FlaskForm):
-    command = StringField('Enter a .robot command:',
+    command = StringField('Enter a robot. command:',
                           validators=[DataRequired()])
 
     submit = SubmitField('Run')

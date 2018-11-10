@@ -31,6 +31,12 @@
             </div>
             <!-- Navbar Right Side -->
             <div class="navbar-nav">
+              <div>
+                <a href="/undock" class="btn btn-dark" role="button">Undock</a>
+              </div>
+              <div>
+                <a href="/dock" class="btn btn-dark" role="button">Dock</a>
+              </div>
               <a class="nav-item nav-link disabled" >Vector version: {{ vector_status['status_version'] }}</a>
             {% if vector_status['status_charging'] == True %}
               <a href="/battery">
@@ -73,9 +79,6 @@
           {% endwith %}
           {% block content %}{% endblock %}
         </div>
-              </ul>
-            </p>
-          </div>
         </div>
       </div>
     </main>
