@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 
 from flask import Flask, render_template, url_for, redirect, flash
-from forms import CommandForm
+from forms import CommandForm, RegisterForm, LoginForm
 import multiprocessing
+import os
 import time
 import anki_vector
 
@@ -125,6 +126,29 @@ def battery():
     return render_template(
         'battery.html', vector_status=vector_status, title='Battery')
     p.join()
+
+
+@app.route("/register", methods=['GET', 'POST'])
+def register():
+    form = RegisterForm()
+    if form.validate_on_submit():
+        config_file = open("config.txt", "w")
+        config_file.write(form.username.data + '\n' + form.password.data)
+        config_file.close()
+        flash("Login Saved!", 'success')
+        return redirect(url_for('home'))
+    return render_template(
+        'register.html', title='Register', form=form)
+
+
+@app.route("/login", methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        flash("Login Successful!", 'success')
+        return redirect(url_for('home'))
+    return render_template(
+        'login.html', title='Login', form=form)
 
 
 if __name__ == '__main__':

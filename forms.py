@@ -10,3 +10,22 @@ class CommandForm(FlaskForm):
                           validators=[DataRequired()])
 
     submit = SubmitField('Run')
+
+
+class RegisterForm(FlaskForm):
+    username = StringField('Username:', validators=[DataRequired()])
+
+    password = PasswordField('Password:', validators=[DataRequired()])
+
+    confirm_password = PasswordField('Confirm Password',
+                                     validators=[DataRequired(), EqualTo('password')])
+
+    submit = SubmitField('Create')
+
+
+class LoginForm(FlaskForm):
+    username = StringField('Username:', validators=[DataRequired()])
+
+    password = PasswordField('Password', validators=[DataRequired()])
+
+    submit = SubmitField('Login')
