@@ -13,11 +13,12 @@ contribute.
 * add more buttons to home screen for more robot functions
 * animations list page with links with ability to click to animate vector (all thousands of them) with search option.
 * create a text box to type in text to display on vector's face
-* add sidebar of robot commands for easy copy and pasting
 
 
 ## Eventually
 * set up uWSGI
+* set jsonify and make pages load more dynamically
+* create 'waiting on vector' animated .gif for load times
 * create a way to easily add new scripts and be able to run them with click of an icon.
 * create a 'control' page that contains the remote control SDK example
 * plugin manager
