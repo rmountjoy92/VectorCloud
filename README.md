@@ -8,6 +8,7 @@ contribute.
 ## Soon
 * make code more modular
 * develop RESTFUL API
+* add ability to 'stage' mulitple robot. commands and send on submit
 * document code
 * create how to install/run section in readme
 * create a login function to prevent unauthorized access
