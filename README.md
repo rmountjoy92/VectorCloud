@@ -20,7 +20,7 @@ contribute.
 
 ## Eventually
 * set up uWSGI
-* set jsonify and make pages load more dynamically
+* make pages load more dynamically
 * create 'waiting on vector' animated .gif for load times
 * create a way to easily add new scripts and be able to run them with click of an icon.
 * create a 'control' page that contains the remote control SDK example
