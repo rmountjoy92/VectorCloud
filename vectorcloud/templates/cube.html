@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+{% block content %}
+        <article class="media content-section">
+          <div class="media-body">
+            <div class="article-metadata">
+              <a class="mr-2" >Cube Status</a>
+            </div>
+            <p class="article-content">Cube battery level: {{ vector_status['status_cube_battery_level'] }}</p>
+            <p class="article-content">Cube battery volts: {{ vector_status['status_cube_battery_volts'] }}</p>
+            <p class="article-content">Cube Factory ID: {{ vector_status['status_cube_id'] }}</p>
+            <a href="/" class="btn btn-dark" role="button">Refresh</a>
+            <a href="/dock_cube" class="btn btn-dark" role="button">Pick up cube (sometimes works)</a>
+          </div>
+{% endblock content %}

@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+{% block content %}
+        <article class="media content-section">
+          <div class="media-body">
+            <div class="article-metadata">
+              <a class="mr-2" >Battery Status</a>
+            </div>
+            <p class="article-content">Battery voltage: {{ vector_status['status_voltage'] }}</p>
+            <p class="article-content">Battery level: {{ vector_status['status_battery_level'] }}</p>
+            <p class="article-content">Is charging: {{ vector_status['status_charging'] }}</p>
+            <a href="/" class="btn btn-dark" role="button">Refresh</a>
+          </div>
+        </article>
+{% endblock content %}

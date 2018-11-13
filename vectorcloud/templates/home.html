@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class="content-section">
+        <form method="POST" action="/home">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <legend class="border-bottom border-dark mb-4">Vector Commands</legend>
+                <div class="form-group">
+                    {{ form.command.label(class="form-control-label") }}
+
+                    {% if form.command.errors %}
+                        {{ form.command(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.command.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.command(autocomplete="off", class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+            </fieldset>
+            <div class="form-group">
+                {{ form.submit(class="btn btn-dark") }}
+        </form>
+    </div>
+{% endblock content %}
