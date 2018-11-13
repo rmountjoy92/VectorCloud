@@ -6,7 +6,6 @@ Disclaimer - I am a busy person and will be working on this in my free time. Ple
 contribute.
 
 ## Soon
-* make code more modular
 * develop RESTFUL API
 * add ability to 'stage' mulitple robot. commands and send on submit
 * document code
