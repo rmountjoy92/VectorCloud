@@ -1,9 +1,18 @@
 # VectorCloud
-Here is a list of features I want to include in this project, if you have
-anything to add to list let me know and I will put it on here. I will be constantly adding things as I learn more about the SDK.
+My goal with this project is to create a web interface using Flask for controlling vector, displaying information, and organizing (and possibly scheduling) sdk programs to run. My inspiration for this project comes from https://octoprint.org/ which is a web interface for controlling my 3d printer. 
+
+Here is a list of features I want to include in this project, if you have anything to add to list let me know and I will put it on here. I will be constantly adding things as I learn more about the SDK.
 
 Disclaimer - I am a busy person and will be working on this in my free time. Please feel free to
 contribute.
+## Current Features
+* view battery information provided by vector
+* display battery voltage level as icon on navbar
+* view cube information provided by vector
+* added a button for vector to go pick up his cube (unreliable; will get better with next SDK release)
+* dock/undock vector from buttons on navbar
+* display version number provided by vector on navbar
+* stage mulitple robots commands via interactive form and bulk send commands to vector
 
 ## Soon
 * create SQLAlchemy database for storing commands and remove all global variables
