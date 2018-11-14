@@ -6,6 +6,7 @@ Disclaimer - I am a busy person and will be working on this in my free time. Ple
 contribute.
 
 ## Soon
+* create SQLAlchemy database for storing commands and remove all global variables
 * develop RESTFUL API
 * document code
 * create how to install/run section in readme
