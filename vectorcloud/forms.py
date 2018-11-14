@@ -9,7 +9,7 @@ class CommandForm(FlaskForm):
     command = StringField('Enter a robot. command:',
                           validators=[DataRequired()])
 
-    submit = SubmitField('Run')
+    submit = SubmitField('Stage')
 
 
 class RegisterForm(FlaskForm):

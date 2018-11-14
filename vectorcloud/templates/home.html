@@ -1,13 +1,16 @@
 {% extends "layout.html" %}
 {% block content %}
     <div class="content-section">
+        {% for command in robot_commands %}
+          <p>>> {{ command }}</p>
+          <p></p>
+        {% endfor %}
         <form method="POST" action="/home">
             {{ form.hidden_tag() }}
             <fieldset class="form-group">
                 <legend class="border-bottom border-dark mb-4">Vector Commands</legend>
                 <div class="form-group">
                     {{ form.command.label(class="form-control-label") }}
-
                     {% if form.command.errors %}
                         {{ form.command(class="form-control form-control-lg is-invalid") }}
                         <div class="invalid-feedback">
@@ -22,6 +25,10 @@
             </fieldset>
             <div class="form-group">
                 {{ form.submit(class="btn btn-dark") }}
+                {% if robot_commands %}
+                  <a href="/execute_commands" class="btn btn-dark" role="button">Execute</a>
+                  <a href="/clear_commands" class="btn btn-dark" role="button">Clear</a>
+                {% endif %}
         </form>
     </div>
 {% endblock content %}

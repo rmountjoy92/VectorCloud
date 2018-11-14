@@ -1,12 +1,31 @@
 #!/usr/bin/env python3
-from flask import render_template, url_for, redirect, flash
-from vectorcloud.forms import CommandForm, RegisterForm, LoginForm
-from vectorcloud import app
+
 import multiprocessing
+import io
+import json
+import sys
+import os
 import time
 import anki_vector
+from flask import render_template, url_for, redirect, flash, request
+from werkzeug.utils import secure_filename
+from PIL import Image
+from vectorcloud.forms import CommandForm, RegisterForm, LoginForm
+from vectorcloud import app, ALLOWED_EXTENSIONS
+from anki_vector import util
+
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# VectorCloud code starts here
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 output = multiprocessing.Queue()
+global robot_commands
+global command_output
+robot_commands = []
+command_output = []
 
 
 def get_stats(output):
@@ -44,15 +63,17 @@ def robot_do(robot_commands):
     try:
         args = anki_vector.util.parse_command_args()
         with anki_vector.Robot(args.serial) as robot:
-            command_output = []
+            command_output.clear()
             for command in robot_commands:
                 out = eval(command)
                 command_output.append(out)
-                if command_output:
-                    command_output = str(command_output)
-                    flash(command_output, 'success')
+            for out in command_output:
+                string = str(out)
+                flash(string, 'success')
     except NameError:
         flash('Command not found!', 'warning')
+    robot_commands.clear()
+    command_output.clear()
 
 
 @app.route("/")
@@ -60,16 +81,31 @@ def robot_do(robot_commands):
 def home():
     form = CommandForm()
     if form.validate_on_submit():
-        robot_commands = []
         out = form.command.data
         robot_commands.append(out)
-        robot_do(robot_commands)
+        # session['robot_session_commands'] = robot_commands
         return redirect("/")
     p = multiprocessing.Process(target=get_stats, args=(output,))
     p.start()
     vector_status = output.get()
-    return render_template('home.html', vector_status=vector_status, form=form)
+    return render_template('home.html', vector_status=vector_status, form=form, robot_commands=robot_commands)
     p.join()
+
+
+@app.route("/execute_commands")
+def execute_commands():
+    # robot_commands = session.get('robot_session_commands', None)
+    if robot_commands:
+        robot_do(robot_commands)
+    else:
+        flash('No command staged!', 'warning')
+    return redirect("/")
+
+
+@app.route("/clear_commands")
+def clear_commands():
+    robot_commands.clear()
+    return redirect("/")
 
 
 @app.route("/undock")
@@ -148,3 +184,9 @@ def login():
         return redirect(url_for('home'))
     return render_template(
         'login.html', title='Login', form=form)
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# VectorCloud code ends here; Anki remote_control code Starts here.
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
