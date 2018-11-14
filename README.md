@@ -6,9 +6,7 @@ Disclaimer - I am a busy person and will be working on this in my free time. Ple
 contribute.
 
 ## Soon
-* make code more modular
 * develop RESTFUL API
-* add ability to 'stage' mulitple robot. commands and send on submit
 * document code
 * create how to install/run section in readme
 * create a login function to prevent unauthorized access
@@ -20,9 +18,9 @@ contribute.
 
 ## Eventually
 * set up uWSGI
-* set jsonify and make pages load more dynamically
+* make pages load more dynamically
 * create 'waiting on vector' animated .gif for load times
-* create a way to easily add new scripts and be able to run them with click of an icon.
+* create a way to easily store sdk applications to server and be able to run them with click of an icon.
 * create a 'control' page that contains the remote control SDK example
 * plugin manager
 * manage photos and videos
