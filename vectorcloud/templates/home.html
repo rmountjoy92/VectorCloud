@@ -1,8 +1,10 @@
 {% extends "layout.html" %}
 {% block content %}
     <div class="content-section">
-        {% for command in robot_commands %}
-          <p>>> {{ command }}</p>
+        {% for command in command_list %}
+          <p>
+            >> {{ command }}
+          </p>
           <p></p>
         {% endfor %}
         <form method="POST" action="/home">
@@ -25,7 +27,7 @@
             </fieldset>
             <div class="form-group">
                 {{ form.submit(class="btn btn-dark") }}
-                {% if robot_commands %}
+                {% if command_list %}
                   <a href="/execute_commands" class="btn btn-dark" role="button">Execute</a>
                   <a href="/clear_commands" class="btn btn-dark" role="button">Clear</a>
                 {% endif %}

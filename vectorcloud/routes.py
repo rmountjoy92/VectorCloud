@@ -1,18 +1,19 @@
 #!/usr/bin/env python3
 
 import multiprocessing
-import io
-import json
-import sys
-import os
+# import io
+# import json
+# import sys
+# import os
 import time
 import anki_vector
 from flask import render_template, url_for, redirect, flash, request
-from werkzeug.utils import secure_filename
-from PIL import Image
+# from werkzeug.utils import secure_filename
+# from PIL import Image
 from vectorcloud.forms import CommandForm, RegisterForm, LoginForm
-from vectorcloud import app, ALLOWED_EXTENSIONS
-from anki_vector import util
+from vectorcloud.models import Command, Output
+from vectorcloud import app, ALLOWED_EXTENSIONS, db
+# from anki_vector import util
 
 
 # ------------------------------------------------------------------------------
@@ -21,11 +22,13 @@ from anki_vector import util
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 
+
 output = multiprocessing.Queue()
 global robot_commands
 global command_output
 robot_commands = []
 command_output = []
+db.create_all()
 
 
 def get_stats(output):
@@ -59,21 +62,26 @@ def get_stats(output):
         output.put(vector_status)
 
 
-def robot_do(robot_commands):
+def robot_do():
+    robot_commands = Command.query.all()
     try:
         args = anki_vector.util.parse_command_args()
         with anki_vector.Robot(args.serial) as robot:
-            command_output.clear()
             for command in robot_commands:
-                out = eval(command)
-                command_output.append(out)
+                command_string = str(command)
+                robot_output_string = str(eval(command_string))
+                db_output = Output(output=robot_output_string)
+                db.session.add(db_output)
+                db.session.commit()
+            command_output = Output.query.all()
             for out in command_output:
-                string = str(out)
-                flash(string, 'success')
+                out_string = str(out)
+                flash(out_string, 'success')
     except NameError:
         flash('Command not found!', 'warning')
-    robot_commands.clear()
-    command_output.clear()
+    db.session.query(Command).delete()
+    db.session.query(Output).delete()
+    db.session.commit()
 
 
 @app.route("/")
@@ -81,22 +89,23 @@ def robot_do(robot_commands):
 def home():
     form = CommandForm()
     if form.validate_on_submit():
-        out = form.command.data
-        robot_commands.append(out)
-        # session['robot_session_commands'] = robot_commands
+        robot_command = Command(command=form.command.data)
+        db.session.add(robot_command)
+        db.session.commit()
         return redirect("/")
+    command_list = Command.query.all()
     p = multiprocessing.Process(target=get_stats, args=(output,))
     p.start()
     vector_status = output.get()
-    return render_template('home.html', vector_status=vector_status, form=form, robot_commands=robot_commands)
+    return render_template('home.html', vector_status=vector_status, form=form, command_list=command_list)
     p.join()
 
 
 @app.route("/execute_commands")
 def execute_commands():
-    # robot_commands = session.get('robot_session_commands', None)
+    robot_commands = Command.query.all()
     if robot_commands:
-        robot_do(robot_commands)
+        robot_do()
     else:
         flash('No command staged!', 'warning')
     return redirect("/")
@@ -104,7 +113,10 @@ def execute_commands():
 
 @app.route("/clear_commands")
 def clear_commands():
-    robot_commands.clear()
+    db.session.query(Command).delete()
+    db.session.commit()
+    # db.drop_all()
+    # db.create_all()
     return redirect("/")
 
 
