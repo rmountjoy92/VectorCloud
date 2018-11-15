@@ -15,7 +15,6 @@ contribute.
 * stage mulitple robots commands via interactive form and bulk send commands to vector
 
 ## Soon
-* create SQLAlchemy database for storing commands and remove all global variables
 * develop RESTFUL API
 * document code
 * create how to install/run section in readme
