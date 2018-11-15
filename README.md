@@ -13,6 +13,7 @@ contribute.
 * dock/undock vector from buttons on navbar
 * display version number provided by vector on navbar
 * stage mulitple robots commands via interactive form and bulk send commands to vector
+* SQLite database for storing commands, output, and users
 
 ## Soon
 * develop RESTFUL API
