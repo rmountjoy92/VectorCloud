@@ -91,3 +91,8 @@ a.article-title:hover {
 .list-group-item {
   background-color: #29353B;
 }
+
+.btn-group {
+  padding-left: 15px;
+  padding-right: 15px;
+}

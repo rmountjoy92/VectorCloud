@@ -8,12 +8,13 @@ import multiprocessing
 import time
 import anki_vector
 from flask import render_template, url_for, redirect, flash, request
+from flask_login import login_user, logout_user, current_user
 # from werkzeug.utils import secure_filename
 # from PIL import Image
 from vectorcloud.forms import CommandForm, RegisterForm, LoginForm
-from vectorcloud.models import Command, Output
-from vectorcloud import app, ALLOWED_EXTENSIONS, db
-# from anki_vector import util
+from vectorcloud.models import Command, Output, User
+from vectorcloud import app, ALLOWED_EXTENSIONS, db, bcrypt
+from anki_vector import util
 
 
 # ------------------------------------------------------------------------------
@@ -84,6 +85,24 @@ def robot_do():
     db.session.commit()
 
 
+def public_route(decorated_function):
+    decorated_function.is_public = True
+    return decorated_function
+
+
+@app.before_request
+def check_valid_login():
+    user = db.session.query(User).first()
+    if any([request.endpoint.startswith('static'),
+            current_user.is_authenticated,
+            getattr(app.view_functions[request.endpoint], 'is_public', False)]):
+        return
+    elif user is None:
+        return redirect(url_for('register'))
+    else:
+        return redirect(url_for('login'))
+
+
 @app.route("/")
 @app.route("/home", methods=['GET', 'POST'])
 def home():
@@ -97,7 +116,8 @@ def home():
     p = multiprocessing.Process(target=get_stats, args=(output,))
     p.start()
     vector_status = output.get()
-    return render_template('home.html', vector_status=vector_status, form=form, command_list=command_list)
+    return render_template('home.html', vector_status=vector_status,
+                           form=form, command_list=command_list)
     p.join()
 
 
@@ -115,8 +135,6 @@ def execute_commands():
 def clear_commands():
     db.session.query(Command).delete()
     db.session.commit()
-    # db.drop_all()
-    # db.create_all()
     return redirect("/")
 
 
@@ -152,7 +170,7 @@ def dock_cube():
             robot.behavior.set_lift_height(0,  max_speed=10.0)
             robot.world.disconnect_cube()
             flash('Cube picked up!', 'success')
-    return redirect("/cube")
+    return redirect(url_for('cube'))
 
 
 @app.route("/cube")
@@ -175,30 +193,51 @@ def battery():
     p.join()
 
 
+@public_route
 @app.route("/register", methods=['GET', 'POST'])
 def register():
+    register.is_public = True
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
     form = RegisterForm()
     if form.validate_on_submit():
-        config_file = open("config.txt", "w")
-        config_file.write(form.username.data + '\n' + form.password.data)
-        config_file.close()
+        hashed_password = bcrypt.generate_password_hash(
+            form.password.data).decode('utf-8')
+        user = User(username=form.username.data, password=hashed_password)
+        db.session.add(user)
+        db.session.commit()
         flash("Login Saved!", 'success')
-        return redirect(url_for('home'))
+        return redirect(url_for('login'))
     return render_template(
         'register.html', title='Register', form=form)
 
 
+@public_route
 @app.route("/login", methods=['GET', 'POST'])
 def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
     form = LoginForm()
     if form.validate_on_submit():
-        flash("Login Successful!", 'success')
-        return redirect(url_for('home'))
+        user = User.query.filter_by(username=form.username.data).first()
+        if user and bcrypt.check_password_hash(user.password, form.password.data):
+            login_user(user, remember=form.remember.data)
+            flash("Login Successful!", 'success')
+            return redirect(url_for('home'))
+        else:
+            flash("Login Unsuccessful. Check username and password.", 'success')
+            return redirect(url_for('login'))
     return render_template(
         'login.html', title='Login', form=form)
 
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-# VectorCloud code ends here; Anki remote_control code Starts here.
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
+
+@app.route("/logout")
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
+
+    # ------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------
+    # VectorCloud code ends here; Anki remote_control code Starts here.
+    # ------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------

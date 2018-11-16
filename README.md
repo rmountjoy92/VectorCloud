@@ -1,5 +1,5 @@
 # VectorCloud
-My goal with this project is to create a web interface using Flask for controlling vector, displaying information, and organizing (and possibly scheduling) sdk programs to run. My inspiration for this project comes from https://octoprint.org/ which is a web interface for controlling my 3d printer. 
+My goal with this project is to create a web interface using Flask for controlling vector, displaying information, and organizing (and possibly scheduling) sdk programs to run. My inspiration for this project comes from https://octoprint.org/ which is a web interface for controlling my 3d printer.
 
 Here is a list of features I want to include in this project, if you have anything to add to list let me know and I will put it on here. I will be constantly adding things as I learn more about the SDK.
 
@@ -14,12 +14,12 @@ contribute.
 * display version number provided by vector on navbar
 * stage mulitple robots commands via interactive form and bulk send commands to vector
 * SQLite database for storing commands, output, and users
+* user authentication and registration, all routes are blocked unless user logs in
 
 ## Soon
 * develop RESTFUL API
 * document code
 * create how to install/run section in readme
-* create a login function to prevent unauthorized access
 * add network state, pose, status output to status
 * add more buttons to home screen for more robot functions
 * animations list page with links with ability to click to animate vector (all thousands of them) with search option.

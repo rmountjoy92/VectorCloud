@@ -2,7 +2,8 @@
 
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField
-from wtforms.validators import DataRequired, Length, Email, EqualTo
+from wtforms.validators import DataRequired, Length, EqualTo, ValidationError
+from vectorcloud.models import User
 
 
 class CommandForm(FlaskForm):
@@ -13,7 +14,8 @@ class CommandForm(FlaskForm):
 
 
 class RegisterForm(FlaskForm):
-    username = StringField('Username:', validators=[DataRequired()])
+    username = StringField('Username:', validators=[
+                           DataRequired(), Length(min=2, max=20)])
 
     password = PasswordField('Password:', validators=[DataRequired()])
 
@@ -22,6 +24,11 @@ class RegisterForm(FlaskForm):
 
     submit = SubmitField('Create')
 
+    def validate_username(self, username):
+        user = User.query.filter_by(username=username.data).first()
+        if user:
+            raise ValidationError('Username already exists.')
+
 
 class LoginForm(FlaskForm):
     username = StringField('Username:', validators=[DataRequired()])
@@ -29,3 +36,5 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
 
     submit = SubmitField('Login')
+
+    remember = BooleanField('Remember Me')

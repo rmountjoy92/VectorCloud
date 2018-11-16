@@ -26,36 +26,41 @@
           </button>
           <div class="collapse navbar-collapse" id="navbarToggle">
             <div class="navbar-nav mr-auto">
-              <a class="nav-item nav-link" href="/">Home</a>
-              <a class="nav-item nav-link" href="/cube">Cube</a>
+              <a class="nav-item nav-link" href="{{ url_for('home') }}">Home</a>
+              <a class="nav-item nav-link" href="{{ url_for('cube') }}">Cube</a>
             </div>
             <!-- Navbar Right Side -->
             <div class="navbar-nav">
-              <div class="btn-group" role="group" aria-label="Basic example">
-                <a href="/undock" class="btn btn-dark" role="button">Undock</a>
-                <a href="/dock" class="btn btn-dark" role="button">Dock</a>
-              </div>
               <a class="nav-item nav-link disabled" >Vector version: {{ vector_status['status_version'] }}</a>
-            {% if vector_status['status_charging'] == True %}
-              <a href="/battery">
-              <img src="/static/battery_charging.svg" width="32px" height="32px">
-              </a>
-            {% elif vector_status['status_voltage'] > 3.85 %}
-              <a href="/battery">
-              <img src="/static/battery_full.svg" width="32px" height="32px">
-              </a>
-            {% elif 3.75 <= vector_status['status_voltage'] <= 3.85 %}
-              <a href="/battery">
-              <img src="/static/battery_med.svg" width="32px" height="32px">
-              </a>
-            {% elif 3.6 <= vector_status['status_voltage'] < 3.75 %}
-              <a href="/battery">
-              <img src="/static/battery_low.svg" width="32px" height="32px">
-              </a>
-            {% elif vector_status['status_voltage'] < 3.6 %}
-              <a href="/battery">
-              <img src="/static/battery_empty.svg" width="32px" height="32px">
-              </a>
+              {% if vector_status['status_charging'] == True %}
+                <a href="{{ url_for('battery') }}">
+                <img src="/static/battery_charging.svg" width="32px" height="32px">
+                </a>
+              {% elif vector_status['status_voltage'] > 3.85 %}
+                <a href="{{ url_for('battery') }}">
+                <img src="/static/battery_full.svg" width="32px" height="32px">
+                </a>
+              {% elif 3.75 <= vector_status['status_voltage'] <= 3.85 %}
+                <a href="{{ url_for('battery') }}">
+                <img src="/static/battery_med.svg" width="32px" height="32px">
+                </a>
+              {% elif 3.6 <= vector_status['status_voltage'] < 3.75 %}
+                <a href="{{ url_for('battery') }}">
+                <img src="/static/battery_low.svg" width="32px" height="32px">
+                </a>
+              {% elif vector_status['status_voltage'] < 3.6 %}
+                <a href="{{ url_for('battery') }}">
+                <img src="/static/battery_empty.svg" width="32px" height="32px">
+                </a>
+              {% endif %}
+            <div class="btn-group" role="group" aria-label="Basic example">
+              <a href="{{ url_for('undock') }}" class="btn btn-dark" role="button">Undock</a>
+              <a href="{{ url_for('dock') }}" class="btn btn-dark" role="button">Dock</a>
+            </div>
+            {% if current_user.is_authenticated %}
+            <a href="{{ url_for('logout') }}">
+            <img src="/static/logout.svg" width="32px" height="32px">
+            </a>
             {% endif %}
             </div>
           </div>
