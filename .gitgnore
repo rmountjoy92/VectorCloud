@@ -6,7 +6,7 @@ __pycache__/
 *.db
 
 # Dolphin
-*.desktop
+*.directory
 
 # C extensions
 *.so
