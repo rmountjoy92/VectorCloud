@@ -1,12 +1,13 @@
 # Byte-compiled / optimized / DLL files
-__pycache__/
+vectorcloud/__pycache__/
 *.py[cod]
 
 # Databases
-*.db
+vectorcloud/site.db
 
 # Dolphin
-*.directory
+.directory
+vectorcloud/.directory
 
 # C extensions
 *.so
