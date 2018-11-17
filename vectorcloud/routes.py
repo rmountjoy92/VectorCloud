@@ -4,16 +4,18 @@ import multiprocessing
 # import io
 # import json
 # import sys
-# import os
+import os
 import time
+import secrets
+import importlib
 import anki_vector
 from flask import render_template, url_for, redirect, flash, request
 from flask_login import login_user, logout_user, current_user
 # from werkzeug.utils import secure_filename
-# from PIL import Image
-from vectorcloud.forms import CommandForm, RegisterForm, LoginForm
-from vectorcloud.models import Command, Output, User
-from vectorcloud import app, ALLOWED_EXTENSIONS, db, bcrypt
+from PIL import Image
+from vectorcloud.forms import CommandForm, RegisterForm, LoginForm, UploadScript
+from vectorcloud.models import Command, Output, User, Application
+from vectorcloud import app, db, bcrypt
 from anki_vector import util
 
 
@@ -106,18 +108,20 @@ def check_valid_login():
 @app.route("/")
 @app.route("/home", methods=['GET', 'POST'])
 def home():
+    app_list = Application.query.all()
     form = CommandForm()
     if form.validate_on_submit():
         robot_command = Command(command=form.command.data)
         db.session.add(robot_command)
         db.session.commit()
-        return redirect("/")
+        return redirect(url_for('home'))
     command_list = Command.query.all()
     p = multiprocessing.Process(target=get_stats, args=(output,))
     p.start()
     vector_status = output.get()
     return render_template('home.html', vector_status=vector_status,
-                           form=form, command_list=command_list)
+                           form=form, command_list=command_list,
+                           app_list=app_list)
     p.join()
 
 
@@ -128,14 +132,14 @@ def execute_commands():
         robot_do()
     else:
         flash('No command staged!', 'warning')
-    return redirect("/")
+    return redirect(url_for('home'))
 
 
 @app.route("/clear_commands")
 def clear_commands():
     db.session.query(Command).delete()
     db.session.commit()
-    return redirect("/")
+    return redirect(url_for('home'))
 
 
 @app.route("/undock")
@@ -144,7 +148,7 @@ def undock():
     args = anki_vector.util.parse_command_args()
     with anki_vector.Robot(args.serial) as robot:
         robot.behavior.drive_off_charger()
-    return redirect("/")
+    return redirect(url_for('home'))
 
 
 @app.route("/dock")
@@ -154,7 +158,7 @@ def dock():
     with anki_vector.Robot(args.serial) as robot:
         robot.behavior.drive_on_charger()
         time.sleep(1)
-    return redirect("/")
+    return redirect(url_for('home'))
 
 
 @app.route("/dock_cube")
@@ -225,7 +229,7 @@ def login():
             flash("Login Successful!", 'success')
             return redirect(url_for('home'))
         else:
-            flash("Login Unsuccessful. Check username and password.", 'success')
+            flash("Login Unsuccessful. Check username and password.", 'warning')
             return redirect(url_for('login'))
     return render_template(
         'login.html', title='Login', form=form)
@@ -236,6 +240,103 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
+
+def save_script(form_script):
+    random_hex = secrets.token_hex(8)
+    file_name = random_hex + '.py'
+    script_path = os.path.join(app.root_path, 'scripts', file_name)
+    form_script.save(script_path)
+    return random_hex
+
+
+def save_icon(form_icon, random_hex):
+    _, f_ext = os.path.splitext(form_icon.filename)
+    file_name = random_hex + f_ext
+    icon_path = os.path.join(app.root_path, 'static/app_icons', file_name)
+
+    output_size = (125, 125)
+    i = Image.open(form_icon)
+    i.thumbnail(output_size)
+    i.save(icon_path)
+
+    return file_name
+
+
+@app.route("/upload", methods=['GET', 'POST'])
+def upload():
+    form = UploadScript()
+    if form.validate_on_submit():
+        if form.script.data:
+            random_hex = save_script(form.script.data)
+            if form.icon.data:
+                icon_fn = save_icon(form.icon.data, random_hex)
+            else:
+                icon_fn = 'default.jpg'
+            application = Application(hex_id=random_hex,
+                                      script_name=form.script_name.data,
+                                      description=form.description.data,
+                                      icon=icon_fn)
+            db.session.add(application)
+            db.session.commit()
+            flash("Application Saved!", 'success')
+            return redirect(url_for('home'))
+        else:
+            flash("No script uploaded", 'warning')
+        return redirect(url_for('upload'))
+    return render_template(
+        'upload.html', title='Upload', form=form)
+
+
+@app.route("/run_script/<script_hex_id>")
+def run_script(script_hex_id):
+    application = Application.query.filter_by(hex_id=script_hex_id).first()
+    script = script_hex_id + '.py'
+    script_path = os.path.join(app.root_path, 'scripts', script)
+    out = os.popen('python3 ' + script_path).read()
+    if out:
+        flash(application.script_name + ' ran succussfully! Output: ' + out,
+              'success')
+    else:
+        flash('Something is not right with your script.', 'warning')
+    return redirect(url_for('home'))
+
+
+@app.route("/edit_application/<script_id>", methods=['GET', 'POST'])
+def edit_application(script_id):
+    form = UploadScript()
+    application = Application.query.filter_by(id=script_id).first()
+    script_hex_id = application.hex_id
+    if form.validate_on_submit():
+        if form.icon.data:
+            icon_fn = save_icon(form.icon.data, script_hex_id)
+            application.icon = icon_fn
+        else:
+            icon_fn = 'default.jpg'
+            application.icon = icon_fn
+        application.script_name = form.script_name.data
+        application.description = form.description.data
+        db.session.merge(application)
+        db.session.commit()
+        flash('Application Edited!', 'success')
+        return redirect(url_for('home'))
+
+    return render_template(
+        'edit_application.html', title='Edit Application', form=form, script_id=script_id)
+
+
+@app.route("/delete_application/<script_id>", methods=['GET', 'POST'])
+def delete_application(script_id):
+    application = Application.query.filter_by(id=script_id).first()
+    script_fn = application.hex_id + '.py'
+    script_path = os.path.join(app.root_path, 'scripts', script_fn)
+    icon_path = os.path.join(app.root_path, 'static/app_icons', application.icon)
+    os.remove(script_path)
+    if application.icon != 'default.jpg':
+        os.remove(icon_path)
+    Application.query.filter_by(id=script_id).delete()
+    db.session.commit()
+    flash('Application Deleted!', 'success')
+    return redirect(url_for('home'))
     # ------------------------------------------------------------------------------
     # ------------------------------------------------------------------------------
     # VectorCloud code ends here; Anki remote_control code Starts here.

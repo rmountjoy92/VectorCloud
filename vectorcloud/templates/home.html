@@ -1,36 +1,56 @@
 {% extends "layout.html" %}
 {% block content %}
-    <div class="content-section">
-        {% for command in command_list %}
-          <p>
-            >> {{ command }}
-          </p>
-          <p></p>
-        {% endfor %}
-        <form method="POST" action="/home">
-            {{ form.hidden_tag() }}
-            <fieldset class="form-group">
-                <legend class="border-bottom border-dark mb-4">Vector Commands</legend>
-                <div class="form-group">
-                    {{ form.command.label(class="form-control-label") }}
-                    {% if form.command.errors %}
-                        {{ form.command(class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.command.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.command(autocomplete="off", class="form-control form-control-lg") }}
-                    {% endif %}
-                </div>
-            </fieldset>
-            <div class="form-group">
-                {{ form.submit(class="btn btn-dark") }}
-                {% if command_list %}
-                  <a href="/execute_commands" class="btn btn-dark" role="button">Execute</a>
-                  <a href="/clear_commands" class="btn btn-dark" role="button">Clear</a>
-                {% endif %}
-        </form>
+    <div class="container">
+      <div class="content-section">
+          {% for command in command_list %}
+            <p>
+              >> {{ command }}
+            </p>
+            <p></p>
+          {% endfor %}
+          <form method="POST" action="/home">
+              {{ form.hidden_tag() }}
+              <fieldset class="form-group">
+                  <legend class="border-bottom border-dark mb-4">Vector Commands</legend>
+                  <div class="form-group">
+                      {{ form.command.label(class="form-control-label") }}
+                      {% if form.command.errors %}
+                          {{ form.command(class="form-control form-control-lg is-invalid") }}
+                          <div class="invalid-feedback">
+                              {% for error in form.command.errors %}
+                                  <span>{{ error }}</span>
+                              {% endfor %}
+                          </div>
+                      {% else %}
+                          {{ form.command(autocomplete="off", class="form-control form-control-lg") }}
+                      {% endif %}
+                  </div>
+              </fieldset>
+              <div class="form-group">
+                  {{ form.submit(class="btn btn-dark") }}
+                  {% if command_list %}
+                    <a href="/execute_commands" class="btn btn-dark" role="button">Execute</a>
+                    <a href="/clear_commands" class="btn btn-dark" role="button">Clear</a>
+                  {% endif %}
+          </form>
+      </div>
+    </div>
+    <div>
+      <a href="/upload">Upload Application</a><p></p>
+    </div>
+    <div class="container">
+          {% for app in app_list %}
+          <article class="media content-section">
+            <div class="media-body">
+                <a href="/run_script/{{ app.hex_id }}">
+                <img src="/static/app_icons/{{ app.icon }}" class="rounded mx-auto d-block">
+                </a>
+                <p></p>
+                <h2 class="text-center"> {{ app.script_name }}</h2>
+                <p class="text-center">{{ app.description }}</p>
+                <a href="/edit_application/{{ app.id }}" class="btn btn-dark float-right" role="button">Edit</a>
+              </div>
+          </article>
+          {% endfor %}
     </div>
 {% endblock content %}

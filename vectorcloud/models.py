@@ -32,3 +32,14 @@ class User(db.Model, UserMixin):
 
     def __repr__(self):
         return self.username
+
+
+class Application(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    script_name = db.Column(db.Text)
+    description = db.Column(db.Text)
+    icon = db.Column(db.String(20))
+    hex_id = db.Column(db.Text)
+
+    def __repr__(self):
+        return [self.id, self.script_name, self.description, self.hex_id]

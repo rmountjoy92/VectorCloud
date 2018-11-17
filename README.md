@@ -15,6 +15,8 @@ contribute.
 * stage mulitple robots commands via interactive form and bulk send commands to vector
 * SQLite database for storing commands, output, and users
 * user authentication and registration, all routes are blocked unless user logs in
+* upload single python scripts to server, save as application with name, description and picture
+* edit and delete sdk apps
 
 ## Soon
 * develop RESTFUL API
@@ -24,13 +26,13 @@ contribute.
 * add more buttons to home screen for more robot functions
 * animations list page with links with ability to click to animate vector (all thousands of them) with search option.
 * create a text box to type in text to display on vector's face
+* ability to add 'support' files for sdk apps
 
 
 ## Eventually
 * set up uWSGI
 * make pages load more dynamically
 * create 'waiting on vector' animated .gif for load times
-* create a way to easily store sdk applications to server and be able to run them with click of an icon.
 * create a 'control' page that contains the remote control SDK example
 * plugin manager
 * manage photos and videos

@@ -1,23 +1,24 @@
 #!/usr/bin/env python3
 
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField
+from flask_wtf.file import FileField, FileAllowed
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField
 from wtforms.validators import DataRequired, Length, EqualTo, ValidationError
 from vectorcloud.models import User
 
 
 class CommandForm(FlaskForm):
-    command = StringField('Enter a robot. command:',
+    command = StringField('Enter a robot. command',
                           validators=[DataRequired()])
 
     submit = SubmitField('Stage')
 
 
 class RegisterForm(FlaskForm):
-    username = StringField('Username:', validators=[
+    username = StringField('Username', validators=[
                            DataRequired(), Length(min=2, max=20)])
 
-    password = PasswordField('Password:', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired()])
 
     confirm_password = PasswordField('Confirm Password',
                                      validators=[DataRequired(), EqualTo('password')])
@@ -31,10 +32,27 @@ class RegisterForm(FlaskForm):
 
 
 class LoginForm(FlaskForm):
-    username = StringField('Username:', validators=[DataRequired()])
+    username = StringField('Username', validators=[DataRequired()])
 
     password = PasswordField('Password', validators=[DataRequired()])
 
     submit = SubmitField('Login')
 
     remember = BooleanField('Remember Me')
+
+
+class UploadScript(FlaskForm):
+    script_name = StringField('Name of SDK application',
+                              validators=[DataRequired()])
+
+    description = TextAreaField('Description')
+
+    script = FileField('Select Python File',
+                       validators=[FileAllowed(['py'])])
+
+    icon = FileField('Select Icon Image',
+                     validators=[FileAllowed(['jpg', 'png'])])
+
+    upload = SubmitField('Upload')
+
+    update = SubmitField('Update')

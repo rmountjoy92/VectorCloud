@@ -96,3 +96,11 @@ a.article-title:hover {
   padding-left: 15px;
   padding-right: 15px;
 }
+
+a {
+    color: #00EE93;
+}
+
+a:hover {
+    color: white;
+}
