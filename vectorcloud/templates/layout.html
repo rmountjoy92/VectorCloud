@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="theme-color" content="#222D32">
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
     <!-- Bootstrap CSS -->
@@ -28,50 +29,49 @@
           </button>
           <div class="collapse navbar-collapse" id="navbarToggle">
             <div class="navbar-nav mr-auto">
-              <a class="nav-item nav-link" href="{{ url_for('home') }}">Home</a>
               <a class="nav-item nav-link" href="{{ url_for('cube') }}">Cube</a>
             </div>
             <!-- Navbar Right Side -->
             <div class="navbar-nav">
-              <a class="nav-item nav-link disabled" >Vector version: {{ vector_status['status_version'] }}</a>
-              {% if vector_status['status_charging'] == True %}
+              <a class="nav-item nav-link disabled" >Vector version: {{ vector_status.version }}</a>
+              {% if vector_status.status_charging == True %}
                 <div class="icon">
                   <a href="{{ url_for('battery') }}">
                   <img src="/static/battery_charging.svg" width="32px" height="32px" data-toggle="tooltip" data-placement="bottom" title="Battery Info">
                   </a>
                 </div>
-              {% elif vector_status['status_voltage'] > 3.85 %}
+              {% elif vector_status.battery_voltage > 3.85 %}
                 <div class="icon">
                   <a href="{{ url_for('battery') }}">
                   <img src="/static/battery_full.svg" width="32px" height="32px" data-toggle="tooltip" data-placement="bottom" title="Battery Info">
                   </a>
                 </div>
-              {% elif 3.75 <= vector_status['status_voltage'] <= 3.85 %}
+              {% elif 3.75 <= vector_status.battery_voltage <= 3.85 %}
                 <div class="icon">
                   <a href="{{ url_for('battery') }}">
                   <img src="/static/battery_med.svg" width="32px" height="32px" data-toggle="tooltip" data-placement="bottom" title="Battery Info">
                   </a>
                 </div>
-              {% elif 3.6 <= vector_status['status_voltage'] < 3.75 %}
+              {% elif 3.6 <= vector_status.battery_voltage < 3.75 %}
                 <div class="icon">
                   <a href="{{ url_for('battery') }}">
                   <img src="/static/battery_low.svg" width="32px" height="32px" data-toggle="tooltip" data-placement="bottom" title="Battery Info">
                   </a>
                 </div>
-              {% elif vector_status['status_voltage'] < 3.6 %}
+              {% elif vector_status.battery_voltage < 3.6 %}
                 <div class="icon">
                   <a href="{{ url_for('battery') }}">
                   <img src="/static/battery_empty.svg" width="32px" height="32px" data-toggle="tooltip" data-placement="bottom" title="Battery Info">
                   </a>
                 </div>
               {% endif %}
-              {% if vector_status['status_charging'] == True %}
+              {% if vector_status.status_charging == True %}
                 <div class="icon">
                   <a href="{{ url_for('undock') }}">
                   <img src="/static/undock.svg" width="32px" height="32px" data-toggle="tooltip" data-placement="bottom" title="Undock">
                   </a>
                 </div>
-              {% elif vector_status['status_charging'] == False %}
+              {% elif vector_status.status_charging == False %}
                 <div class="icon">
                   <a href="{{ url_for('dock') }}">
                   <img src="/static/dock.svg" width="32px" height="32px" data-toggle="tooltip" data-placement="bottom" title="Dock">

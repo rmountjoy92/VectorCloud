@@ -1,20 +1,18 @@
 #!/usr/bin/env python3
 
-import multiprocessing
 # import io
 # import json
 # import sys
 import os
 import time
 import secrets
-import importlib
 import anki_vector
 from flask import render_template, url_for, redirect, flash, request
 from flask_login import login_user, logout_user, current_user
 # from werkzeug.utils import secure_filename
 from PIL import Image
 from vectorcloud.forms import CommandForm, RegisterForm, LoginForm, UploadScript
-from vectorcloud.models import Command, Output, User, Application
+from vectorcloud.models import Command, Output, User, Application, Status
 from vectorcloud import app, db, bcrypt
 from anki_vector import util
 
@@ -25,44 +23,23 @@ from anki_vector import util
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 
-
-output = multiprocessing.Queue()
-global robot_commands
-global command_output
-robot_commands = []
-command_output = []
-db.create_all()
-
-
-def get_stats(output):
-
-    vector_status = {
-        'status_version': '0',
-        'status_voltage': '0',
-        'status_battery_level': '0',
-        'status_charging': '0',
-        'status_cube_battery_level': '0',
-        'status_cube_id': '0',
-        'status_cube_battery_volts': '0'
-    }
-
+def get_stats():
     args = anki_vector.util.parse_command_args()
     with anki_vector.Robot(args.serial) as robot:
 
         version_state = robot.get_version_state()
-        if version_state:
-            vector_status['status_version'] = version_state.os_version
-
         battery_state = robot.get_battery_state()
-        if battery_state:
-            vector_status['status_voltage'] = battery_state.battery_volts
-            vector_status['status_battery_level'] = battery_state.battery_level
-            vector_status['status_charging'] = battery_state.is_on_charger_platform
-            vector_status['status_cube_battery_level'] = battery_state.cube_battery.level
-            vector_status['status_cube_id'] = battery_state.cube_battery.factory_id
-            vector_status['status_cube_battery_volts'] = battery_state.cube_battery.battery_volts
 
-        output.put(vector_status)
+        db.session.query(Status).delete()
+        status = Status(version=version_state.os_version,
+                        battery_voltage=battery_state.battery_volts,
+                        battery_level=battery_state.battery_level,
+                        status_charging=battery_state.is_on_charger_platform,
+                        cube_battery_level=battery_state.cube_battery.level,
+                        cube_id=battery_state.cube_battery.factory_id,
+                        cube_battery_volts=battery_state.cube_battery.battery_volts)
+        db.session.add(status)
+        db.session.commit()
 
 
 def robot_do():
@@ -116,13 +93,11 @@ def home():
         db.session.commit()
         return redirect(url_for('home'))
     command_list = Command.query.all()
-    p = multiprocessing.Process(target=get_stats, args=(output,))
-    p.start()
-    vector_status = output.get()
+    get_stats()
+    vector_status = Status.query.first()
     return render_template('home.html', vector_status=vector_status,
                            form=form, command_list=command_list,
                            app_list=app_list)
-    p.join()
 
 
 @app.route("/execute_commands")
@@ -179,22 +154,18 @@ def dock_cube():
 
 @app.route("/cube")
 def cube():
-    p = multiprocessing.Process(target=get_stats, args=(output,))
-    p.start()
-    vector_status = output.get()
+    get_stats()
+    vector_status = Status.query.first()
     return render_template(
         'cube.html', vector_status=vector_status, title='Cube')
-    p.join()
 
 
 @app.route("/battery")
 def battery():
-    p = multiprocessing.Process(target=get_stats, args=(output,))
-    p.start()
-    vector_status = output.get()
+    get_stats()
+    vector_status = Status.query.first()
     return render_template(
         'battery.html', vector_status=vector_status, title='Battery')
-    p.join()
 
 
 @public_route
