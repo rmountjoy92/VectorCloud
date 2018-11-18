@@ -4,6 +4,8 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="theme-color" content="#222D32">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
@@ -20,7 +22,7 @@
     <header class="site-header">
       <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
         <div class="container">
-          <a class="navbar-brand mr-4" href="/">VectorCloud</a>
+          <a class="navbar-brand mr-4" href="/"><img src="/static/vectorcloud.svg" width="30" height="30" class="d-inline-block align-top" alt="">VectorCloud</a>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
@@ -33,34 +35,55 @@
             <div class="navbar-nav">
               <a class="nav-item nav-link disabled" >Vector version: {{ vector_status['status_version'] }}</a>
               {% if vector_status['status_charging'] == True %}
-                <a href="{{ url_for('battery') }}">
-                <img src="/static/battery_charging.svg" width="32px" height="32px">
-                </a>
+                <div class="icon">
+                  <a href="{{ url_for('battery') }}">
+                  <img src="/static/battery_charging.svg" width="32px" height="32px" data-toggle="tooltip" data-placement="bottom" title="Battery Info">
+                  </a>
+                </div>
               {% elif vector_status['status_voltage'] > 3.85 %}
-                <a href="{{ url_for('battery') }}">
-                <img src="/static/battery_full.svg" width="32px" height="32px">
-                </a>
+                <div class="icon">
+                  <a href="{{ url_for('battery') }}">
+                  <img src="/static/battery_full.svg" width="32px" height="32px" data-toggle="tooltip" data-placement="bottom" title="Battery Info">
+                  </a>
+                </div>
               {% elif 3.75 <= vector_status['status_voltage'] <= 3.85 %}
-                <a href="{{ url_for('battery') }}">
-                <img src="/static/battery_med.svg" width="32px" height="32px">
-                </a>
+                <div class="icon">
+                  <a href="{{ url_for('battery') }}">
+                  <img src="/static/battery_med.svg" width="32px" height="32px" data-toggle="tooltip" data-placement="bottom" title="Battery Info">
+                  </a>
+                </div>
               {% elif 3.6 <= vector_status['status_voltage'] < 3.75 %}
-                <a href="{{ url_for('battery') }}">
-                <img src="/static/battery_low.svg" width="32px" height="32px">
-                </a>
+                <div class="icon">
+                  <a href="{{ url_for('battery') }}">
+                  <img src="/static/battery_low.svg" width="32px" height="32px" data-toggle="tooltip" data-placement="bottom" title="Battery Info">
+                  </a>
+                </div>
               {% elif vector_status['status_voltage'] < 3.6 %}
-                <a href="{{ url_for('battery') }}">
-                <img src="/static/battery_empty.svg" width="32px" height="32px">
-                </a>
+                <div class="icon">
+                  <a href="{{ url_for('battery') }}">
+                  <img src="/static/battery_empty.svg" width="32px" height="32px" data-toggle="tooltip" data-placement="bottom" title="Battery Info">
+                  </a>
+                </div>
               {% endif %}
-            <div class="btn-group" role="group" aria-label="Basic example">
-              <a href="{{ url_for('undock') }}" class="btn btn-dark" role="button">Undock</a>
-              <a href="{{ url_for('dock') }}" class="btn btn-dark" role="button">Dock</a>
-            </div>
+              {% if vector_status['status_charging'] == True %}
+                <div class="icon">
+                  <a href="{{ url_for('undock') }}">
+                  <img src="/static/undock.svg" width="32px" height="32px" data-toggle="tooltip" data-placement="bottom" title="Undock">
+                  </a>
+                </div>
+              {% elif vector_status['status_charging'] == False %}
+                <div class="icon">
+                  <a href="{{ url_for('dock') }}">
+                  <img src="/static/dock.svg" width="32px" height="32px" data-toggle="tooltip" data-placement="bottom" title="Dock">
+                  </a>
+                </div>
+              {% endif %}
             {% if current_user.is_authenticated %}
-            <a href="{{ url_for('logout') }}">
-            <img src="/static/logout.svg" width="32px" height="32px">
-            </a>
+              <div class="icon">
+                <a href="{{ url_for('logout') }}">
+                <img src="/static/logout.svg" width="32px" height="32px" data-toggle="tooltip" data-placement="bottom" title="Logout">
+                </a>
+              </div>
             {% endif %}
             </div>
           </div>
@@ -89,6 +112,16 @@
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script>
+    $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+    </script>
+    <script>
+    $(document).ready(function(){
+        $('[data-toggle="popover"]').popover();
+    });
+    </script>
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
