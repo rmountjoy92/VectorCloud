@@ -6,6 +6,23 @@ Here is a list of features I want to include in this project, if you have anythi
 
 Disclaimer - I am a busy person and will be working on this in my free time. Please feel free to
 contribute.
+
+## How to run
+* create a virtual environment https://packaging.python.org/guides/installing-using-pip-and-virtualenv/
+* put the SDK folder into the virtual environment directory 
+* install as per the directions in the docs folder of the SDK folder
+* in a terminal, navigate to your sdk folder. From inside your SDK folder enter:
+```
+git clone https://github.com/rmountjoy92/VectorCloud
+pip3 install flask flask-sqlalchemy flask-bcrypt flask-login
+```
+* navigate to the VectorCloud folder and enter:
+```
+./run.py
+```
+* Open a browser and go to http://localhost:5000 
+* to stop the server press ctrl+c in the terminal
+
 ## Current Features
 * view battery information provided by vector
 * display battery voltage level as icon on navbar
