@@ -16,7 +16,7 @@ contribute.
 git clone https://github.com/rmountjoy92/VectorCloud
 pip3 install flask flask-sqlalchemy flask-bcrypt flask-login
 ```
-* navigate to the VectorCloud folder and enter:
+* navigate to the VectorCloud folder, make sure run.py is executable and enter:
 ```
 ./run.py
 ```
