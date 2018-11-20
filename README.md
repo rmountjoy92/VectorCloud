@@ -39,7 +39,6 @@ pip3 install flask flask-sqlalchemy flask-bcrypt flask-login
 ## Soon
 * develop RESTFUL API
 * document code
-* create how to install/run section in readme
 * add network state, pose, status output to status
 * add more buttons to home screen for more robot functions
 * animations list page with links with ability to click to animate vector (all thousands of them) with search option.
@@ -49,8 +48,6 @@ pip3 install flask flask-sqlalchemy flask-bcrypt flask-login
 
 ## Eventually
 * set up uWSGI
-* make pages load more dynamically
-* create 'waiting on vector' animated .gif for load times
 * create a 'control' page that contains the remote control SDK example
 * plugin manager
 * manage photos and videos
