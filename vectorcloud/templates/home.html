@@ -22,28 +22,35 @@
                               {% endfor %}
                           </div>
                       {% else %}
+                        <div onsubmit="loading();">
                           {{ form.command(autocomplete="off", class="form-control form-control-lg") }}
+                        </div>
                       {% endif %}
                   </div>
               </fieldset>
               <div class="form-group">
-                  {{ form.submit(class="btn btn-dark") }}
+                  <div>
+                  {{ form.submit(onclick="loading();", class="btn btn-dark") }}
                   {% if command_list %}
-                    <a href="/execute_commands" class="btn btn-dark" role="button">Execute</a>
-                    <a href="/clear_commands" class="btn btn-dark" role="button">Clear</a>
+                      <a href="/execute_commands" class="btn btn-dark" onclick="loading();" role="button">Execute</a>
+                      <a href="/clear_commands" class="btn btn-dark" onclick="loading();" role="button">Clear</a>
                   {% endif %}
+                  </div>
           </form>
       </div>
     </div>
     <div>
-      <a href="/upload">Upload Application</a><p></p>
+      <legend class="text-center border-bottom border-dark mb-2">Applications</legend>
+      <div class="text-center">
+        <a href="/upload" class="btn btn-dark" border-color:"#00EE93" role="button">Upload Application</a><p></p>
+      </div>
     </div>
-    <div class="container">
+    <div class="container-fluid">
           {% for app in app_list %}
           <article class="media content-section">
             <div class="media-body">
                 <a href="/run_script/{{ app.hex_id }}">
-                <img src="/static/app_icons/{{ app.icon }}" class="rounded mx-auto d-block" data-toggle="tooltip" data-placement="top" title="Run Application">
+                <img src="/static/app_icons/{{ app.icon }}" class="rounded mx-auto d-block" onclick="loading();" data-toggle="tooltip" data-placement="top" title="Run Application">
                 </a>
                 <p></p>
                 <h2 class="text-center"> {{ app.script_name }}</h2>

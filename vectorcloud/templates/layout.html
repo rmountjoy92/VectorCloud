@@ -6,12 +6,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="theme-color" content="#222D32">
 
+    <!-- Google Font -->
+    <link href='https://fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet'>
+
+    <!-- JQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/head.js') }}"></script>
+
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
 
     {% if title %}
         <title>VectorCloud - {{ title }}</title>
@@ -23,65 +29,67 @@
     <header class="site-header">
       <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
         <div class="container">
-          <a class="navbar-brand mr-4" href="/"><img src="/static/vectorcloud.svg" width="30" height="30" class="d-inline-block align-top" alt="">VectorCloud</a>
+          <a class="navbar-brand mr-4" href="/home"><img src="{{ url_for('static', filename='icons/vectorcloud.svg') }}" width="35" height="35" class="d-inline-block align-top" onclick="loading();" data-toggle="tooltip" data-placement="auto" title="Home" alt=""></a>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
           <div class="collapse navbar-collapse" id="navbarToggle">
             <div class="navbar-nav mr-auto">
-              <a class="nav-item nav-link" href="{{ url_for('cube') }}">Cube</a>
+              <a href="{{ url_for('cube') }}">
+              <img src="{{ url_for('static', filename='icons/cube.svg') }}" width="32px" height="32px" data-toggle="tooltip" onclick="loading();" data-placement="auto" title="Cube Info">
+              </a>
             </div>
             <!-- Navbar Right Side -->
             <div class="navbar-nav">
-              <a class="nav-item nav-link disabled" >Vector version: {{ vector_status.version }}</a>
+              <text class="navbar-text">Vector version: {{ vector_status.version }}</text>
               {% if vector_status.status_charging == True %}
                 <div class="icon">
                   <a href="{{ url_for('battery') }}">
-                  <img src="/static/battery_charging.svg" width="32px" height="32px" data-toggle="tooltip" data-placement="bottom" title="Battery Info">
+                  <img src="{{ url_for('static', filename='icons/battery_charging.svg') }}" width="32px" height="32px" data-toggle="tooltip" onclick="loading();" data-placement="auto" title="Battery Info">
                   </a>
                 </div>
               {% elif vector_status.battery_voltage > 3.85 %}
                 <div class="icon">
                   <a href="{{ url_for('battery') }}">
-                  <img src="/static/battery_full.svg" width="32px" height="32px" data-toggle="tooltip" data-placement="bottom" title="Battery Info">
+                  <img src="{{ url_for('static', filename='icons/battery_full.svg') }}" width="32px" height="32px" data-toggle="tooltip" onclick="loading();" data-placement="auto" title="Battery Info">
                   </a>
                 </div>
               {% elif 3.75 <= vector_status.battery_voltage <= 3.85 %}
                 <div class="icon">
                   <a href="{{ url_for('battery') }}">
-                  <img src="/static/battery_med.svg" width="32px" height="32px" data-toggle="tooltip" data-placement="bottom" title="Battery Info">
+                  <img src="{{ url_for('static', filename='icons/battery_med.svg') }}" width="32px" height="32px" data-toggle="tooltip" onclick="loading();" data-placement="auto" title="Battery Info">
                   </a>
                 </div>
               {% elif 3.6 <= vector_status.battery_voltage < 3.75 %}
                 <div class="icon">
                   <a href="{{ url_for('battery') }}">
-                  <img src="/static/battery_low.svg" width="32px" height="32px" data-toggle="tooltip" data-placement="bottom" title="Battery Info">
+                  <img src="{{ url_for('static', filename='icons/battery_low.svg') }}" width="32px" height="32px" data-toggle="tooltip" onclick="loading();" data-placement="auto" title="Battery Info">
                   </a>
                 </div>
               {% elif vector_status.battery_voltage < 3.6 %}
                 <div class="icon">
                   <a href="{{ url_for('battery') }}">
-                  <img src="/static/battery_empty.svg" width="32px" height="32px" data-toggle="tooltip" data-placement="bottom" title="Battery Info">
+                  <img src="{{ url_for('static', filename='icons/battery_empty.svg') }}" width="32px" height="32px" data-toggle="tooltip" onclick="loading();" data-placement="auto" title="Battery Info">
                   </a>
                 </div>
               {% endif %}
               {% if vector_status.status_charging == True %}
                 <div class="icon">
                   <a href="{{ url_for('undock') }}">
-                  <img src="/static/undock.svg" width="32px" height="32px" data-toggle="tooltip" data-placement="bottom" title="Undock">
+                  <img src="{{ url_for('static', filename='icons/undock.svg') }}" width="32px" height="32px" onclick="loading();" data-toggle="tooltip" data-placement="auto" title="Undock">
                   </a>
                 </div>
               {% elif vector_status.status_charging == False %}
                 <div class="icon">
                   <a href="{{ url_for('dock') }}">
-                  <img src="/static/dock.svg" width="32px" height="32px" data-toggle="tooltip" data-placement="bottom" title="Dock">
+                  <img src="{{ url_for('static', filename='icons/dock.svg') }}" width="32px" height="32px" onclick="loading();" data-toggle="tooltip" data-placement="auto" title="Dock">
                   </a>
                 </div>
               {% endif %}
             {% if current_user.is_authenticated %}
               <div class="icon">
                 <a href="{{ url_for('logout') }}">
-                <img src="/static/logout.svg" width="32px" height="32px" data-toggle="tooltip" data-placement="bottom" title="Logout">
+                <img src="{{ url_for('static', filename='icons/logout.svg') }}" width="32px" height="32px" data-toggle="tooltip" data-placement="auto" title="logout">
                 </a>
               </div>
             {% endif %}
@@ -90,6 +98,7 @@
         </div>
       </nav>
     </header>
+    <div id="loading"><h5 class="text-center">Waiting for Vector..</h5></div>
     <main role="main" class="container">
       <div class="row justify-content-md-center">
         <div class="col-md-6">
@@ -103,7 +112,9 @@
               {% endfor %}
             {% endif %}
           {% endwith %}
+          <div id="content">
           {% block content %}{% endblock %}
+          </div>
         </div>
         </div>
       </div>
@@ -111,19 +122,11 @@
 
 
     <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script>
-    $(document).ready(function(){
-        $('[data-toggle="tooltip"]').tooltip();
-    });
-    </script>
-    <script>
-    $(document).ready(function(){
-        $('[data-toggle="popover"]').popover();
-    });
-    </script>
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <!-- jQuery first, then Popper.js & tooltip, then Bootstrap JS -->
+
+    <script type="text/javascript" src="{{ url_for('static', filename='js/body.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
 </body>
 </html>

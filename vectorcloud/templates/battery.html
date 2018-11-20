@@ -8,7 +8,7 @@
             <p class="article-content">Battery voltage: {{ vector_status.battery_voltage }}</p>
             <p class="article-content">Battery level: {{ vector_status.battery_level }}</p>
             <p class="article-content">Is charging: {{ vector_status.status_charging }}</p>
-            <a href="/" class="btn btn-dark" role="button">Refresh</a>
+            <a href="/battery" class="btn btn-dark" role="button" onclick="loading();">Refresh</a>
           </div>
         </article>
 {% endblock content %}

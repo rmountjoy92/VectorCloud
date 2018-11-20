@@ -1,11 +1,27 @@
+
+
 body {
   background: #29353B;
   color: #00EE93;
   margin-top: 5rem;
+  font-family: 'Ubuntu'; font-size: 100%;
 }
 
 h1, h2, h3, h4, h5, h6 {
   color: #00EE93;
+}
+
+.navbar-text {
+  color: "#222D32"
+  padding: 10px 0 10px 0px
+}
+
+.btn-dark {
+  color: #00EE93;
+}
+.btn-dark:hover {
+  color: #00EE93;
+  border-color: #00EE93;
 }
 
 .bg-steel {
@@ -106,7 +122,11 @@ a:hover {
 }
 
 .icon {
-  padding: 0px 5px 0px 5px;
+  padding: 5px;
+}
+
+.border-success {
+  color: #00EE93;
 }
 
 /* Tooltip */
@@ -136,4 +156,12 @@ a:hover {
 /* Tooltip on right */
 .test + .tooltip.right > .tooltip-arrow {
     border-right: 5px solid black;
+}
+div#loading {
+    margin:10px auto;
+    width: 200px;
+    height: 200px;
+    display: none;
+    background: url(/static/icons/ajax-loader.gif) no-repeat;
+    cursor: wait;
 }

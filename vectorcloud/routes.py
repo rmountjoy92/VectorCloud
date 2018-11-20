@@ -4,6 +4,7 @@
 # import json
 # import sys
 import os
+import subprocess
 import time
 import secrets
 import anki_vector
@@ -14,7 +15,8 @@ from PIL import Image
 from vectorcloud.forms import CommandForm, RegisterForm, LoginForm, UploadScript
 from vectorcloud.models import Command, Output, User, Application, Status
 from vectorcloud import app, db, bcrypt
-from anki_vector import util
+import scripts
+from anki_vector.util import degrees, radians
 
 
 # ------------------------------------------------------------------------------
@@ -74,7 +76,8 @@ def check_valid_login():
     user = db.session.query(User).first()
     if any([request.endpoint.startswith('static'),
             current_user.is_authenticated,
-            getattr(app.view_functions[request.endpoint], 'is_public', False)]):
+            getattr(app.view_functions[request.endpoint],
+                    'is_public', False)]):
         return
     elif user is None:
         return redirect(url_for('register'))
@@ -215,7 +218,8 @@ def logout():
 def save_script(form_script):
     random_hex = secrets.token_hex(8)
     file_name = random_hex + '.py'
-    script_path = os.path.join(app.root_path, 'scripts', file_name)
+    scripts_folder = os.path.dirname(scripts.__file__)
+    script_path = os.path.join(scripts_folder, file_name)
     form_script.save(script_path)
     return random_hex
 
@@ -242,7 +246,7 @@ def upload():
             if form.icon.data:
                 icon_fn = save_icon(form.icon.data, random_hex)
             else:
-                icon_fn = 'default.jpg'
+                icon_fn = 'default.png'
             application = Application(hex_id=random_hex,
                                       script_name=form.script_name.data,
                                       description=form.description.data,
@@ -262,10 +266,12 @@ def upload():
 def run_script(script_hex_id):
     application = Application.query.filter_by(hex_id=script_hex_id).first()
     script = script_hex_id + '.py'
-    script_path = os.path.join(app.root_path, 'scripts', script)
-    out = os.popen('python3 ' + script_path).read()
-    if out:
-        flash(application.script_name + ' ran succussfully! Output: ' + out,
+    scripts_folder = os.path.dirname(scripts.__file__)
+    script_path = os.path.join(scripts_folder, script)
+    out = subprocess.run('python3 ' + script_path, stdout=subprocess.PIPE,
+                         shell=True, encoding='utf-8')
+    if out.returncode == 0:
+        flash(application.script_name + ' ran succussfully! Output: ' + str(out.stdout),
               'success')
     else:
         flash('Something is not right with your script.', 'warning')
@@ -278,11 +284,17 @@ def edit_application(script_id):
     application = Application.query.filter_by(id=script_id).first()
     script_hex_id = application.hex_id
     if form.validate_on_submit():
+        if application.icon != 'default.png':
+            icon_path = os.path.join(app.root_path,
+                                     'static/app_icons', application.icon)
+            os.remove(icon_path)
+
         if form.icon.data:
             icon_fn = save_icon(form.icon.data, script_hex_id)
             application.icon = icon_fn
+
         else:
-            icon_fn = 'default.jpg'
+            icon_fn = 'default.png'
             application.icon = icon_fn
         application.script_name = form.script_name.data
         application.description = form.description.data
@@ -292,17 +304,20 @@ def edit_application(script_id):
         return redirect(url_for('home'))
 
     return render_template(
-        'edit_application.html', title='Edit Application', form=form, script_id=script_id)
+        'edit_application.html', title='Edit Application', form=form,
+        script_id=script_id)
 
 
 @app.route("/delete_application/<script_id>", methods=['GET', 'POST'])
 def delete_application(script_id):
     application = Application.query.filter_by(id=script_id).first()
     script_fn = application.hex_id + '.py'
-    script_path = os.path.join(app.root_path, 'scripts', script_fn)
-    icon_path = os.path.join(app.root_path, 'static/app_icons', application.icon)
+    scripts_folder = os.path.dirname(scripts.__file__)
+    script_path = os.path.join(scripts_folder, script_fn)
+    icon_path = os.path.join(app.root_path,
+                             'static/app_icons', application.icon)
     os.remove(script_path)
-    if application.icon != 'default.jpg':
+    if application.icon != 'default.png':
         os.remove(icon_path)
     Application.query.filter_by(id=script_id).delete()
     db.session.commit()

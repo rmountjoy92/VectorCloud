@@ -1,36 +1,5 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="theme-color" content="#222D32">
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
-
-    {% if title %}
-        <title>VectorCloud - {{ title }}</title>
-    {% else %}
-        <title>VectorCloud</title>
-    {% endif %}
-</head>
-<body>
-  <div>
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        {% for category, message in messages %}
-          <div class="alert alert-{{ category }}">
-            <button type="button" class="close" data-dismiss="alert">&times;</button>
-            {{ message }}
-          </div>
-        {% endfor %}
-      {% endif %}
-    {% endwith %}
-  </div>
-  <img src="/static/vectorcloud.svg" class="mx-auto d-block" height="125" width="125">
+{% extends "utility_window.html" %}
+{% block content %}
   <div class="container">
     <div class="content-section">
         <form method="POST" action="">
@@ -60,7 +29,7 @@
                             {% endfor %}
                         </div>
                     {% else %}
-                        {{ form.password(class="form-control form-control-lg") }}
+                        {{ form.password(onsubmit="loading();", class="form-control form-control-lg") }}
                     {% endif %}
                 </div>
                 <div class="form-check">
@@ -69,17 +38,11 @@
                 </div>
             </fieldset>
             <div class="form-group">
-                {{ form.submit(class="btn btn-dark") }}
+                {{ form.submit(onclick="loading();", class="btn btn-dark") }}
             </div>
         </form>
     </div>
   </div>
   <div class="border-top border-dark pt-3">
   </div>
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-</body>
-</html>
+{% endblock content %}
