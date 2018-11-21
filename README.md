@@ -23,6 +23,10 @@ pip3 install flask flask-sqlalchemy flask-bcrypt flask-login
 * Open a browser and go to http://localhost:5000 
 * to stop the server press ctrl+c in the terminal
 
+To reset your username/password you can do the following:
+* type db.session.query(User).delete() into the vector commands bar and execute
+* if you can't log in you can delete 'site.db' from the vectorcloud directory **note: if you do this, you will have to manually clear out the scripts and app_icons directory of any user added files and reupload them via the gui
+
 ## Current Features
 * view battery information provided by vector
 * display battery voltage level as icon on navbar
