@@ -37,6 +37,7 @@ pip3 install flask flask-sqlalchemy flask-bcrypt flask-login
 * edit and delete sdk apps
 
 ## Soon
+* use try except blocks for running on Windows
 * develop RESTFUL API
 * document code
 * add network state, pose, status output to status
