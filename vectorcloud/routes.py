@@ -8,7 +8,6 @@ from PIL import Image
 from flask import render_template, url_for, redirect, flash, request
 from flask_login import login_user, logout_user, current_user
 from flask_bootstrap import Bootstrap
-from flask_colorpicker import colorpicker
 import anki_vector
 from anki_vector.util import degrees, radians
 from vectorcloud.forms import CommandForm, RegisterForm, LoginForm,\
