@@ -1,33 +1,30 @@
 #!/usr/bin/env python3
 
-# import io
-# import json
-# import sys
 import os
 import subprocess
 import time
 import secrets
-import anki_vector
+from PIL import Image
 from flask import render_template, url_for, redirect, flash, request
 from flask_login import login_user, logout_user, current_user
-# from werkzeug.utils import secure_filename
-from PIL import Image
-from vectorcloud.forms import CommandForm, RegisterForm, LoginForm, UploadScript
+from flask_bootstrap import Bootstrap
+from flask_colorpicker import colorpicker
+import anki_vector
+from anki_vector.util import degrees, radians
+from vectorcloud.forms import CommandForm, RegisterForm, LoginForm,\
+    UploadScript, SettingsForms
 from vectorcloud.models import Command, Output, User, Application, Status
 from vectorcloud import app, db, bcrypt
 import scripts
-from anki_vector.util import degrees, radians
 
+Bootstrap(app)
+colorpicker(app)
 
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-# VectorCloud code starts here
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
 
 def get_stats():
     args = anki_vector.util.parse_command_args()
-    with anki_vector.Robot(args.serial) as robot:
+    with anki_vector.Robot(args.serial, requires_behavior_control=False,
+                           cache_animation_list=False) as robot:
 
         version_state = robot.get_version_state()
         battery_state = robot.get_battery_state()
@@ -39,7 +36,8 @@ def get_stats():
                         status_charging=battery_state.is_on_charger_platform,
                         cube_battery_level=battery_state.cube_battery.level,
                         cube_id=battery_state.cube_battery.factory_id,
-                        cube_battery_volts=battery_state.cube_battery.battery_volts)
+                        cube_battery_volts=battery_state.
+                        cube_battery.battery_volts)
         db.session.add(status)
         db.session.commit()
 
@@ -88,19 +86,32 @@ def check_valid_login():
 @app.route("/")
 @app.route("/home", methods=['GET', 'POST'])
 def home():
-    app_list = Application.query.all()
-    form = CommandForm()
-    if form.validate_on_submit():
-        robot_command = Command(command=form.command.data)
-        db.session.add(robot_command)
-        db.session.commit()
-        return redirect(url_for('home'))
-    command_list = Command.query.all()
-    get_stats()
-    vector_status = Status.query.first()
-    return render_template('home.html', vector_status=vector_status,
-                           form=form, command_list=command_list,
-                           app_list=app_list)
+    try:
+        app_list = Application.query.all()
+        form = CommandForm()
+        if form.validate_on_submit():
+            robot_command = Command(command=form.command.data)
+            db.session.add(robot_command)
+            db.session.commit()
+            return redirect(url_for('home'))
+        command_list = Command.query.all()
+        get_stats()
+        vector_status = Status.query.first()
+        return render_template('home.html', vector_status=vector_status,
+                               form=form, command_list=command_list,
+                               app_list=app_list)
+    except anki_vector.exceptions.VectorNotFoundException:
+        return redirect(url_for('vector_not_found'))
+
+
+@app.route("/vector_not_found")
+def vector_not_found():
+    return render_template('/error_pages/vector_not_found.html')
+
+
+@app.route("/vector_stuck")
+def vector_stuck():
+    return render_template('/error_pages/vector_stuck.html')
 
 
 @app.route("/execute_commands")
@@ -133,10 +144,13 @@ def undock():
 def dock():
     flash('Dock Command Complete!', 'success')
     args = anki_vector.util.parse_command_args()
-    with anki_vector.Robot(args.serial) as robot:
-        robot.behavior.drive_on_charger()
-        time.sleep(1)
-    return redirect(url_for('home'))
+    try:
+        with anki_vector.Robot(args.serial) as robot:
+            robot.behavior.drive_on_charger()
+            time.sleep(1)
+        return redirect(url_for('home'))
+    except anki_vector.exceptions.VectorControlTimeoutException:
+        return redirect(url_for('vector_stuck'))
 
 
 @app.route("/dock_cube")
@@ -198,12 +212,14 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
-        if user and bcrypt.check_password_hash(user.password, form.password.data):
+        if user and bcrypt.check_password_hash(user.password,
+                                               form.password.data):
             login_user(user, remember=form.remember.data)
             flash("Login Successful!", 'success')
             return redirect(url_for('home'))
         else:
-            flash("Login Unsuccessful. Check username and password.", 'warning')
+            flash("Login Unsuccessful. Check username and password.",
+                  'warning')
             return redirect(url_for('login'))
     return render_template(
         'login.html', title='Login', form=form)
@@ -271,8 +287,8 @@ def run_script(script_hex_id):
     out = subprocess.run('python3 ' + script_path, stdout=subprocess.PIPE,
                          shell=True, encoding='utf-8')
     if out.returncode == 0:
-        flash(application.script_name + ' ran succussfully! Output: ' + str(out.stdout),
-              'success')
+        flash(application.script_name + ' ran succussfully! Output: ' +
+              str(out.stdout), 'success')
     else:
         flash('Something is not right with your script.', 'warning')
     return redirect(url_for('home'))
@@ -323,8 +339,40 @@ def delete_application(script_id):
     db.session.commit()
     flash('Application Deleted!', 'success')
     return redirect(url_for('home'))
-    # ------------------------------------------------------------------------------
-    # ------------------------------------------------------------------------------
-    # VectorCloud code ends here; Anki remote_control code Starts here.
-    # ------------------------------------------------------------------------------
-    # ------------------------------------------------------------------------------
+
+
+@app.route("/settings", methods=['GET', 'POST'])
+def settings():
+    form = SettingsForms()
+    return render_template('settings.html', form=form)
+
+
+@app.route("/change_color/<color>", methods=['GET', 'POST'])
+def change_color(color):
+    return color
+
+# def run_rc():
+#     scripts_folder = os.path.dirname(scripts.__file__)
+#     rc_path = os.path.join(scripts_folder, 'remote_control', 'start.sh')
+#     os.system(rc_path)
+#     # rc_pid = p.pid
+#     # db_pid = RC(pid=rc_pid)
+#     # db.session.add(db_pid)
+#     # db.session.commit()
+
+
+# @app.route("/control", methods=['GET', 'POST'])
+# def control():
+#     # run_rc
+#     # p = multiprocessing.Process(target=run_rc)
+#     # p.start()
+#     return render_template('control.html', title='Control')
+
+
+# @app.route("/kill_control", methods=['GET', 'POST'])
+# def kill_control():
+#     # rc_pid = RC.query.all()
+#     # os.kill(rc_pid, signal.SIGINT)
+#     # db.session.query(RC).delete()
+#     # db.session.commit()
+#     # return redirect(url_for('home'))

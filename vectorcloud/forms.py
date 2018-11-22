@@ -2,7 +2,8 @@
 
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField,\
+    TextAreaField
 from wtforms.validators import DataRequired, Length, EqualTo, ValidationError
 from vectorcloud.models import User
 
@@ -21,7 +22,8 @@ class RegisterForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
 
     confirm_password = PasswordField('Confirm Password',
-                                     validators=[DataRequired(), EqualTo('password')])
+                                     validators=[DataRequired(),
+                                                 EqualTo('password')])
 
     submit = SubmitField('Create')
 
@@ -56,3 +58,8 @@ class UploadScript(FlaskForm):
     upload = SubmitField('Upload')
 
     update = SubmitField('Update')
+
+
+class SettingsForms(FlaskForm):
+    eye_color = StringField('Name of SDK application',
+                            validators=[DataRequired()])

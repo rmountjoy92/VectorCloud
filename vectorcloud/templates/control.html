@@ -1,9 +1,10 @@
-{% extends "layout.html" %}
+{% extends "utility_window.html" %}
 {% block content %}
         <article class="media content-section">
           <div class="media-body">
-            <div class="article-metadata">
-              <a class="mr-2" >Coming Soon</a>
+            <div class="article-metadata text-center">
+              <p>Remote Control is running. Click close to return to VectorCloud</p>
+              <p><a href="/kill_control" class="btn btn-dark" role="button" onclick="loading();">Refresh</a></p>
             </div>
           </div>
         </article>

@@ -29,19 +29,20 @@
     <header class="site-header">
       <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
         <div class="container">
-          <a class="navbar-brand mr-4" href="/home"><img src="{{ url_for('static', filename='icons/vectorcloud.svg') }}" width="35" height="35" class="d-inline-block align-top" onclick="loading();" data-toggle="tooltip" data-placement="auto" title="Home" alt=""></a>
+          <a class="navbar-brand mr-4" href="{{ url_for('home') }}"><img src="{{ url_for('static', filename='icons/vectorcloud.svg') }}" width="35" height="35" class="d-inline-block align-top" onclick="loading();" data-toggle="tooltip" data-placement="auto" title="Home" alt=""></a>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
           <div class="collapse navbar-collapse" id="navbarToggle">
             <div class="navbar-nav mr-auto">
-              <a href="{{ url_for('cube') }}">
-              <img src="{{ url_for('static', filename='icons/cube.svg') }}" width="32px" height="32px" data-toggle="tooltip" onclick="loading();" data-placement="auto" title="Cube Info">
-              </a>
             </div>
             <!-- Navbar Right Side -->
             <div class="navbar-nav">
-              <text class="navbar-text">Vector version: {{ vector_status.version }}</text>
+              <div class="icon">
+                <a href="{{ url_for('cube') }}">
+                <img src="{{ url_for('static', filename='icons/cube.svg') }}" width="32px" height="32px" data-toggle="tooltip" onclick="loading();" data-placement="auto" title="Cube Info">
+                </a>
+              </div>
               {% if vector_status.status_charging == True %}
                 <div class="icon">
                   <a href="{{ url_for('battery') }}">
@@ -89,10 +90,17 @@
             {% if current_user.is_authenticated %}
               <div class="icon">
                 <a href="{{ url_for('logout') }}">
-                <img src="{{ url_for('static', filename='icons/logout.svg') }}" width="32px" height="32px" data-toggle="tooltip" data-placement="auto" title="logout">
+                <img src="{{ url_for('static', filename='icons/logout.svg') }}" width="32px" height="32px" data-toggle="tooltip" data-placement="auto" title="Logout">
                 </a>
               </div>
             {% endif %}
+            <div class="fixed">
+              <div class="navbar-text">
+                <text><b>Vector version:</b> {{ vector_status.version }}</text>
+              </div>
+              <a href="{{ url_for('settings') }}">
+              <img src="{{ url_for('static', filename='icons/settings.svg') }}" width="32px" height="32px" data-toggle="tooltip" data-placement="top" title="Settings">
+              </a>
             </div>
           </div>
         </div>
