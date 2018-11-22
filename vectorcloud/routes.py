@@ -16,8 +16,6 @@ from vectorcloud.models import Command, Output, User, Application, Status
 from vectorcloud import app, db, bcrypt
 import scripts
 
-Bootstrap(app)
-colorpicker(app)
 
 
 def get_stats():
