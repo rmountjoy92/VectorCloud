@@ -14,7 +14,7 @@ contribute.
 * in a terminal, navigate to your sdk folder. From inside your SDK folder enter:
 ```
 git clone https://github.com/rmountjoy92/VectorCloud
-pip3 install flask flask-sqlalchemy flask-bcrypt flask-login
+pip3 install flask flask-sqlalchemy flask-bcrypt flask-login flask-wtf flask-bootstrap
 ```
 * navigate to the VectorCloud folder, make sure run.py is executable and enter:
 ```
