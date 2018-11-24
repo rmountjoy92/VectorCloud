@@ -34,7 +34,7 @@ pip3 install flask flask-sqlalchemy flask-bcrypt flask-login flask-wtf flask-boo
 * stage mulitple robots commands via interactive form and bulk send commands to vector
 * SQLite database for storing commands, output, and users
 * user authentication and registration, all routes are blocked unless user logs in
-* upload single python scripts to server, save as application with name, description and picture
+* upload python scripts to server, save as application with name, description and picture, support files
 * edit and delete sdk apps
 
 ## Soon
@@ -45,7 +45,7 @@ pip3 install flask flask-sqlalchemy flask-bcrypt flask-login flask-wtf flask-boo
 * add more buttons to home screen for more robot functions
 * animations list page with links with ability to click to animate vector (all thousands of them) with search option.
 * create a text box to type in text to display on vector's face
-* ability to add 'support' files for sdk apps
+
 
 
 ## Eventually
