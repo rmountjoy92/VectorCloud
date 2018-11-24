@@ -46,33 +46,38 @@
               </div>
               {% if vector_status.status_charging == True %}
                 <div class="icon">
-                  <a href="{{ url_for('battery') }}">
-                  <img src="{{ url_for('static', filename='icons/battery_charging.svg') }}" width="32px" height="32px" data-toggle="tooltip" onclick="loading();" data-placement="auto" title="Battery Info">
-                  </a>
+                  <img tabindex="0" src="{{ url_for('static', filename='icons/battery_charging.svg') }}" width="32px" height="32px" data-toggle="popover" data-placement="left" data-trigger="focus" title="Battery Info" data-html="true" data-content="
+                  <p><h5>Battery Voltage: </h5>{{ vector_status.battery_voltage }}</p>
+                  <p><h5>Battery Charging: </h5>{{ vector_status.status_charging }}</p>
+                  ">
                 </div>
               {% elif vector_status.battery_voltage > 3.85 %}
                 <div class="icon">
-                  <a href="{{ url_for('battery') }}">
-                  <img src="{{ url_for('static', filename='icons/battery_full.svg') }}" width="32px" height="32px" data-toggle="tooltip" onclick="loading();" data-placement="auto" title="Battery Info">
-                  </a>
+                  <img tabindex="0" src="{{ url_for('static', filename='icons/battery_full.svg') }}" width="32px" height="32px" data-toggle="popover" data-placement="left" data-trigger="focus" title="Battery Info" data-html="true" data-content="
+                  <p><h5>Battery Voltage: </h5>{{ vector_status.battery_voltage }}</p>
+                  <p><h5>Battery Charging: </h5>{{ vector_status.status_charging }}</p>
+                  ">
                 </div>
               {% elif 3.75 <= vector_status.battery_voltage <= 3.85 %}
                 <div class="icon">
-                  <a href="{{ url_for('battery') }}">
-                  <img src="{{ url_for('static', filename='icons/battery_med.svg') }}" width="32px" height="32px" data-toggle="tooltip" onclick="loading();" data-placement="auto" title="Battery Info">
-                  </a>
+                  <img tabindex="0" src="{{ url_for('static', filename='icons/battery_med.svg') }}" width="32px" height="32px" data-toggle="popover" data-placement="left" data-trigger="focus" title="Battery Info" data-html="true" data-content="
+                  <p><h5>Battery Voltage: </h5>{{ vector_status.battery_voltage }}</p>
+                  <p><h5>Battery Charging: </h5>{{ vector_status.status_charging }}</p>
+                  ">
                 </div>
               {% elif 3.6 <= vector_status.battery_voltage < 3.75 %}
                 <div class="icon">
-                  <a href="{{ url_for('battery') }}">
-                  <img src="{{ url_for('static', filename='icons/battery_low.svg') }}" width="32px" height="32px" data-toggle="tooltip" onclick="loading();" data-placement="auto" title="Battery Info">
-                  </a>
+                  <img tabindex="0" src="{{ url_for('static', filename='icons/battery_low.svg') }}" width="32px" height="32px" data-toggle="popover" data-placement="left" data-trigger="focus" title="Battery Info" data-html="true" data-content="
+                  <p><h5>Battery Voltage: </h5>{{ vector_status.battery_voltage }}</p>
+                  <p><h5>Battery Charging: </h5>{{ vector_status.status_charging }}</p>
+                  ">
                 </div>
               {% elif vector_status.battery_voltage < 3.6 %}
                 <div class="icon">
-                  <a href="{{ url_for('battery') }}">
-                  <img src="{{ url_for('static', filename='icons/battery_empty.svg') }}" width="32px" height="32px" data-toggle="tooltip" onclick="loading();" data-placement="auto" title="Battery Info">
-                  </a>
+                  <img tabindex="0" src="{{ url_for('static', filename='icons/battery_empty.svg') }}" width="32px" height="32px" data-toggle="popover" data-placement="left" data-trigger="focus" title="Battery Info" data-html="true" data-content="
+                  <p><h5>Battery Voltage: </h5>{{ vector_status.battery_voltage }}</p>
+                  <p><h5>Battery Charging: </h5>{{ vector_status.status_charging }}</p>
+                  ">
                 </div>
               {% endif %}
               {% if vector_status.status_charging == True %}

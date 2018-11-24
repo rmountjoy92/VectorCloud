@@ -373,7 +373,7 @@ def edit_application(script_id):
         db.session.merge(application)
         db.session.commit()
         flash('Application Edited!', 'success')
-        return redirect(url_for('home'))
+        return redirect(url_for('edit_application', script_id=script_id))
 
     elif request.method == 'GET':
         form.script_name.data = application.script_name
@@ -409,7 +409,7 @@ def delete_application(script_id):
     return redirect(url_for('home'))
 
 
-@app.route("/delete_support_file/<file_id>", methods=['GET', 'POST'])
+@app.route("/delete_support_file/<int:file_id>", methods=['GET', 'POST'])
 def delete_support_file(file_id):
     support_file = AppSupport.query.filter_by(id=file_id).first()
     application = Application.query.filter_by(hex_id=support_file.hex_id).first()
@@ -418,6 +418,7 @@ def delete_support_file(file_id):
     os.remove(support_file_path)
     AppSupport.query.filter_by(id=file_id).delete()
     db.session.commit()
+    flash(support_file.file_name + ' Deleted!', 'success')
     return redirect(url_for('edit_application', script_id=application.id))
 
 

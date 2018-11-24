@@ -35,6 +35,9 @@ h1, h2, h3, h4, h5, h6 {
 
 .bg-steel {
   background-color: #222D32;
+  -webkit-box-shadow: 0px 0px 10px 5px rgba(0,0,0,0.3);
+  -moz-box-shadow: 0px 0px 10px 5px rgba(0,0,0,0.3);
+  box-shadow: 0px 0px 10px 5px rgba(0,0,0,0.3);
 }
 
 .site-header .navbar-nav .nav-link {
@@ -203,7 +206,10 @@ div.fixed {
 
 /* Popover */
   .popover {
-      margin: 100px auto;
+      position: fixed;
+      top: 0;
+      right: 50%;
+      width: 100% auto;
       border: 0px;
       background-color: #222D32;
       -webkit-box-shadow: 0px 0px 5px 5px rgba(0,0,0,0.2);

@@ -12,6 +12,29 @@
               {{ form.hidden_tag() }}
               <fieldset class="form-group">
                   <legend class="border-bottom border-dark mb-4">Vector Commands</legend>
+                  <div class="icon">
+                    <img align="right" src="{{ url_for('static', filename='icons/info.svg') }}" width="24px" height="24px" data-toggle="popover" data-placement="left" title="Robot Commands" data-html="true" data-content="
+                    <p><b>Enter a robot. command: </b>In this command bar you can enter python code with the condition of: </p>
+                    <p><code>with anki_vector.Robot(args.serial) as robot:</code></p>
+                    <p><b>Sample Commands: </b></p>
+                    <p><code>robot.get_version_state()</code></p>
+                    <p><code>robot.get_battery_state()</code></p>
+                    <p><code>robot.behavior.drive_off_charger()</code></p>
+                    <p><code>robot.behavior.drive_on_charger()</code></p>
+                    <p><code>robot.say_text('Hello World')</code></p>
+                    <p><code>robot.behavior.set_eye_color(hue=0.0, saturation=0.0)</code></p>
+                    <p>Refer to the API section of the docs in the SDK folder for a full list of commands.</p>
+                    <p><b>Database Commands: </b>The command bar sends python code to the running application, so a side effect is that
+                    we can send database queries from the bar as well. Full documentation on the database is coming, but some common database queries would be:</p>
+                    <p><b>Clear the user table:</b></p>
+                    <p><code>db.session.query(User).delete()</code></p>
+                    <p>Note: This will delete the user account and redirect you to the register screen</p>
+                    <p><b>Clear the applications table:</b></p>
+                    <p><code>db.session.query(Application).delete()</code></p>
+                    <p><code>db.session.query(AppSupport).delete()</code></p>
+                    <p>Note: This will clear the application and support files entries in the database, but will not delete the files from the folders</p>
+                    ">
+                  </div>
                   <div class="form-group">
                       {{ form.command.label(class="form-control-label") }}
                       {% if form.command.errors %}
@@ -32,18 +55,20 @@
                   <div>
                   {{ form.submit(onclick="loading();", class="btn btn-dark") }}
                   {% if command_list %}
-                      <a href="/execute_commands" class="btn btn-dark" onclick="loading();" role="button">Execute</a>
-                      <a href="/clear_commands" class="btn btn-dark" onclick="loading();" role="button">Clear</a>
+                      <a href="{{ url_for('execute_commands') }}" class="btn btn-dark" onclick="loading();" role="button">Execute</a>
+                      <a href="{{ url_for('clear_commands') }}" class="btn btn-dark" onclick="loading();" role="button">Clear</a>
                   {% endif %}
                   </div>
           </form>
       </div>
     </div>
+    <div class="text-center">
+      <a href="{{ url_for('upload') }}">
+      <img class="icon" align="right" src="{{ url_for('static', filename='icons/upload.svg') }}" width="32px" height="32px" data-toggle="tooltip" data-placement="top" title="Upload Application">
+      </a>
+    </div>
     <div>
-      <legend class="text-center border-bottom border-dark mb-2">Applications</legend>
-      <div class="text-center">
-        <a href="/upload" class="btn btn-dark" border-color:"#00EE93" role="button">Upload Application</a><p></p>
-      </div>
+      <legend class="text-left border-dark mb-4">Applications</legend>
     </div>
     <div class="container-fluid">
           {% for app in app_list %}
@@ -51,8 +76,8 @@
             <div class="media-body">
 
                 <div class="image-container">
-                  <a href="/run_script/{{ app.hex_id }}">
-                  <img src="/static/app_icons/{{ app.icon }}" class="rounded mx-auto d-block" onclick="loading();" data-toggle="tooltip" data-placement="top" title="Run Application">
+                  <a href="{{ url_for('run_script', script_hex_id=app.hex_id) }}">
+                  <img src="{{ url_for('static', filename='app_icons/' + app.icon) }}" class="rounded mx-auto d-block" onclick="loading();" data-toggle="tooltip" data-placement="top" title="Run Application">
                   </a>
                 </div>
 
@@ -61,7 +86,7 @@
                 <p class="text-center">{{ app.description }}</p>
 
                 <div>
-                  <a href="/edit_application/{{ app.id }}"">
+                  <a href="{{ url_for('edit_application', script_id=app.id) }}">
                   <img align="right" src="{{ url_for('static', filename='icons/edit.svg') }}" width="24px" height="24px" data-toggle="tooltip" data-placement="top" title="Edit">
                   </a>
                 </div>

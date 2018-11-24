@@ -7,17 +7,17 @@
             <fieldset class="form-group">
                 <legend class="border-bottom border-dark mb-4 text-center">Editing: {{ application.script_name }}</legend>
                 <div class="icon">
-                  <img align="right" src="{{ url_for('static', filename='icons/info.svg') }}" width="24px" height="24px" data-toggle="popover" data-placement="left" title="How to Upload an SDK Application" data-html="true" data-content="
+                  <img align="right" src="{{ url_for('static', filename='icons/info.svg') }}" width="24px" height="24px" data-toggle="popover" data-placement="left" title="Editing an SDK Application" data-html="true" data-content="
                   <p><b>Name:</b> (optional) Change your application's name</p>
                   <p><b>Description:</b> (optional) Change your application's description</p>
                   <p><b>Set Main Python File:</b> (optional) Change your main python file for running your application. This deletes the old main file. This must have the extension '.py'</p>
                   <p><b>Add Support File:</b> (optional) Add supporting python files for your application. These files are placed in the lib package. Be sure your main python application imports support files from 'lib'.
-                    E.g. from lib import <i>your_file</i> These file must all also have the extension '.py' Support file names must be unique. </p>
+                    E.g. <p><code>from lib import <i>your_file</i></code></p> These file must all also have the extension '.py' Support file names must be unique. </p>
                   <p><b>Add Icon Image:</b> (optional) Give your application an icon. Custom icons should be 125px x 125px </p>
-                  <p><b>Support Files:</b> Replace/delete your support files</p>">
+                  ">
                 </div>
                 {% if application.icon != 'default.png' %}
-                  <img src="/static/app_icons/{{ application.icon }}" width="64px" height="64px" class="rounded icon mx-auto d-block">
+                  <img src="{{ url_for('static', filename='app_icons/' + application.icon) }}" class="rounded icon mx-auto d-block">
                 {% endif %}
                 <div class="form-group">
                     {{ form.script_name.label(class="form-control-label") }}
@@ -80,7 +80,7 @@
               {% for file in support_files %}
                 <p><font color="#898F91">
                   {{ file.file_name }}
-                  <a href="/delete_support_file/{{ file.id }}">
+                  <a href="{{ url_for('delete_support_file', file_id=file.id) }}">
                   <img class="icon" align="right" src="{{ url_for('static', filename='icons/trash.svg') }}" width="32px" height="32px" data-toggle="tooltip" data-placement="top" title="Delete {{ file.file_name }}">
                   </a>
                 </p>
@@ -88,8 +88,8 @@
             </div>
             <div class="form-group">
                 {{ form.update(class="btn btn-dark") }}
-                <a href="/delete_application/{{ script_id }}" class="btn btn-dark" onclick="loading();" role="button">Delete Application</a>
-                <a href="/home" class="btn btn-dark" onclick="loading();" role="button">Cancel</a>
+                <a href="{{ url_for('delete_application', script_id=script_id) }}" class="btn btn-dark" onclick="loading();" role="button">Delete Application</a>
+                <a href="{{ url_for('home') }}" class="btn btn-dark" onclick="loading();" role="button">Cancel</a>
             </div>
         </form>
     </div>
