@@ -287,6 +287,8 @@ def save_icon(form_icon, random_hex):
 
 @app.route("/upload", methods=['GET', 'POST'])
 def upload():
+    get_stats()
+    vector_status = Status.query.first()
     form = UploadScript()
     if form.validate_on_submit():
         if form.script.data:
@@ -313,7 +315,7 @@ def upload():
             flash("No script uploaded", 'warning')
         return redirect(url_for('upload'))
     return render_template(
-        'upload.html', title='Upload', form=form)
+        'upload.html', title='Upload', form=form, vector_status=vector_status)
 
 
 @app.route("/run_script/<script_hex_id>")
@@ -334,6 +336,8 @@ def run_script(script_hex_id):
 
 @app.route("/edit_application/<script_id>", methods=['GET', 'POST'])
 def edit_application(script_id):
+    get_stats()
+    vector_status = Status.query.first()
     form = UploadScript()
     application = Application.query.filter_by(id=script_id).first()
     support_files = AppSupport.query.filter_by(hex_id=application.hex_id)
@@ -377,7 +381,8 @@ def edit_application(script_id):
     return render_template(
         'edit_application.html', title='Edit Application', form=form,
         script_id=script_id, support_files=support_files,
-        support_files_first=support_files_first, application=application)
+        support_files_first=support_files_first, application=application,
+        vector_status=vector_status)
 
 
 @app.route("/delete_application/<script_id>", methods=['GET', 'POST'])
