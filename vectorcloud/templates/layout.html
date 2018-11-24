@@ -6,18 +6,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="theme-color" content="#222D32">
 
-    <!-- Google Font -->
-    <link href='https://fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet'>
-
-    <!-- JQuery -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='js/head.js') }}"></script>
-
-
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
+    <!-- Google Font -->
+    <link href='https://fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet'>
+
+    <!-- static/js/head.js -->
+    <script type="text/javascript" src="{{ url_for('static', filename='js/head.js') }}"></script>
+
+
+    <!-- static/css/main.css -->
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
+
 
     {% if title %}
         <title>VectorCloud - {{ title }}</title>
@@ -90,7 +91,7 @@
             {% if current_user.is_authenticated %}
               <div class="icon">
                 <a href="{{ url_for('logout') }}">
-                <img src="{{ url_for('static', filename='icons/logout.svg') }}" width="32px" height="32px" data-toggle="tooltip" data-placement="auto" title="Logout">
+                <img src="{{ url_for('static', filename='icons/logout.svg') }}" width="32px" height="32px" onclick="loading();" data-toggle="tooltip" data-placement="auto" title="Logout">
                 </a>
               </div>
             {% endif %}
@@ -120,7 +121,7 @@
               {% endfor %}
             {% endif %}
           {% endwith %}
-          <div id="content">
+          <div id="bod">
           {% block content %}{% endblock %}
           </div>
         </div>
@@ -131,10 +132,9 @@
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js & tooltip, then Bootstrap JS -->
-
-    <script type="text/javascript" src="{{ url_for('static', filename='js/body.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-
-</body>
-</html>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/body.js') }}"></script>
+    </body>
+    </html>

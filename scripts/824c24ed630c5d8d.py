@@ -20,14 +20,13 @@ Make Vector say 'Hello World' in this simple Vector SDK example program.
 """
 
 import anki_vector
-import time
 
 
 def main():
     args = anki_vector.util.parse_command_args()
     with anki_vector.Robot(args.serial) as robot:
         print("Say 'Hello World'...")
-        robot.say_text("hello world")
+        robot.say_text("Hello World")
 
 
 if __name__ == "__main__":

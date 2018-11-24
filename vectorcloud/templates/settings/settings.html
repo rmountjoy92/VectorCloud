@@ -1,0 +1,13 @@
+{% extends "utility_window.html" %}
+{% block content %}
+  <div class="container">
+    <div class="content-section">
+      <div class="icon">
+        <a href="{{ url_for('settings') }}">
+        <img class="mx-auto d-block" src="{{ url_for('static', filename='icons/user.svg') }}" width="32px" height="32px" data-toggle="tooltip" data-placement="top" title="User Info">
+        </a>
+        {% block settings %}{% endblock %}
+      </div>
+    </div>
+  </div>
+{% endblock content %}

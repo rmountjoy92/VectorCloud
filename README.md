@@ -9,7 +9,7 @@ contribute.
 
 ## How to run
 * create a virtual environment https://packaging.python.org/guides/installing-using-pip-and-virtualenv/
-* put the SDK folder into the virtual environment directory 
+* put the SDK folder into the virtual environment directory
 * install as per the directions in the docs folder of the SDK folder
 * in a terminal, navigate to your sdk folder. From inside your SDK folder enter:
 ```
@@ -20,12 +20,9 @@ pip3 install flask flask-sqlalchemy flask-bcrypt flask-login flask-wtf flask-boo
 ```
 ./run.py
 ```
-* Open a browser and go to http://localhost:5000 
+* Open a browser and go to http://localhost:5000
 * to stop the server press ctrl+c in the terminal
 
-To reset your username/password you can do the following:
-* type db.session.query(User).delete() into the vector commands bar and execute
-* if you can't log in you can delete 'site.db' from the vectorcloud directory **note: if you do this, you will have to manually clear out the scripts and static/app_icons directory of any user added files and reupload them via the gui
 
 ## Current Features
 * view battery information provided by vector

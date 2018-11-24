@@ -6,22 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="theme-color" content="#222D32">
 
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
     <!-- Google Font -->
     <link href='https://fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet'>
 
-    <!-- JQuery -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <!-- static/js/head.js -->
     <script type="text/javascript" src="{{ url_for('static', filename='js/head.js') }}"></script>
 
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-
+    <!-- static/css/main.css -->
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
 
 
@@ -46,8 +41,10 @@
             {% endfor %}
           {% endif %}
         {% endwith %}
-        <div id="content">
-          <img src="{{ url_for('static', filename='icons/vectorcloud.svg') }}" class="mx-auto d-block" height="125" width="125">
+        <div id="bod">
+          <a href="{{ url_for('home') }}">
+            <img src="{{ url_for('static', filename='icons/vectorcloud.svg') }}" class="mx-auto d-block" height="125" width="125" data-toggle="tooltip" data-placement="top" title="Home">
+          </a>
         {% block content %}{% endblock %}
         </div>
       </div>
@@ -58,10 +55,9 @@
 
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Popper.js & tooltip, then Bootstrap JS -->
-
-<script type="text/javascript" src="{{ url_for('static', filename='js/body.js') }}"></script>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-
+<script type="text/javascript" src="{{ url_for('static', filename='js/body.js') }}"></script>
 </body>
 </html>

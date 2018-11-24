@@ -45,6 +45,15 @@ class Application(db.Model):
         return [self.id, self.script_name, self.description, self.hex_id]
 
 
+class AppSupport(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    hex_id = db.Column(db.Text)
+    file_name = db.Column(db.Text)
+
+    def __repr__(self):
+        return [self.id, self.hex_id, self.file_name]
+
+
 class Status(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     version = db.Column(db.Text)

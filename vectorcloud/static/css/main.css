@@ -1,4 +1,7 @@
-
+.image-container {
+  display: flex;
+  justify-content: center;
+}
 
 body {
   background: #29353B;
@@ -136,13 +139,6 @@ a.article-title:hover {
   padding-right: 15px;
 }
 
-a {
-    color: #00EE93;
-}
-
-a:hover {
-    color: white;
-}
 
 .icon {
   padding: 5px;
@@ -152,34 +148,6 @@ a:hover {
   color: #00EE93;
 }
 
-/* Tooltip */
-.test + .tooltip > .tooltip-inner {
-    background-color: #73AD21;
-    color: #FFFFFF;
-    border: 1px solid green;
-    padding: 15px;
-    font-size: 20px;
-}
-
-/* Tooltip on top */
-.test + .tooltip.top > .tooltip-arrow {
-    border-top: 5px solid green;
-}
-
-/* Tooltip on bottom */
-.test + .tooltip.bottom > .tooltip-arrow {
-    border-bottom: 5px solid blue;
-}
-
-/* Tooltip on left */
-.test + .tooltip.left > .tooltip-arrow {
-    border-left: 5px solid red;
-}
-
-/* Tooltip on right */
-.test + .tooltip.right > .tooltip-arrow {
-    border-right: 5px solid black;
-}
 
 div#loading {
     margin:10px auto;
@@ -231,4 +199,37 @@ div.fixed {
   margin-top: 40px;
   margin-left: 40px;
   background: yellow;
+}
+
+/* Popover */
+  .popover {
+      margin: 100px auto;
+      border: 0px;
+      background-color: #222D32;
+      -webkit-box-shadow: 0px 0px 5px 5px rgba(0,0,0,0.2);
+      -moz-box-shadow: 0px 0px 5px 5px rgba(0,0,0,0.2);
+      box-shadow: 0px 0px 5px 5px rgba(0,0,0,0.2);
+  }
+  /* Popover Header */
+  .popover-header {
+      background-color: #29353B;
+      color: #00EE93;
+      font-size: 28px;
+      text-align:center;
+      border: 0px;
+  }
+  /* Popover Body */
+  .popover-body {
+      background-color: #222D32;
+      color: #FFFFFF;
+      padding: 25px;
+      border: 0px;
+  }
+  /* Popover Arrow */
+  .popover>.arrow:after {
+    border-color: transparent !important;
+}
+
+.popover .arrow:before {
+    border-color: transparent !important;
 }

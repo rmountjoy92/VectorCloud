@@ -1,0 +1,53 @@
+{% extends "settings/settings.html" %}
+{% block settings %}
+  <form method="POST" action="">
+      {{ user_form.hidden_tag() }}
+      <fieldset class="form-group">
+          <legend class="border-bottom border-dark mb-4 text-center">User Settings</legend>
+          <div class="form-group">
+              {{ user_form.username.label(class="form-control-label") }}
+
+              {% if user_form.username.errors %}
+                  {{ user_form.username(class="form-control form-control-lg is-invalid") }}
+                  <div class="invalid-feedback">
+                      {% for error in user_form.username.errors %}
+                          <span>{{ error }}</span>
+                      {% endfor %}
+                  </div>
+              {% else %}
+                  {{ user_form.username(autocomplete="off", class="form-control form-control-lg") }}
+              {% endif %}
+          </div>
+          <div class="form-group">
+              {{ user_form.password.label(class="form-control-label") }}
+              {% if user_form.password.errors %}
+                  {{ user_form.password(class="form-control form-control-lg is-invalid") }}
+                  <div class="invalid-feedback">
+                      {% for error in user_form.password.errors %}
+                          <span>{{ error }}</span>
+                      {% endfor %}
+                  </div>
+              {% else %}
+                  {{ user_form.password(class="form-control form-control-lg") }}
+              {% endif %}
+          </div>
+          <div class="form-group">
+              {{ user_form.confirm_password.label(class="form-control-label") }}
+              {% if user_form.confirm_password.errors %}
+                  {{ user_form.confirm_password(class="form-control form-control-lg is-invalid") }}
+                  <div class="invalid-feedback">
+                      {% for error in user_form.confirm_password.errors %}
+                          <span>{{ error }}</span>
+                      {% endfor %}
+                  </div>
+              {% else %}
+                  {{ user_form.confirm_password(onsubmit="loading();", class="form-control form-control-lg") }}
+              {% endif %}
+          </div>
+      </fieldset>
+      <div class="form-group">
+          {{ user_form.update(onclick="loading();", class="btn btn-dark") }}
+          <a href="/delete_user" class="btn btn-dark" role="button">Delete Login</a>
+      </div>
+  </form>
+{% endblock %}

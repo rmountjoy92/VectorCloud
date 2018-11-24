@@ -7,15 +7,16 @@ import secrets
 from PIL import Image
 from flask import render_template, url_for, redirect, flash, request
 from flask_login import login_user, logout_user, current_user
-from flask_bootstrap import Bootstrap
 import anki_vector
 from anki_vector.util import degrees, radians
 from vectorcloud.forms import CommandForm, RegisterForm, LoginForm,\
     UploadScript, SettingsForms
-from vectorcloud.models import Command, Output, User, Application, Status
+from vectorcloud.models import Command, Output, User, Application, AppSupport,\
+    Status
 from vectorcloud import app, db, bcrypt
 import scripts
 
+db.create_all()
 
 
 def get_stats():
@@ -78,6 +79,17 @@ def check_valid_login():
         return redirect(url_for('register'))
     else:
         return redirect(url_for('login'))
+
+
+@app.after_request
+def add_header(response):
+    """
+    Add headers to both force latest IE rendering engine or Chrome Frame,
+    and also to cache the rendered page for 10 minutes.
+    """
+    response.headers['X-UA-Compatible'] = 'IE=Edge,chrome=1'
+    response.headers['Cache-Control'] = 'public, max-age=0'
+    return response
 
 
 @app.route("/")
@@ -237,6 +249,29 @@ def save_script(form_script):
     return random_hex
 
 
+def save_script_helpers(helper, random_hex):
+    scripts_folder = os.path.dirname(scripts.__file__)
+    lib_folder = scripts_folder + '/lib/'
+    helper_name = str(helper)
+    if len(helper_name) > 1:
+        helper_name = helper_name.replace("<FileStorage: '", '')
+        helper_name = helper_name.replace("' ('text/x-python')>", '')
+        fn = os.path.join(lib_folder, helper_name)
+        find_helper = AppSupport.query.filter_by(file_name=helper_name).first()
+        if find_helper:
+            is_in_db = True
+        else:
+            helper_db = AppSupport(hex_id=random_hex,
+                                   file_name=helper_name)
+            db.session.add(helper_db)
+            is_in_db = False
+            helper.save(fn)
+            db.session.commit()
+        return is_in_db
+    else:
+        pass
+
+
 def save_icon(form_icon, random_hex):
     _, f_ext = os.path.splitext(form_icon.filename)
     file_name = random_hex + f_ext
@@ -256,6 +291,12 @@ def upload():
     if form.validate_on_submit():
         if form.script.data:
             random_hex = save_script(form.script.data)
+            if form.script_helpers.data:
+                for helper in form.script_helpers.data:
+                    is_in_db = save_script_helpers(helper, random_hex)
+                    if is_in_db is True:
+                        flash("Helper File Already in Lib!", 'warning')
+                        return redirect(url_for('upload'))
             if form.icon.data:
                 icon_fn = save_icon(form.icon.data, random_hex)
             else:
@@ -278,9 +319,9 @@ def upload():
 @app.route("/run_script/<script_hex_id>")
 def run_script(script_hex_id):
     application = Application.query.filter_by(hex_id=script_hex_id).first()
-    script = script_hex_id + '.py'
+    scriptn = script_hex_id + '.py'
     scripts_folder = os.path.dirname(scripts.__file__)
-    script_path = os.path.join(scripts_folder, script)
+    script_path = os.path.join(scripts_folder, scriptn)
     out = subprocess.run('python3 ' + script_path, stdout=subprocess.PIPE,
                          shell=True, encoding='utf-8')
     if out.returncode == 0:
@@ -295,20 +336,34 @@ def run_script(script_hex_id):
 def edit_application(script_id):
     form = UploadScript()
     application = Application.query.filter_by(id=script_id).first()
+    support_files = AppSupport.query.filter_by(hex_id=application.hex_id)
+    support_files_first = AppSupport.query.filter_by(hex_id=application.hex_id).first()
     script_hex_id = application.hex_id
     if form.validate_on_submit():
-        if application.icon != 'default.png':
-            icon_path = os.path.join(app.root_path,
-                                     'static/app_icons', application.icon)
-            os.remove(icon_path)
+        if form.script.data:
+            scripts_folder = os.path.dirname(scripts.__file__)
+            scriptn = script_hex_id + '.py'
+            script_path = os.path.join(scripts_folder, scriptn)
+            os.remove(script_path)
+            form.script.data.save(script_path)
+
+        if form.script_helpers.data:
+            for helper in form.script_helpers.data:
+                is_in_db = save_script_helpers(helper, script_hex_id)
+                if is_in_db is True:
+                    flash("Helper File Already in Lib!", 'warning')
+                    return redirect(url_for('edit_application',
+                                            script_id=script_id))
 
         if form.icon.data:
+            if application.icon != 'default.png':
+                icon_path = os.path.join(app.root_path,
+                                         'static/app_icons', application.icon)
+                os.remove(icon_path)
+
             icon_fn = save_icon(form.icon.data, script_hex_id)
             application.icon = icon_fn
 
-        else:
-            icon_fn = 'default.png'
-            application.icon = icon_fn
         application.script_name = form.script_name.data
         application.description = form.description.data
         db.session.merge(application)
@@ -316,19 +371,30 @@ def edit_application(script_id):
         flash('Application Edited!', 'success')
         return redirect(url_for('home'))
 
+    elif request.method == 'GET':
+        form.script_name.data = application.script_name
+        form.description.data = application.description
     return render_template(
         'edit_application.html', title='Edit Application', form=form,
-        script_id=script_id)
+        script_id=script_id, support_files=support_files,
+        support_files_first=support_files_first, application=application)
 
 
 @app.route("/delete_application/<script_id>", methods=['GET', 'POST'])
 def delete_application(script_id):
     application = Application.query.filter_by(id=script_id).first()
+    hex_id = application.hex_id
     script_fn = application.hex_id + '.py'
     scripts_folder = os.path.dirname(scripts.__file__)
     script_path = os.path.join(scripts_folder, script_fn)
     icon_path = os.path.join(app.root_path,
                              'static/app_icons', application.icon)
+    support_files = AppSupport.query.filter_by(hex_id=hex_id)
+    lib_folder = scripts_folder + '/lib/'
+    for file in support_files:
+        file_path = lib_folder + file.file_name
+        os.remove(file_path)
+        AppSupport.query.filter_by(id=file.id).delete()
     os.remove(script_path)
     if application.icon != 'default.png':
         os.remove(icon_path)
@@ -338,15 +404,43 @@ def delete_application(script_id):
     return redirect(url_for('home'))
 
 
+@app.route("/delete_support_file/<file_id>", methods=['GET', 'POST'])
+def delete_support_file(file_id):
+    support_file = AppSupport.query.filter_by(id=file_id).first()
+    application = Application.query.filter_by(hex_id=support_file.hex_id).first()
+    scripts_folder = os.path.dirname(scripts.__file__)
+    support_file_path = os.path.join(scripts_folder, 'lib', support_file.file_name)
+    os.remove(support_file_path)
+    AppSupport.query.filter_by(id=file_id).delete()
+    db.session.commit()
+    return redirect(url_for('edit_application', script_id=application.id))
+
+
 @app.route("/settings", methods=['GET', 'POST'])
 def settings():
     form = SettingsForms()
-    return render_template('settings.html', form=form)
+    user_form = RegisterForm()
+    if user_form.validate_on_submit():
+        current_user.username = user_form.username.data
+        hashed_password = bcrypt.generate_password_hash(
+            user_form.password.data).decode('utf-8')
+        current_user.password = hashed_password
+        flash('Login Credentials Updated!', 'success')
+        db.session.commit()
+        return redirect(url_for('settings'))
+    elif request.method == 'GET':
+        user_form.username.data = current_user.username
+    get_stats()
+    vector_status = Status.query.first()
+    return render_template('settings/user.html', form=form,
+                           vector_status=vector_status, user_form=user_form)
 
 
-@app.route("/change_color/<color>", methods=['GET', 'POST'])
-def change_color(color):
-    return color
+@app.route("/delete_user")
+def delete_user():
+    db.session.query(User).delete()
+    db.session.commit()
+    return redirect(url_for('register'))
 
 # def run_rc():
 #     scripts_folder = os.path.dirname(scripts.__file__)

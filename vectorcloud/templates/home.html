@@ -49,15 +49,22 @@
           {% for app in app_list %}
           <article class="media content-section">
             <div class="media-body">
-                <a href="/edit_application/{{ app.id }}"">
-                <img align="right" src="{{ url_for('static', filename='icons/edit.svg') }}" width="24px" height="24px" data-toggle="tooltip" data-placement="top" title="Edit">
-                </a>
-                <a href="/run_script/{{ app.hex_id }}">
-                <img src="/static/app_icons/{{ app.icon }}" class="rounded mx-auto d-block" onclick="loading();" data-toggle="tooltip" data-placement="top" title="Run Application">
-                </a>
+
+                <div class="image-container">
+                  <a href="/run_script/{{ app.hex_id }}">
+                  <img src="/static/app_icons/{{ app.icon }}" class="rounded mx-auto d-block" onclick="loading();" data-toggle="tooltip" data-placement="top" title="Run Application">
+                  </a>
+                </div>
+
                 <p></p>
                 <h2 class="text-center"> {{ app.script_name }}</h2>
                 <p class="text-center">{{ app.description }}</p>
+
+                <div>
+                  <a href="/edit_application/{{ app.id }}"">
+                  <img align="right" src="{{ url_for('static', filename='icons/edit.svg') }}" width="24px" height="24px" data-toggle="tooltip" data-placement="top" title="Edit">
+                  </a>
+                </div>
               </div>
           </article>
           {% endfor %}

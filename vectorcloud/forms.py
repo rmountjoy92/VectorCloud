@@ -3,7 +3,7 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from wtforms import StringField, PasswordField, SubmitField, BooleanField,\
-    TextAreaField
+    TextAreaField, MultipleFileField
 from wtforms.validators import DataRequired, Length, EqualTo, ValidationError
 from vectorcloud.models import User
 
@@ -27,6 +27,8 @@ class RegisterForm(FlaskForm):
 
     submit = SubmitField('Create')
 
+    update = SubmitField('Update')
+
     def validate_username(self, username):
         user = User.query.filter_by(username=username.data).first()
         if user:
@@ -49,10 +51,13 @@ class UploadScript(FlaskForm):
 
     description = TextAreaField('Description')
 
-    script = FileField('Select Python File',
+    script = FileField('Set Main Python File',
                        validators=[FileAllowed(['py'])])
 
-    icon = FileField('Select Icon Image',
+    script_helpers = MultipleFileField('Add Support Files',
+                                       validators=[FileAllowed(['py'])])
+
+    icon = FileField('Add Icon Image',
                      validators=[FileAllowed(['jpg', 'png'])])
 
     upload = SubmitField('Upload')
