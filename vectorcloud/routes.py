@@ -16,9 +16,59 @@ from vectorcloud.models import Command, Output, User, Application, AppSupport,\
 from vectorcloud import app, db, bcrypt
 import scripts
 
+
+# ------------------------------------------------------------------------------
+# intial routes and functions (before/after request)
+# ------------------------------------------------------------------------------
+
+# create all tables in the database if they don't exist
 db.create_all()
 
 
+# establishes routes decorated w/ @public_route as accessible while not signed
+# in. See login and register routes for usage
+def public_route(decorated_function):
+    decorated_function.is_public = True
+    return decorated_function
+
+
+# blocks access to all pages (except public routes) unless the user is
+# signed in.
+@app.before_request
+def check_valid_login():
+    user = db.session.query(User).first()
+    if any([request.endpoint.startswith('static'),
+            current_user.is_authenticated,
+            getattr(app.view_functions[request.endpoint],
+                    'is_public', False)]):
+        return
+    elif user is None:
+        return redirect(url_for('register'))
+    else:
+        return redirect(url_for('login'))
+
+
+# this was a fix to make sure images stored in the cache are deleted when
+# a new image is uploaded
+@app.after_request
+def add_header(response):
+    """
+    Add headers to both force latest IE rendering engine or Chrome Frame,
+    and also to cache the rendered page for 10 minutes.
+    """
+    response.headers['X-UA-Compatible'] = 'IE=Edge,chrome=1'
+    response.headers['Cache-Control'] = 'public, max-age=0'
+    return response
+
+
+# ------------------------------------------------------------------------------
+# Main functions
+# ------------------------------------------------------------------------------
+
+# get_stats(): this function gets the results of robot.get_version_state() &
+# robot.get_battery_state() and stores it to the status table in the databse
+# it clears the table at the begining of the function and leaves the data there
+# until it is called again.
 def get_stats():
     args = anki_vector.util.parse_command_args()
     with anki_vector.Robot(args.serial, requires_behavior_control=False,
@@ -40,6 +90,11 @@ def get_stats():
         db.session.commit()
 
 
+# robot_do(): this function executes all commands in the command table in order
+# with the condition of with anki_vector.Robot(args.serial) as robot:
+# if there are commands in the commands in the command table, all you have to
+# do to executes is redirect to /execute_commands/ and this function will be
+# called.
 def robot_do():
     robot_commands = Command.query.all()
     try:
@@ -62,36 +117,11 @@ def robot_do():
     db.session.commit()
 
 
-def public_route(decorated_function):
-    decorated_function.is_public = True
-    return decorated_function
+# ------------------------------------------------------------------------------
+# Home routes
+# ------------------------------------------------------------------------------
 
-
-@app.before_request
-def check_valid_login():
-    user = db.session.query(User).first()
-    if any([request.endpoint.startswith('static'),
-            current_user.is_authenticated,
-            getattr(app.view_functions[request.endpoint],
-                    'is_public', False)]):
-        return
-    elif user is None:
-        return redirect(url_for('register'))
-    else:
-        return redirect(url_for('login'))
-
-
-@app.after_request
-def add_header(response):
-    """
-    Add headers to both force latest IE rendering engine or Chrome Frame,
-    and also to cache the rendered page for 10 minutes.
-    """
-    response.headers['X-UA-Compatible'] = 'IE=Edge,chrome=1'
-    response.headers['Cache-Control'] = 'public, max-age=0'
-    return response
-
-
+# Home page
 @app.route("/")
 @app.route("/home", methods=['GET', 'POST'])
 def home():
@@ -113,16 +143,7 @@ def home():
         return redirect(url_for('vector_not_found'))
 
 
-@app.route("/vector_not_found")
-def vector_not_found():
-    return render_template('/error_pages/vector_not_found.html')
-
-
-@app.route("/vector_stuck")
-def vector_stuck():
-    return render_template('/error_pages/vector_stuck.html')
-
-
+# executes all commmands in the command table(if present), redirects to home.
 @app.route("/execute_commands")
 def execute_commands():
     robot_commands = Command.query.all()
@@ -133,6 +154,7 @@ def execute_commands():
     return redirect(url_for('home'))
 
 
+# clears the command table, redirects to home.
 @app.route("/clear_commands")
 def clear_commands():
     db.session.query(Command).delete()
@@ -140,6 +162,7 @@ def clear_commands():
     return redirect(url_for('home'))
 
 
+# sends undock commmand to Vector, waits for completion, redirects to home.
 @app.route("/undock")
 def undock():
     flash('Undock Command Complete!', 'success')
@@ -149,6 +172,7 @@ def undock():
     return redirect(url_for('home'))
 
 
+# sends dock commmand to Vector, waits for completion, redirects to home.
 @app.route("/dock")
 def dock():
     flash('Dock Command Complete!', 'success')
@@ -162,6 +186,8 @@ def dock():
         return redirect(url_for('vector_stuck'))
 
 
+# sends the following commands to Vector to attempt to pick up his cube
+# redirects to home when done.
 @app.route("/dock_cube")
 def dock_cube():
     args = anki_vector.util.parse_command_args()
@@ -178,6 +204,7 @@ def dock_cube():
     return redirect(url_for('cube'))
 
 
+# cube page
 @app.route("/cube")
 def cube():
     get_stats()
@@ -186,14 +213,21 @@ def cube():
         'cube.html', vector_status=vector_status, title='Cube')
 
 
-@app.route("/battery")
-def battery():
-    get_stats()
-    vector_status = Status.query.first()
-    return render_template(
-        'battery.html', vector_status=vector_status, title='Battery')
+# ------------------------------------------------------------------------------
+# User system routes
+# ------------------------------------------------------------------------------
+
+# this makes Vector greet you when you log in from the login page
+def login_message():
+    args = anki_vector.util.parse_command_args()
+    with anki_vector.Robot(args.serial) as robot:
+        robot.behavior.set_eye_color(hue=0.0, saturation=0.0)
+        robot.say_text(current_user.username +
+                       ' has logged in to Vector Cloud')
 
 
+# registration page; when no users have been created (User table is empty)
+# all pages will redirect to this page.
 @public_route
 @app.route("/register", methods=['GET', 'POST'])
 def register():
@@ -213,6 +247,7 @@ def register():
         'register.html', title='Register', form=form)
 
 
+# login page
 @public_route
 @app.route("/login", methods=['GET', 'POST'])
 def login():
@@ -224,6 +259,7 @@ def login():
         if user and bcrypt.check_password_hash(user.password,
                                                form.password.data):
             login_user(user, remember=form.remember.data)
+            login_message()
             flash("Login Successful!", 'success')
             return redirect(url_for('home'))
         else:
@@ -234,12 +270,46 @@ def login():
         'login.html', title='Login', form=form)
 
 
+# this logs the user out and redirects to the login page
 @app.route("/logout")
 def logout():
     logout_user()
     return redirect(url_for('login'))
 
 
+# ------------------------------------------------------------------------------
+# Application system routes
+# ------------------------------------------------------------------------------
+# The upload system works as follows:
+# 1. the upload page takes the form data and fills a row in the Application
+#    table of the database.
+#
+# 2. the database columns that are created are:
+#    id: unique key, assigned by the database (if it is the first app this = 1)
+#    script_name: application's name given to it by the user
+#    description: application's description given to it by the user
+#    icon: application's icon file name (hex id + '.jpg' or '.png')
+#    hex_id: application's hex id assigned to it from vectorcloud
+#
+# 3. main python file is renamed to (hex id + '.py') and saved to /scripts/
+#
+# 4. if added, the icon file is renamed to (hex id + '.jpg' or '.png') and
+#    saved to static/app_icons/
+#
+# 5. if support files added, the upload page takes the form data and fills a
+#    row in the AppSupport table of the database. The columns for each support
+#    file created are:
+#    id: unique key, assigned by the database
+#    hex_id: the hex id of the application the file is related to
+#    file_name: the file's name e.g. test.py
+#
+# 6. if added, support files are checked against existing entries and if unique
+#    they are added to /scripts/lib
+
+
+# this function takes the main python file from the form on the upload page,
+# generates a hex id, renames the file with the hex id, saves the file to the
+# scripts folder, then returns the hex id.
 def save_script(form_script):
     random_hex = secrets.token_hex(8)
     file_name = random_hex + '.py'
@@ -249,6 +319,10 @@ def save_script(form_script):
     return random_hex
 
 
+# this function takes one of the the support files from the form and the
+# application's hex id, figures out if the file already exists in the lib
+# package and if it doesn't, it adds the file to the lib package and registers
+# it in the database.
 def save_script_helpers(helper, random_hex):
     scripts_folder = os.path.dirname(scripts.__file__)
     lib_folder = scripts_folder + '/lib/'
@@ -272,6 +346,9 @@ def save_script_helpers(helper, random_hex):
         pass
 
 
+# this function takes the image file from the form on the upload page, and the
+# application's hex id, renames the file with the hex id, saves the file to the
+# static/app_icons folder, then returns the new file name.
 def save_icon(form_icon, random_hex):
     _, f_ext = os.path.splitext(form_icon.filename)
     file_name = random_hex + f_ext
@@ -285,6 +362,7 @@ def save_icon(form_icon, random_hex):
     return file_name
 
 
+# Upload page
 @app.route("/upload", methods=['GET', 'POST'])
 def upload():
     get_stats()
@@ -318,6 +396,9 @@ def upload():
         'upload.html', title='Upload', form=form, vector_status=vector_status)
 
 
+# runs a script from the database by hex id. Hex id is passed into the url
+# e.g. /run_script/cb893c1cee6d7e87 would run the script with hex id
+# cb893c1cee6d7e87 in the database
 @app.route("/run_script/<script_hex_id>")
 def run_script(script_hex_id):
     application = Application.query.filter_by(hex_id=script_hex_id).first()
@@ -334,6 +415,7 @@ def run_script(script_hex_id):
     return redirect(url_for('home'))
 
 
+# edit application page
 @app.route("/edit_application/<script_id>", methods=['GET', 'POST'])
 def edit_application(script_id):
     get_stats()
@@ -341,9 +423,12 @@ def edit_application(script_id):
     form = UploadScript()
     application = Application.query.filter_by(id=script_id).first()
     support_files = AppSupport.query.filter_by(hex_id=application.hex_id)
-    support_files_first = AppSupport.query.filter_by(hex_id=application.hex_id).first()
+    support_files_first = AppSupport.query.\
+        filter_by(hex_id=application.hex_id).first()
     script_hex_id = application.hex_id
+
     if form.validate_on_submit():
+
         if form.script.data:
             scripts_folder = os.path.dirname(scripts.__file__)
             scriptn = script_hex_id + '.py'
@@ -378,6 +463,7 @@ def edit_application(script_id):
     elif request.method == 'GET':
         form.script_name.data = application.script_name
         form.description.data = application.description
+
     return render_template(
         'edit_application.html', title='Edit Application', form=form,
         script_id=script_id, support_files=support_files,
@@ -385,6 +471,11 @@ def edit_application(script_id):
         vector_status=vector_status)
 
 
+# this deletes an application by it's unique key (id column). This will delete:
+# 1. the main python file
+# 2. image file (if not default)
+# 3. any added support files associated with the hex id
+# 4. database entries for all of the above
 @app.route("/delete_application/<script_id>", methods=['GET', 'POST'])
 def delete_application(script_id):
     application = Application.query.filter_by(id=script_id).first()
@@ -409,12 +500,16 @@ def delete_application(script_id):
     return redirect(url_for('home'))
 
 
+# this deletes a support file by it's unique key (id column).
+# deletes the file from lib and removes databse entry
 @app.route("/delete_support_file/<int:file_id>", methods=['GET', 'POST'])
 def delete_support_file(file_id):
     support_file = AppSupport.query.filter_by(id=file_id).first()
-    application = Application.query.filter_by(hex_id=support_file.hex_id).first()
+    application = Application.query.\
+        filter_by(hex_id=support_file.hex_id).first()
     scripts_folder = os.path.dirname(scripts.__file__)
-    support_file_path = os.path.join(scripts_folder, 'lib', support_file.file_name)
+    support_file_path = os.path.\
+        join(scripts_folder, 'lib', support_file.file_name)
     os.remove(support_file_path)
     AppSupport.query.filter_by(id=file_id).delete()
     db.session.commit()
@@ -422,6 +517,11 @@ def delete_support_file(file_id):
     return redirect(url_for('edit_application', script_id=application.id))
 
 
+# ------------------------------------------------------------------------------
+# Settings system routes
+# ------------------------------------------------------------------------------
+
+# settings page
 @app.route("/settings", methods=['GET', 'POST'])
 def settings():
     form = SettingsForms()
@@ -442,34 +542,22 @@ def settings():
                            vector_status=vector_status, user_form=user_form)
 
 
+# this clears the user table, redirects to register
 @app.route("/delete_user")
 def delete_user():
     db.session.query(User).delete()
     db.session.commit()
     return redirect(url_for('register'))
 
-# def run_rc():
-#     scripts_folder = os.path.dirname(scripts.__file__)
-#     rc_path = os.path.join(scripts_folder, 'remote_control', 'start.sh')
-#     os.system(rc_path)
-#     # rc_pid = p.pid
-#     # db_pid = RC(pid=rc_pid)
-#     # db.session.add(db_pid)
-#     # db.session.commit()
+
+# ------------------------------------------------------------------------------
+# Error Pages
+# ------------------------------------------------------------------------------
+@app.route("/vector_not_found")
+def vector_not_found():
+    return render_template('/error_pages/vector_not_found.html')
 
 
-# @app.route("/control", methods=['GET', 'POST'])
-# def control():
-#     # run_rc
-#     # p = multiprocessing.Process(target=run_rc)
-#     # p.start()
-#     return render_template('control.html', title='Control')
-
-
-# @app.route("/kill_control", methods=['GET', 'POST'])
-# def kill_control():
-#     # rc_pid = RC.query.all()
-#     # os.kill(rc_pid, signal.SIGINT)
-#     # db.session.query(RC).delete()
-#     # db.session.commit()
-#     # return redirect(url_for('home'))
+@app.route("/vector_stuck")
+def vector_stuck():
+    return render_template('/error_pages/vector_stuck.html')
