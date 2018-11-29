@@ -2,10 +2,9 @@
 # VectorCloud
 My goal with this project is to create a web interface using Flask for controlling vector, displaying information, and organizing (and possibly scheduling) sdk programs to run. My inspiration for this project comes from https://octoprint.org/ which is a web interface for controlling my 3d printer.
 
-Here is a list of features I want to include in this project, if you have anything to add to list let me know and I will put it on here. I will be constantly adding things as I learn more about the SDK.
+Here is a list of features I want to include in this project, if you have anything to add to list let me know and I will put it on here. I will be adding things as I learn more about the SDK.
 
-Disclaimer - I am a busy person and will be working on this in my free time. Please feel free to
-contribute.
+Please feel free to contribute.
 
 ## How to run
 * create a virtual environment https://packaging.python.org/guides/installing-using-pip-and-virtualenv/
@@ -17,9 +16,15 @@ git clone https://github.com/rmountjoy92/VectorCloud
 pip3 install flask flask-sqlalchemy flask-bcrypt flask-login flask-wtf flask-bootstrap
 ```
 * navigate to the VectorCloud folder, make sure run.py is executable and enter:
+On Linux or Mac:
 ```
-./run.py
+./run.py 
 ```
+On Windows:
+```
+py run.py
+```
+
 * Open a browser and go to http://localhost:5000
 * to stop the server press ctrl+c in the terminal
 
@@ -30,15 +35,18 @@ pip3 install flask flask-sqlalchemy flask-bcrypt flask-login flask-wtf flask-boo
 * view cube information provided by vector
 * added a button for vector to go pick up his cube (unreliable; will get better with next SDK release)
 * dock/undock vector from buttons on navbar
-* display version number provided by vector on navbar
+* display version number, ip address, and vector name provided by vector
 * stage mulitple robots commands via interactive form and bulk send commands to vector
-* SQLite database for storing commands, output, applications and users
+* SQLite database for storing data in tables
 * user authentication and registration, all routes are blocked unless user logs in
 * upload python scripts to server, save as application with name, description and picture, support files
 * edit and delete sdk apps
+* edit username & password
+* database integration for uploaded apps
+* welcome message and settings
+
 
 ## Soon
-* use try except blocks for running on Windows
 * develop RESTFUL API
 * add network state, pose, status output to status
 * add more buttons to home screen for more robot functions
