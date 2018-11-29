@@ -4,6 +4,7 @@ import os
 import subprocess
 import time
 import secrets
+import platform
 from pathlib import Path
 from configparser import ConfigParser
 from PIL import Image
@@ -22,6 +23,10 @@ import scripts
 # ------------------------------------------------------------------------------
 # intial routes and functions (before/after request)
 # ------------------------------------------------------------------------------
+
+# get the operating system
+global operating_system
+operating_system = platform.system()
 
 # create all tables in the database if they don't exist
 db.create_all()
@@ -338,15 +343,15 @@ def logout():
 # Control system routes
 # ------------------------------------------------------------------------------
 
-# Main control page
-@app.route("/control")
-def control():
-    get_stats()
-    vector_status = Status.query.first()
-    subprocess.run(
-        'python3 /home/ross/Scripts/vector/vectorsdk/SDK/examples/apps/remote_control/remote_control.py', shell=True)
-    return render_template(
-        'control.html', title='Control', vector_status=vector_status)
+# # Main control page
+# @app.route("/control")
+# def control():
+#     get_stats()
+#     vector_status = Status.query.first()
+#     subprocess.run(
+#         'python3 /home/ross/Scripts/vector/vectorsdk/SDK/examples/apps/remote_control/remote_control.py', shell=True)
+#     return render_template(
+#         'control.html', title='Control', vector_status=vector_status)
 
 # ------------------------------------------------------------------------------
 # Application system routes
@@ -476,8 +481,12 @@ def run_script(script_hex_id):
     scriptn = script_hex_id + '.py'
     scripts_folder = os.path.dirname(scripts.__file__)
     script_path = os.path.join(scripts_folder, scriptn)
-    out = subprocess.run('python3 ' + script_path, stdout=subprocess.PIPE,
-                         shell=True, encoding='utf-8')
+    if operating_system == 'Windows':
+        out = subprocess.run('py ' + script_path, stdout=subprocess.PIPE,
+                             shell=True, encoding='utf-8')
+    else:
+        out = subprocess.run('python3 ' + script_path, stdout=subprocess.PIPE,
+                             shell=True, encoding='utf-8')
     if out.returncode == 0:
         flash(application.script_name + ' ran succussfully! Output: ' +
               str(out.stdout), 'success')
