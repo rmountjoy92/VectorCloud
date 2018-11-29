@@ -2,12 +2,19 @@
 {% block content %}
   <div class="container">
     <div class="content-section">
-      <div class="icon">
-        <a href="{{ url_for('settings') }}">
-        <img class="mx-auto d-block" src="{{ url_for('static', filename='icons/user.svg') }}" width="32px" height="32px" data-toggle="tooltip" data-placement="top" title="User Info">
-        </a>
-        {% block settings %}{% endblock %}
+      <div class="row image-container border-bottom border-dark mb-4">
+        <div class="column icon">
+          <a href="{{ url_for('settings') }}">
+          <img src="{{ url_for('static', filename='icons/settings-menu.svg') }}" width="32px" height="32px" data-toggle="tooltip" data-placement="top" title="VectorCloud Settings">
+          </a>
+        </div>
+        <div class="column icon">
+          <a href="{{ url_for('settings_user') }}">
+          <img src="{{ url_for('static', filename='icons/user.svg') }}" width="32px" height="32px" data-toggle="tooltip" data-placement="top" title="User Settings">
+          </a>
+        </div>
       </div>
+      {% block settings %}{% endblock %}
     </div>
   </div>
 {% endblock content %}

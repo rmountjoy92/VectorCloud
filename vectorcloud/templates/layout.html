@@ -93,6 +93,11 @@
                   </a>
                 </div>
               {% endif %}
+              <div class="icon">
+                <a href="{{ url_for('settings') }}">
+                <img src="{{ url_for('static', filename='icons/settings-menu.svg') }}" width="32px" height="32px" data-toggle="tooltip" data-placement="top" title="Settings">
+                </a>
+              </div>
             {% if current_user.is_authenticated %}
               <div class="icon">
                 <a href="{{ url_for('logout') }}">
@@ -102,11 +107,14 @@
             {% endif %}
             <div class="fixed">
               <div class="navbar-text">
-                <text><b>Vector version:</b> {{ vector_status.version }}</text>
+                <p>
+                  <text><b>{{ vector_status.name }}</b></text>
+                </p>
+                <p>
+                  <text><b>IP:</b> {{ vector_status.ip }}</text>
+                </p>
+                  <text><b>Version:</b> {{ vector_status.version }}</text>
               </div>
-              <a href="{{ url_for('settings') }}">
-              <img src="{{ url_for('static', filename='icons/settings.svg') }}" width="32px" height="32px" data-toggle="tooltip" data-placement="top" title="Settings">
-              </a>
             </div>
           </div>
         </div>

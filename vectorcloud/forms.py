@@ -66,5 +66,8 @@ class UploadScript(FlaskForm):
 
 
 class SettingsForms(FlaskForm):
-    eye_color = StringField('Name of SDK application',
-                            validators=[DataRequired()])
+    greeting_message_enabled = BooleanField('Enable Greeting Message')
+
+    custom_greeting_message = StringField('Custom Greeting Message')
+
+    save = SubmitField('Save')

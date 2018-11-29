@@ -3,6 +3,14 @@
   justify-content: center;
 }
 
+.border-bottom {
+  background: #29353B;
+  padding: 5px;
+  -webkit-box-shadow: inset 0px 0px 10px 5px rgba(0,0,0,0.3);
+  -moz-box-shadow: inset 0px 0px 10px 5px rgba(0,0,0,0.3);
+  box-shadow: inset 0px 0px 10px 5px rgba(0,0,0,0.3);
+}
+
 body {
   background: #29353B;
   color: #00EE93;
@@ -112,14 +120,19 @@ a.article-title:hover {
 }
 
 .form-control {
+  padding: 10px;
   background-color: #29353B; border-width: 0px; color: #ffffff;
+  -webkit-box-shadow: inset 0px 0px 10px 5px rgba(0,0,0,0.2);
+  -moz-box-shadow: inset 0px 0px 10px 5px rgba(0,0,0,0.2);
+  box-shadow: inset 0px 0px 10px 5px rgba(0,0,0,0.2);
 }
 
 .form-control:focus {
-  border-width: 0px; border-color: #00EE93; background-color: #29353B; color: #ffffff;
-  -webkit-box-shadow: 0px 0px 10px 5px rgba(0,0,0,0.3);
-  -moz-box-shadow: 0px 0px 10px 5px rgba(0,0,0,0.3);
-  box-shadow: 0px 0px 10px 5px rgba(0,0,0,0.3);
+  padding: 10px;
+  background-color: #29353B; border-width: 0px; color: #ffffff;
+  -webkit-box-shadow: inset 0px 0px 15px 5px rgba(0,0,0,0.4);
+  -moz-box-shadow: inset 0px 0px 15px 5px rgba(0,0,0,0.4);
+  box-shadow: inset 0px 0px 15px 5px rgba(0,0,0,0.4);
 }
 
 .input {
@@ -168,7 +181,7 @@ div.fixed {
     border: 1px solid #222D32;
     background-color: #222D32;
     border-radius: 12px;
-    padding: 5px;
+    padding: 15px;
     margin: 15px;
     -webkit-box-shadow: 0px 0px 5px 5px rgba(0,0,0,0.3);
     -moz-box-shadow: 0px 0px 5px 5px rgba(0,0,0,0.3);

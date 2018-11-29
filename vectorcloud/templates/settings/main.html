@@ -1,0 +1,38 @@
+{% extends "settings/settings.html" %}
+{% block settings %}
+<form method="POST" action="">
+  {{ form.hidden_tag() }}
+  <fieldset class="form-group">
+    <legend class="border-bottom border-dark mb-4 text-center"><b>VectorCloud Settings</b></legend>
+    <h5>Welcome Message</h5>
+    <div class="form-check">
+        {{ form.greeting_message_enabled(class="form-check-input") }}
+        {{ form.greeting_message_enabled.label(class="form-check-label") }}
+    </div>
+    <p></p>
+    <div class="form-group">
+      <div class="icon">
+        <img tabindex="0" align="right" src="{{ url_for('static', filename='icons/info.svg') }}" width="24px" height="24px" data-toggle="popover" data-trigger="focus" data-placement="left" data-html="true" data-content="
+        <p>Change how Vector greets you when you log in. To use the default message enter 'Default'. To insert the current user's username type '%U'
+        </p><p>e.g. 'Hello %U!'</p>
+        ">
+      </div>
+        {{ form.custom_greeting_message.label(class="form-control-label") }}
+
+        {% if form.custom_greeting_message.errors %}
+            {{ form.custom_greeting_message(class="form-control form-control-lg is-invalid") }}
+            <div class="invalid-feedback">
+                {% for error in form.custom_greeting_message.errors %}
+                    <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+        {% else %}
+            {{ form.custom_greeting_message(autocomplete="off", class="form-control form-control-lg") }}
+        {% endif %}
+    </div>
+    <div class="form-group">
+        {{ form.save(class="btn btn-dark") }}
+    </div>
+  </fieldset>
+</form>
+{% endblock %}

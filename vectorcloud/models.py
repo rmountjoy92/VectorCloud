@@ -63,8 +63,21 @@ class Status(db.Model):
     cube_battery_level = db.Column(db.Integer)
     cube_id = db.Column(db.Text)
     cube_battery_volts = db.Column(db.Float)
+    timestamp = db.Column(db.Float)
+    ip = db.Column(db.Text)
+    name = db.Column(db.Text)
 
     def __repr__(self):
         return [self.id, self.battery_voltage, self.battery_level,
                 self.status_charging, self.cube_battery_level,
-                self.cube_id, self.cube_battery_volts]
+                self.cube_id, self.cube_battery_volts, self.timestamp]
+
+
+class Settings(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    greeting_message_enabled = db.Column(db.Boolean, default=True)
+    custom_greeting_message = db.Column(db.Text, default='default')
+
+    def __repr__(self):
+        return [self.id, self.greeting_message_enabled,
+                self.custom_greeting_message]

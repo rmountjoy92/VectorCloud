@@ -4,6 +4,8 @@ import os
 import subprocess
 import time
 import secrets
+from pathlib import Path
+from configparser import ConfigParser
 from PIL import Image
 from flask import render_template, url_for, redirect, flash, request
 from flask_login import login_user, logout_user, current_user
@@ -12,7 +14,7 @@ from anki_vector.util import degrees, radians
 from vectorcloud.forms import CommandForm, RegisterForm, LoginForm,\
     UploadScript, SettingsForms
 from vectorcloud.models import Command, Output, User, Application, AppSupport,\
-    Status
+    Status, Settings
 from vectorcloud import app, db, bcrypt
 import scripts
 
@@ -24,9 +26,13 @@ import scripts
 # create all tables in the database if they don't exist
 db.create_all()
 
+# initiate config parser
+config = ConfigParser()
 
 # establishes routes decorated w/ @public_route as accessible while not signed
 # in. See login and register routes for usage
+
+
 def public_route(decorated_function):
     decorated_function.is_public = True
     return decorated_function
@@ -70,36 +76,68 @@ def add_header(response):
 # it clears the table at the begining of the function and leaves the data there
 # until it is called again.
 def get_stats():
-    args = anki_vector.util.parse_command_args()
-    with anki_vector.Robot(args.serial, requires_behavior_control=False,
-                           cache_animation_list=False) as robot:
 
-        version_state = robot.get_version_state()
-        battery_state = robot.get_battery_state()
-
-        db.session.query(Status).delete()
-        status = Status(version=version_state.os_version,
-                        battery_voltage=battery_state.battery_volts,
-                        battery_level=battery_state.battery_level,
-                        status_charging=battery_state.is_on_charger_platform,
-                        cube_battery_level=battery_state.cube_battery.level,
-                        cube_id=battery_state.cube_battery.factory_id,
-                        cube_battery_volts=battery_state.
-                        cube_battery.battery_volts)
+    status = Status.query.first()
+    timestamp = time.time()
+    if status is None:
+        new_stamp = timestamp - 20
+        status = Status(timestamp=new_stamp)
         db.session.add(status)
         db.session.commit()
+    elif timestamp - status.timestamp > 15:
 
+        # get robot name and ip from config file
+        home = Path.home()
+        config_file = str(home / ".anki_vector" / "sdk_config.ini")
+        f = open(config_file)
+        serial = f.readline()
+        serial = serial.replace(']', '')
+        serial = serial.replace('[', '')
+        serial = serial.replace('\n', '')
+        f.close()
+        config.read(config_file)
+        ip = config.get(serial, 'ip')
+        name = config.get(serial, 'name')
+
+        # get results from battery state and version state, save to database
+        args = anki_vector.util.parse_command_args()
+        with anki_vector.Robot(args.serial, requires_behavior_control=False,
+                               cache_animation_list=False) as robot:
+
+            version_state = robot.get_version_state()
+            battery_state = robot.get_battery_state()
+
+            db.session.query(Status).delete()
+            status = Status(version=version_state.os_version,
+                            battery_voltage=battery_state.battery_volts,
+                            battery_level=battery_state.battery_level,
+                            status_charging=battery_state.is_on_charger_platform,
+                            cube_battery_level=battery_state.cube_battery.level,
+                            cube_id=battery_state.cube_battery.factory_id,
+                            cube_battery_volts=battery_state.
+                            cube_battery.battery_volts,
+                            timestamp=timestamp,
+                            ip=ip,
+                            name=name)
+            db.session.add(status)
+            db.session.commit()
+    else:
+        status.timestamp = timestamp
+        db.session.merge(status)
+        db.session.commit()
 
 # robot_do(): this function executes all commands in the command table in order
 # with the condition of with anki_vector.Robot(args.serial) as robot:
 # if there are commands in the commands in the command table, all you have to
 # do to executes is redirect to /execute_commands/ and this function will be
-# called.
-def robot_do():
+# called. Output is sent to a flash message.
+
+
+def robot_do(override_output=None):
     robot_commands = Command.query.all()
     try:
         args = anki_vector.util.parse_command_args()
-        with anki_vector.Robot(args.serial) as robot:
+        with anki_vector.Robot(args.serial, show_viewer=True, enable_camera_feed=True) as robot:
             for command in robot_commands:
                 command_string = str(command)
                 robot_output_string = str(eval(command_string))
@@ -107,11 +145,22 @@ def robot_do():
                 db.session.add(db_output)
                 db.session.commit()
             command_output = Output.query.all()
-            for out in command_output:
-                out_string = str(out)
-                flash(out_string, 'success')
+            if override_output:
+                flash(override_output, 'success')
+            else:
+                for out in command_output:
+                    if out is None:
+                        pass
+                    else:
+                        out_string = 'Command completed successfully! Output: \
+                            ' + str(out)
+                        flash(out_string, 'success')
     except NameError:
         flash('Command not found!', 'warning')
+
+    except anki_vector.exceptions.VectorControlTimeoutException:
+        return redirect(url_for('vector_stuck'))
+
     db.session.query(Command).delete()
     db.session.query(Output).delete()
     db.session.commit()
@@ -122,6 +171,8 @@ def robot_do():
 # ------------------------------------------------------------------------------
 
 # Home page
+
+
 @app.route("/")
 @app.route("/home", methods=['GET', 'POST'])
 def home():
@@ -144,7 +195,7 @@ def home():
 
 
 # executes all commmands in the command table(if present), redirects to home.
-@app.route("/execute_commands")
+@app.route("/execute_commands", methods=['GET', 'POST'])
 def execute_commands():
     robot_commands = Command.query.all()
     if robot_commands:
@@ -162,28 +213,28 @@ def clear_commands():
     return redirect(url_for('home'))
 
 
-# sends undock commmand to Vector, waits for completion, redirects to home.
+# adds undock command to the command table, runs robot_do(), redirects to home.
+# this is a great example of how you can queue commands in the command table
+# and execute them using robot_do (url /execute_commands)
 @app.route("/undock")
 def undock():
-    flash('Undock Command Complete!', 'success')
-    args = anki_vector.util.parse_command_args()
-    with anki_vector.Robot(args.serial) as robot:
-        robot.behavior.drive_off_charger()
+    db.session.query(Command).delete()
+    robot_command = Command(command='robot.behavior.drive_off_charger()')
+    db.session.add(robot_command)
+    db.session.commit()
+    robot_do(override_output='Undock Command Complete!')
     return redirect(url_for('home'))
 
 
-# sends dock commmand to Vector, waits for completion, redirects to home.
+# adds dock command to the command table, runs robot_do(), redirects to home.
 @app.route("/dock")
 def dock():
-    flash('Dock Command Complete!', 'success')
-    args = anki_vector.util.parse_command_args()
-    try:
-        with anki_vector.Robot(args.serial) as robot:
-            robot.behavior.drive_on_charger()
-            time.sleep(1)
-        return redirect(url_for('home'))
-    except anki_vector.exceptions.VectorControlTimeoutException:
-        return redirect(url_for('vector_stuck'))
+    db.session.query(Command).delete()
+    robot_command = Command(command='robot.behavior.drive_on_charger()')
+    db.session.add(robot_command)
+    db.session.commit()
+    robot_do(override_output='Dock Command Complete!')
+    return redirect(url_for('home'))
 
 
 # sends the following commands to Vector to attempt to pick up his cube
@@ -219,11 +270,17 @@ def cube():
 
 # this makes Vector greet you when you log in from the login page
 def login_message():
-    args = anki_vector.util.parse_command_args()
-    with anki_vector.Robot(args.serial) as robot:
-        robot.behavior.set_eye_color(hue=0.0, saturation=0.0)
-        robot.say_text(current_user.username +
-                       ' has logged in to Vector Cloud')
+    settings = db.session.query(Settings).first()
+    if settings.greeting_message_enabled is True:
+        if settings.custom_greeting_message == 'Default' or 'default':
+            robot_msg = 'Hello ' + current_user.username +\
+                '. Welcome to Vector-Cloud!'
+        else:
+            robot_msg = settings.custom_greeting_message
+        args = anki_vector.util.parse_command_args()
+        with anki_vector.Robot(args.serial) as robot:
+            robot.behavior.set_eye_color(hue=0.0, saturation=0.0)
+            robot.say_text(robot_msg)
 
 
 # registration page; when no users have been created (User table is empty)
@@ -276,6 +333,20 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
+
+# ------------------------------------------------------------------------------
+# Control system routes
+# ------------------------------------------------------------------------------
+
+# Main control page
+@app.route("/control")
+def control():
+    get_stats()
+    vector_status = Status.query.first()
+    subprocess.run(
+        'python3 /home/ross/Scripts/vector/vectorsdk/SDK/examples/apps/remote_control/remote_control.py', shell=True)
+    return render_template(
+        'control.html', title='Control', vector_status=vector_status)
 
 # ------------------------------------------------------------------------------
 # Application system routes
@@ -521,9 +592,40 @@ def delete_support_file(file_id):
 # Settings system routes
 # ------------------------------------------------------------------------------
 
-# settings page
+# settings pages
 @app.route("/settings", methods=['GET', 'POST'])
 def settings():
+    form = SettingsForms()
+    settings_db = db.session.query(Settings).first()
+    if settings_db is None:
+        settings_db = Settings(greeting_message_enabled=True,
+                               custom_greeting_message='Default')
+        db.session.add(settings_db)
+        db.session.commit()
+    if form.validate_on_submit():
+        settings_db = db.session.query(Settings).first()
+        settings_db.greeting_message_enabled = \
+            form.greeting_message_enabled.data
+        settings_db.custom_greeting_message = form.custom_greeting_message.data
+        msg = str(settings_db.custom_greeting_message)
+        msg = msg.replace('%U', current_user.username)
+        settings_db.custom_greeting_message = msg
+        db.session.merge(settings_db)
+        db.session.commit()
+        flash('Settings Saved!', 'success')
+        return redirect(url_for('settings'))
+
+    elif request.method == 'GET':
+        form.custom_greeting_message.data = settings_db.custom_greeting_message
+        form.greeting_message_enabled.data = settings_db.greeting_message_enabled
+    get_stats()
+    vector_status = Status.query.first()
+    return render_template('settings/main.html', form=form,
+                           vector_status=vector_status)
+
+
+@app.route("/settings_user", methods=['GET', 'POST'])
+def settings_user():
     form = SettingsForms()
     user_form = RegisterForm()
     if user_form.validate_on_submit():
