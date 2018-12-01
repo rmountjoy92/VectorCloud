@@ -135,7 +135,7 @@ def undock():
     db.session.add(robot_command)
     db.session.commit()
 
-    err_msg = robot_do()
+    err_msg = robot_do(override_output='Dock Command Complete!')
     if err_msg:
         db.session.query(Command).delete()
         db.session.commit()
@@ -158,8 +158,11 @@ def dock():
         db.session.commit()
         return redirect(url_for('error_pages.' + err_msg))
 
+    return redirect(url_for('main.home'))
 
 # connects to cube to get data
+
+
 @main.route("/connect_cube")
 def connect_cube():
     db.session.query(Command).delete()
