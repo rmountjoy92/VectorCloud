@@ -55,15 +55,15 @@
                   <div>
                   {{ form.submit(onclick="loading();", class="btn btn-dark") }}
                   {% if command_list %}
-                      <a href="{{ url_for('execute_commands') }}" class="btn btn-dark" onclick="loading();" role="button">Execute</a>
-                      <a href="{{ url_for('clear_commands') }}" class="btn btn-dark" onclick="loading();" role="button">Clear</a>
+                      <a href="{{ url_for('main.execute_commands') }}" class="btn btn-dark" onclick="loading();" role="button">Execute</a>
+                      <a href="{{ url_for('main.clear_commands') }}" class="btn btn-dark" onclick="loading();" role="button">Clear</a>
                   {% endif %}
                   </div>
           </form>
       </div>
     </div>
     <div class="text-center">
-      <a href="{{ url_for('upload') }}">
+      <a href="{{ url_for('application_system.upload') }}">
       <img class="icon" align="right" src="{{ url_for('static', filename='icons/upload.svg') }}" width="32px" height="32px" data-toggle="tooltip" data-placement="top" title="Upload Application">
       </a>
     </div>
@@ -76,7 +76,7 @@
             <div class="media-body">
 
                 <div class="image-container">
-                  <a href="{{ url_for('run_script', script_hex_id=app.hex_id) }}">
+                  <a href="{{ url_for('application_system.run_script', script_hex_id=app.hex_id) }}">
                   <img src="{{ url_for('static', filename='app_icons/' + app.icon) }}" class="rounded mx-auto d-block" onclick="loading();" data-toggle="tooltip" data-placement="top" title="Run Application">
                   </a>
                 </div>
@@ -86,7 +86,7 @@
                 <p class="text-center">{{ app.description }}</p>
 
                 <div>
-                  <a href="{{ url_for('edit_application', script_id=app.id) }}">
+                  <a href="{{ url_for('application_system.edit_application', script_id=app.id) }}">
                   <img align="right" src="{{ url_for('static', filename='icons/edit.svg') }}" width="24px" height="24px" data-toggle="tooltip" data-placement="top" title="Edit">
                   </a>
                 </div>

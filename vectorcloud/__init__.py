@@ -14,4 +14,16 @@ db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
 
-from vectorcloud import routes
+from vectorcloud.main.routes import main
+from vectorcloud.user_system.routes import user_system
+from vectorcloud.application_system.routes import application_system
+from vectorcloud.settings_system.routes import settings_system
+from vectorcloud.sdk_management.routes import sdk_management
+from vectorcloud.error_pages.routes import error_pages
+
+app.register_blueprint(main)
+app.register_blueprint(user_system)
+app.register_blueprint(application_system)
+app.register_blueprint(settings_system)
+app.register_blueprint(sdk_management)
+app.register_blueprint(error_pages)

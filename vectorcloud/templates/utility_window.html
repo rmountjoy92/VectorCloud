@@ -42,7 +42,7 @@
           {% endif %}
         {% endwith %}
         <div id="bod">
-          <a href="{{ url_for('home') }}">
+          <a href="{{ url_for('main.home') }}">
             <img src="{{ url_for('static', filename='icons/vectorcloud.svg') }}" class="mx-auto d-block" height="125" width="125" data-toggle="tooltip" data-placement="top" title="Home">
           </a>
         {% block content %}{% endblock %}

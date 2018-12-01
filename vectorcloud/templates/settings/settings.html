@@ -4,13 +4,18 @@
     <div class="content-section">
       <div class="row image-container border-bottom border-dark mb-4">
         <div class="column icon">
-          <a href="{{ url_for('settings') }}">
+          <a href="{{ url_for('settings_system.settings') }}">
           <img src="{{ url_for('static', filename='icons/settings-menu.svg') }}" width="32px" height="32px" data-toggle="tooltip" data-placement="top" title="VectorCloud Settings">
           </a>
         </div>
         <div class="column icon">
-          <a href="{{ url_for('settings_user') }}">
+          <a href="{{ url_for('settings_system.settings_user') }}">
           <img src="{{ url_for('static', filename='icons/user.svg') }}" width="32px" height="32px" data-toggle="tooltip" data-placement="top" title="User Settings">
+          </a>
+        </div>
+        <div class="column icon">
+          <a href="{{ url_for('sdk_management.sdk') }}">
+          <img src="{{ url_for('static', filename='icons/package.svg') }}" width="32px" height="32px" data-toggle="tooltip" data-placement="top" title="Manage SDK">
           </a>
         </div>
       </div>
