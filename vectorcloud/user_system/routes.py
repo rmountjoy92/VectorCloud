@@ -39,6 +39,11 @@ def register():
         db.session.add(user)
         db.session.commit()
         flash("Login Saved!", 'success')
+
+        err_msg = login_message()
+        if err_msg:
+            return redirect(url_for('error_pages.' + err_msg))
+
         return redirect(url_for('user_system.login'))
 
     return render_template(

@@ -1,19 +1,19 @@
 #!/usr/bin/env python3
 
 import anki_vector
-from flask_login import current_user
-from vectorcloud.models import Settings
+from vectorcloud.models import Settings, User
 from vectorcloud import db
 
 
 # this makes Vector greet you when you log in from the login page
 def login_message():
     try:
+        user = db.session.query(User).first()
         settings = db.session.query(Settings).first()
         if settings.greeting_message_enabled is True:
 
             if settings.custom_greeting_message == 'Default' or 'default':
-                robot_msg = 'Hello ' + current_user.username +\
+                robot_msg = 'Hello ' + user.username +\
                     '. Welcome to Vector-Cloud!'
 
             else:
