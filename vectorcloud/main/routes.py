@@ -141,6 +141,10 @@ def undock():
         db.session.commit()
         return redirect(url_for('error_pages.' + err_msg))
 
+    err_msg = get_stats(force=True)
+    if err_msg:
+        return redirect(url_for('error_pages.' + err_msg))
+
     return redirect(url_for('main.home'))
 
 
@@ -156,6 +160,10 @@ def dock():
     if err_msg:
         db.session.query(Command).delete()
         db.session.commit()
+        return redirect(url_for('error_pages.' + err_msg))
+
+    err_msg = get_stats(force=True)
+    if err_msg:
         return redirect(url_for('error_pages.' + err_msg))
 
     return redirect(url_for('main.home'))

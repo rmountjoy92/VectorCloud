@@ -35,7 +35,7 @@ config = ConfigParser()
 # until it is called again.
 
 
-def get_stats():
+def get_stats(force=False):
     try:
         status = Status.query.first()
         timestamp = time.time()
@@ -46,7 +46,7 @@ def get_stats():
             db.session.add(status)
             db.session.commit()
 
-        elif timestamp - status.timestamp > 15:
+        elif timestamp - status.timestamp > 15 or force is True:
 
             # get robot name and ip from config file
             home = Path.home()
