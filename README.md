@@ -47,7 +47,6 @@ py run.py
 
 
 ## Soon
-* break up application into blueprints
 * develop RESTFUL API
 * add network state, pose, status output to status
 * add more buttons to home screen for more robot functions
