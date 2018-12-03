@@ -25,6 +25,7 @@ def public_route(decorated_function):
 # initiate config parser
 config = ConfigParser()
 
+
 # ------------------------------------------------------------------------------
 # Main functions
 # ------------------------------------------------------------------------------
@@ -33,8 +34,6 @@ config = ConfigParser()
 # robot.get_battery_state() and stores it to the status table in the databse
 # it clears the table at the begining of the function and leaves the data there
 # until it is called again.
-
-
 def get_stats(force=False):
     try:
         status = Status.query.first()

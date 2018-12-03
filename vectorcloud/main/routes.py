@@ -22,9 +22,6 @@ main = Blueprint('main', __name__)
 # ------------------------------------------------------------------------------
 
 # get the operating system & SDK version
-global operating_system
-global sdk_version
-global vectorcloud_sdk_version
 vectorcloud_sdk_version = "0.5.0"
 sdk_version = anki_vector.__version__
 operating_system = platform.system()
@@ -135,7 +132,7 @@ def undock():
     db.session.add(robot_command)
     db.session.commit()
 
-    err_msg = robot_do(override_output='Dock Command Complete!')
+    err_msg = robot_do(override_output='Undock Command Complete!')
     if err_msg:
         db.session.query(Command).delete()
         db.session.commit()

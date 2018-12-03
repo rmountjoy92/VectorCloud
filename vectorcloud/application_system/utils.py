@@ -3,9 +3,9 @@
 import os
 import sys
 import secrets
+from pathlib import Path
 from vectorcloud.models import AppSupport
-from vectorcloud import app, db
-import scripts
+from vectorcloud import db
 
 try:
     from PIL import Image
@@ -14,13 +14,30 @@ except ImportError:
              - -user Pillow` to install")
 
 
+# script folder is the root path of the application
+def get_script_folder():
+    curr_folder = os.path.dirname(__file__)
+    vc_folder = Path(curr_folder).parent
+    scripts_folder = Path(vc_folder).parent
+    return scripts_folder
+
+
+# lib folder is where helper files are stored it is within the root folder
+def get_lib_folder(scripts_folder):
+    lib_folder = os.path.join(scripts_folder, 'lib')
+    return lib_folder
+
+
+scripts_folder = get_script_folder()
+lib_folder = get_lib_folder(scripts_folder)
+
+
 # this function takes the main python file from the form on the upload page,
 # generates a hex id, renames the file with the hex id, saves the file to the
 # scripts folder, then returns the hex id.
 def save_script(form_script):
     random_hex = secrets.token_hex(8)
     file_name = random_hex + '.py'
-    scripts_folder = os.path.dirname(scripts.__file__)
     script_path = os.path.join(scripts_folder, file_name)
     form_script.save(script_path)
     return random_hex
@@ -31,8 +48,6 @@ def save_script(form_script):
 # package and if it doesn't, it adds the file to the lib package and registers
 # it in the database.
 def save_script_helpers(helper, random_hex):
-    scripts_folder = os.path.dirname(scripts.__file__)
-    lib_folder = scripts_folder + '/lib/'
     helper_name = str(helper)
 
     if len(helper_name) > 1:
@@ -64,7 +79,8 @@ def save_script_helpers(helper, random_hex):
 def save_icon(form_icon, random_hex):
     _, f_ext = os.path.splitext(form_icon.filename)
     file_name = random_hex + f_ext
-    icon_path = os.path.join(app.root_path, 'static/app_icons', file_name)
+    icon_path = os.path.join(scripts_folder, 'vectorcloud',
+                             'static/app_icons', file_name)
 
     output_size = (125, 125)
     i = Image.open(form_icon)
