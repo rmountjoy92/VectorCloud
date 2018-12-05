@@ -31,7 +31,7 @@ config = ConfigParser()
 # ------------------------------------------------------------------------------
 
 # get_stats(): this function gets the results of robot.get_version_state() &
-# robot.get_battery_state() and stores it to the status table in the databse
+# robot.get_battery_state() and stores it to the status table in the database
 # it clears the table at the begining of the function and leaves the data there
 # until it is called again.
 def get_stats(force=False):
@@ -60,9 +60,11 @@ def get_stats(force=False):
             ip = config.get(serial, 'ip')
             name = config.get(serial, 'name')
 
-            # get results from battery state and version state, save to database
+            # get results from battery state and version state,
+            # save to database
             args = anki_vector.util.parse_command_args()
-            with anki_vector.Robot(args.serial, requires_behavior_control=False,
+            with anki_vector.Robot(args.serial,
+                                   requires_behavior_control=False,
                                    cache_animation_list=False) as robot:
 
                 version_state = robot.get_version_state()
@@ -94,13 +96,12 @@ def get_stats(force=False):
     except anki_vector.exceptions.VectorControlTimeoutException:
         return 'vector_stuck'
 
+
 # robot_do(): this function executes all commands in the command table in order
 # with the condition of with anki_vector.Robot(args.serial) as robot:
 # if there are commands in the commands in the command table, all you have to
 # do to executes is redirect to /execute_commands/ and this function will be
 # called. Output is sent to a flash message.
-
-
 def robot_do(override_output=None):
     robot_commands = Command.query.all()
     try:
