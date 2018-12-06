@@ -45,9 +45,11 @@ py run.py
 * edit username & password
 * database integration for uploaded apps
 * welcome message and settings
+* remote control vector from the control page
 
 
 ## Soon
+* fix bugs
 * develop RESTFUL API
 * add network state, pose, status output to status
 * add more buttons to home screen for more robot functions
@@ -58,7 +60,6 @@ py run.py
 
 ## Eventually
 * set up uWSGI
-* create a 'control' page that contains the remote control SDK example
 * plugin manager
 * manage photos and videos
 * interaction with cube lights
