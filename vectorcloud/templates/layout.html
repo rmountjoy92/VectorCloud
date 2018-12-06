@@ -40,6 +40,11 @@
             <!-- Navbar Right Side -->
             <div class="navbar-nav">
               <div class="icon">
+                <a href="{{ url_for('flask_app.control') }}">
+                <img src="{{ url_for('static', filename='icons/remote.svg') }}" width="36px" height="36px" onclick="loading();" data-toggle="tooltip" data-placement="auto" title="Remote Control">
+                </a>
+              </div>
+              <div class="icon">
                 <img src="{{ url_for('static', filename='icons/cube.svg') }}" width="32px" height="32px"
 
 

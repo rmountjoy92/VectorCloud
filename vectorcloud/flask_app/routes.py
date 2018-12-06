@@ -45,8 +45,6 @@ try:
 except ImportError:
     sys.exit("Cannot import anki_vector: Do `pip3 install -e .` in the vector home folder to install")
 
-flask_app = Blueprint('flask_app', __name__)
-
 
 def shutdown_flask(request):
     func = request.environ.get('werkzeug.server.shutdown')
@@ -101,6 +99,7 @@ def create_default_image(image_width, image_height, do_gradient=False):
     return image
 
 
+flask_app = Blueprint('flask_app', __name__)
 _default_camera_image = create_default_image(320, 240)
 _is_mouse_look_enabled_by_default = False
 
@@ -379,12 +378,12 @@ def to_js_bool_string(bool_value):
 
 
 @flask_app.route("/control", methods=['POST', 'GET'])
-def handle_index_page():
+def control():
     args = util.parse_command_args()
-
-    with anki_vector.AsyncRobot(args.serial, enable_camera_feed=True) as robot:
-        robot.behavior.drive_off_charger()
-        flask_app.remote_control_vector = RemoteControlVector(robot)
+    robot = anki_vector.AsyncRobot(args.serial, enable_camera_feed=True)
+    robot.connect()
+    robot.behavior.drive_off_charger()
+    flask_app.remote_control_vector = RemoteControlVector(robot)
 
     return """
     <html>
