@@ -3,19 +3,19 @@
   <div class="container">
     <div class="content-section">
       <div class="row image-container border-bottom border-dark mb-4">
-        <div class="column icon">
+        <div class="column icon" data-toggle="tooltip" data-placement="top" title="VectorCloud Settings">
           <a href="{{ url_for('settings_system.settings') }}">
-          <img src="{{ url_for('static', filename='icons/settings-menu.svg') }}" width="32px" height="32px" data-toggle="tooltip" data-placement="top" title="VectorCloud Settings">
+          <img src="{{ url_for('static', filename='icons/settings-menu.svg') }}" width="32px" height="32px">
           </a>
         </div>
-        <div class="column icon">
+        <div class="column icon" data-toggle="tooltip" data-placement="top" title="User Settings">
           <a href="{{ url_for('settings_system.settings_user') }}">
-          <img src="{{ url_for('static', filename='icons/user.svg') }}" width="32px" height="32px" data-toggle="tooltip" data-placement="top" title="User Settings">
+          <img src="{{ url_for('static', filename='icons/user.svg') }}" width="32px" height="32px">
           </a>
         </div>
-        <div class="column icon">
+        <div class="column icon" data-toggle="tooltip" data-placement="top" title="Manage SDK">
           <a href="{{ url_for('sdk_management.sdk') }}">
-          <img src="{{ url_for('static', filename='icons/package.svg') }}" width="32px" height="32px" data-toggle="tooltip" data-placement="top" title="Manage SDK">
+          <img src="{{ url_for('static', filename='icons/package.svg') }}" width="32px" height="32px">
           </a>
         </div>
       </div>

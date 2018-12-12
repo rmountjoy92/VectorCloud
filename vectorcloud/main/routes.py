@@ -22,7 +22,7 @@ main = Blueprint('main', __name__)
 # ------------------------------------------------------------------------------
 
 # get the operating system & SDK version
-vectorcloud_sdk_version = "0.5.0"
+vectorcloud_sdk_version = "0.5.1"
 sdk_version = anki_vector.__version__
 operating_system = platform.system()
 
