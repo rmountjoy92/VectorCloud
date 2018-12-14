@@ -6,6 +6,7 @@ from vectorcloud.user_system.forms import RegisterForm
 from vectorcloud.settings_system.forms import SettingsForms
 from vectorcloud.models import User, Status, Settings
 from vectorcloud.main.utils import get_stats
+from vectorcloud.main.routes import sdk_version
 from vectorcloud import db, bcrypt
 
 
@@ -52,7 +53,8 @@ def settings():
 
     vector_status = Status.query.first()
     return render_template('settings/main.html', form=form,
-                           vector_status=vector_status)
+                           vector_status=vector_status,
+                           sdk_version=sdk_version)
 
 
 @settings_system.route("/settings_user", methods=['GET', 'POST'])
@@ -78,7 +80,9 @@ def settings_user():
 
     vector_status = Status.query.first()
     return render_template('settings/user.html', form=form,
-                           vector_status=vector_status, user_form=user_form)
+                           vector_status=vector_status,
+                           user_form=user_form,
+                           sdk_version=sdk_version)
 
 
 # this clears the user table, redirects to register

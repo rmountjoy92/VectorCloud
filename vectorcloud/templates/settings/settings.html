@@ -13,11 +13,6 @@
           <img src="{{ url_for('static', filename='icons/user.svg') }}" width="32px" height="32px">
           </a>
         </div>
-        <div class="column icon" data-toggle="tooltip" data-placement="top" title="Manage SDK">
-          <a href="{{ url_for('sdk_management.sdk') }}">
-          <img src="{{ url_for('static', filename='icons/package.svg') }}" width="32px" height="32px">
-          </a>
-        </div>
       </div>
       {% block settings %}{% endblock %}
     </div>

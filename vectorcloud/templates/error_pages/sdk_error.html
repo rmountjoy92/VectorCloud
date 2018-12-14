@@ -1,0 +1,14 @@
+{% extends "utility_window.html" %}
+{% block content %}
+  <div class="container text-center">
+    {% if sdk_version %}
+      <p>Incompatible SDK Version detected!</p>
+      <p>{{ sdk_version }} is installed.</p>
+      <p>VectorCloud is using version: {{ vectorcloud_sdk_version }}</p>
+      <p>Update the SDK using pip </p>
+    {% else %}
+      <p>No SDK installed. Install as per instructions on developer.anki.com</p>
+    {% endif %}
+    <a href="/home" class="btn btn-dark" role="button" onclick="loading();">Try Again</a>
+  </div>
+{% endblock content %}

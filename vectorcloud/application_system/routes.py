@@ -3,9 +3,11 @@
 import os
 import subprocess
 import platform
+import multiprocessing
+import signal
 from flask import render_template, url_for, redirect, flash, request, Blueprint
 from vectorcloud.application_system.forms import UploadScript
-from vectorcloud.models import Application, AppSupport, Status
+from vectorcloud.models import Application, AppSupport, Status, Output
 from vectorcloud import app, db
 from vectorcloud.main.utils import get_stats
 from vectorcloud.application_system.utils import save_icon, save_script,\
@@ -76,7 +78,10 @@ def upload():
             application = Application(hex_id=random_hex,
                                       script_name=form.script_name.data,
                                       description=form.description.data,
-                                      icon=icon_fn)
+                                      icon=icon_fn,
+                                      run_in_bkrd=form.run_in_bkrd.data,
+                                      author=form.author.data,
+                                      website=form.website.data)
             db.session.add(application)
             db.session.commit()
             flash("Application Saved!", 'success')
@@ -88,9 +93,33 @@ def upload():
         'upload.html', title='Upload', form=form, vector_status=vector_status)
 
 
+def start_bkrd_script(py_cmd, script_path, application):
+    pid = os.getpid()
+    application.pid = pid
+    db.session.commit()
+
+    out = subprocess.run(py_cmd + script_path, stdout=subprocess.PIPE,
+                         shell=True, encoding='utf-8')
+
+    if out.returncode == 0:
+        msg = application.script_name + ' ran succussfully! Output: ' +\
+            str(out.stdout)
+        output = Output(output=msg)
+        db.session.add(output)
+
+    else:
+        msg = 'Something is not right with your script.'
+        output = Output(output=msg)
+        db.session.add(output)
+
+    application.pid = None
+    db.session.commit()
+
 # runs a script from the database by hex id. Hex id is passed into the url
 # e.g. /run_script/cb893c1cee6d7e87 would run the script with hex id
 # cb893c1cee6d7e87 in the database
+
+
 @application_system.route("/run_script/<script_hex_id>")
 def run_script(script_hex_id):
     application = Application.query.filter_by(hex_id=script_hex_id).first()
@@ -98,19 +127,46 @@ def run_script(script_hex_id):
     script_path = os.path.join(scripts_folder, scriptn)
 
     if platform.system() == 'Windows':
-        out = subprocess.run('py ' + script_path, stdout=subprocess.PIPE,
-                             shell=True, encoding='utf-8')
+        py_cmd = 'py '
 
     else:
-        out = subprocess.run('python3 ' + script_path, stdout=subprocess.PIPE,
+        py_cmd = 'python3 '
+
+    if application.run_in_bkrd is False:
+        out = subprocess.run(py_cmd + script_path, stdout=subprocess.PIPE,
                              shell=True, encoding='utf-8')
 
-    if out.returncode == 0:
-        flash(application.script_name + ' ran succussfully! Output: ' +
-              str(out.stdout), 'success')
+        if out.returncode == 0:
+            flash(application.script_name + ' ran succussfully! Output: ' +
+                  str(out.stdout), 'success')
+
+        else:
+            flash('Something is not right with your script.', 'warning')
+        return redirect(url_for('main.home'))
 
     else:
-        flash('Something is not right with your script.', 'warning')
+        t = multiprocessing.Process(target=start_bkrd_script,
+                                    args=(py_cmd, script_path, application))
+        t.start()
+        flash('Process Started!', 'success')
+        return redirect(url_for('main.home'))
+
+
+@application_system.route("/kill_process/<pid>")
+def kill_process(pid):
+    application = Application.query.filter_by(pid=pid).first()
+
+    if application:
+        application.pid = None
+        db.session.commit()
+
+    try:
+        os.kill(int(pid), signal.SIGINT)
+        flash('Process Killed!', 'success')
+
+    except ProcessLookupError:
+        flash('Process has already ended or is not found.', 'warning')
+
     return redirect(url_for('main.home'))
 
 
@@ -156,7 +212,10 @@ def edit_application(script_id):
             icon_fn = save_icon(form.icon.data, script_hex_id)
             application.icon = icon_fn
 
+        application.run_in_bkrd = form.run_in_bkrd.data
         application.script_name = form.script_name.data
+        application.author = form.author.data
+        application.website = form.website.data
         application.description = form.description.data
         db.session.merge(application)
         db.session.commit()
@@ -166,7 +225,10 @@ def edit_application(script_id):
 
     elif request.method == 'GET':
         form.script_name.data = application.script_name
+        form.author.data = application.author
+        form.website.data = application.website
         form.description.data = application.description
+        form.run_in_bkrd.data = application.run_in_bkrd
 
     return render_template(
         'edit_application.html', title='Edit Application', form=form,

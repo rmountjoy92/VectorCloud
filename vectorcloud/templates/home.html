@@ -74,7 +74,11 @@
           {% for app in app_list %}
           <article class="media content-section">
             <div class="media-body">
-
+                {% if app.pid != None %}
+                  <a href="{{ url_for('application_system.kill_process', pid=app.pid) }}">
+                  <img align="right" src="{{ url_for('static', filename='icons/running_in_bkrd.svg') }}" data-toggle="tooltip" data-placement="top" title="Process Running. Click here to kill.">
+                  </a>
+                {% endif %}
                 <div class="image-container">
                   <a href="{{ url_for('application_system.run_script', script_hex_id=app.hex_id) }}">
                   <img src="{{ url_for('static', filename='app_icons/' + app.icon) }}" class="rounded mx-auto d-block" onclick="loading();" data-toggle="tooltip" data-placement="top" title="Run Application">
@@ -83,6 +87,17 @@
 
                 <p></p>
                 <h2 class="text-center"> {{ app.script_name }}</h2>
+                <div class="text-center">
+                  <font color="#898F91">Author:</font>
+                </div>
+                <p class="text-center">{{ app.author }}</p>
+                <div class="text-center">
+                  <font color="#898F91">Website:</font>
+                </div>
+                <p class="text-center">{{ app.website }}</p>
+                <div class="text-center">
+                  <font color="#898F91">Description:</font>
+                </div>
                 <p class="text-center">{{ app.description }}</p>
 
                 <div>

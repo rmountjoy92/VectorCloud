@@ -2,6 +2,7 @@
 
 import sys
 import time
+from grpc._channel import _Rendezvous
 from pathlib import Path
 from flask import flash
 from configparser import ConfigParser
@@ -90,6 +91,10 @@ def get_stats(force=False):
             db.session.merge(status)
             db.session.commit()
 
+    except _Rendezvous:
+        time.sleep(3)
+        get_stats(force=force)
+
     except anki_vector.exceptions.VectorNotFoundException:
         return 'vector_not_found'
 
@@ -100,7 +105,7 @@ def get_stats(force=False):
 # robot_do(): this function executes all commands in the command table in order
 # with the condition of with anki_vector.Robot(args.serial) as robot:
 # if there are commands in the commands in the command table, all you have to
-# do to executes is redirect to /execute_commands/ and this function will be
+# do to execute is redirect to /execute_commands/ and this function will be
 # called. Output is sent to a flash message.
 def robot_do(override_output=None):
     robot_commands = Command.query.all()

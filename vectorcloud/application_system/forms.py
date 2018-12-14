@@ -2,7 +2,8 @@
 
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import StringField, SubmitField, TextAreaField, MultipleFileField
+from wtforms import StringField, SubmitField, TextAreaField,\
+    MultipleFileField, BooleanField
 from wtforms.validators import DataRequired
 
 
@@ -11,6 +12,10 @@ class UploadScript(FlaskForm):
                               validators=[DataRequired()])
 
     description = TextAreaField('Description')
+
+    author = StringField('Author Name')
+
+    website = StringField('Website')
 
     script = FileField('Set Main Python File',
                        validators=[FileAllowed(['py'])])
@@ -24,3 +29,5 @@ class UploadScript(FlaskForm):
     upload = SubmitField('Upload')
 
     update = SubmitField('Update')
+
+    run_in_bkrd = BooleanField('Run in Background?')

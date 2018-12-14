@@ -49,6 +49,32 @@
                     {% endif %}
                 </div>
                 <div class="form-group">
+                    {{ form.author.label(class="form-control-label") }}
+                    {% if form.author.errors %}
+                        {{ form.author(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.author.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.author(autocomplete="off", class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.website.label(class="form-control-label") }}
+                    {% if form.website.errors %}
+                        {{ form.website(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.website.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.website(autocomplete="off", class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
                     {{ form.script.label() }}
                     {{ form.script(class="form-control-file") }}
                     {% if form.script.error %}
@@ -88,6 +114,10 @@
                   </a>
                 </p>
               {% endfor %}
+            </div>
+            <div class="form-check">
+                {{ form.run_in_bkrd(class="form-check-input") }}
+                {{ form.run_in_bkrd.label(class="form-check-label") }}
             </div>
             <div class="form-group">
                 {{ form.update(class="btn btn-dark") }}

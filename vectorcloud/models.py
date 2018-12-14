@@ -37,12 +37,18 @@ class User(db.Model, UserMixin):
 class Application(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     script_name = db.Column(db.Text)
+    author = db.Column(db.Text)
+    website = db.Column(db.Text)
     description = db.Column(db.Text)
     icon = db.Column(db.String(20))
     hex_id = db.Column(db.Text)
+    run_in_bkrd = db.Column(db.Boolean, default=False)
+    pid = db.Column(db.Integer, default=None)
 
     def __repr__(self):
-        return [self.id, self.script_name, self.description, self.hex_id]
+        return [self.id, self.script_name, self.script_name, self.author,
+                self.website, self.description, self.icon, self.hex_id,
+                self.run_in_bkrd, self.pid]
 
 
 class AppSupport(db.Model):

@@ -6,7 +6,7 @@ import platform
 from flask import render_template, url_for, redirect, flash, request, Blueprint
 from flask_login import current_user
 from vectorcloud.main.forms import CommandForm
-from vectorcloud.models import Command, User, Status, Application
+from vectorcloud.models import Command, User, Status, Application, Output
 from vectorcloud.main.utils import robot_do, get_stats
 from vectorcloud import db, app
 
@@ -67,16 +67,19 @@ def add_header(response):
 # ------------------------------------------------------------------------------
 
 # Home page
-
-
 @main.route("/")
 @main.route("/home", methods=['GET', 'POST'])
 def home():
     if sdk_version != vectorcloud_sdk_version:
-        flash('Incompatible SDK Version detected! ' + sdk_version +
-              ' is installed. VectorCloud is using version: ' +
-              vectorcloud_sdk_version, 'danger')
-        return redirect(url_for('sdk_management.sdk'))
+        return render_template('error_pages/sdk_error.html',
+                               sdk_version=sdk_version,
+                               vectorcloud_sdk_version=vectorcloud_sdk_version)
+
+    output = Output.query.all()
+    for out in output:
+        flash(out, 'success')
+    db.session.query(Output).delete()
+    db.session.commit()
 
     app_list = Application.query.all()
     form = CommandForm()
@@ -96,7 +99,8 @@ def home():
     vector_status = Status.query.first()
     return render_template('home.html', vector_status=vector_status,
                            form=form, command_list=command_list,
-                           app_list=app_list)
+                           app_list=app_list,
+                           sdk_version=sdk_version)
 
 
 # executes all commmands in the command table(if present), redirects to home.

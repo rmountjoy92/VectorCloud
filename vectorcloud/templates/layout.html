@@ -127,14 +127,17 @@
               </div>
             {% endif %}
             <div class="fixed">
-              <div class="navbar-text text-center">
+              <div class="navbar-text" align="right">
                 <p>
                   <text><b>{{ vector_status.name }}</b></text>
                 </p>
                 <p>
                   <text><b>IP:</b> {{ vector_status.ip }}</text>
                 </p>
-                  <text><b>Version:</b> {{ vector_status.version }}</text>
+                <p>
+                  <text><b>OS Version:</b> {{ vector_status.version }}</text>
+                </p>
+                  <text><b>SDK Version:</b> {{ sdk_version }}</text>
               </div>
             </div>
           </div>
