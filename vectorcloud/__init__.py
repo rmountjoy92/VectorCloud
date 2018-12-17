@@ -20,6 +20,7 @@ from vectorcloud.application_system.routes import application_system
 from vectorcloud.settings_system.routes import settings_system
 from vectorcloud.error_pages.routes import error_pages
 from vectorcloud.flask_app.routes import flask_app
+from vectorcloud.application_store.routes import application_store
 
 app.register_blueprint(main)
 app.register_blueprint(user_system)
@@ -27,3 +28,4 @@ app.register_blueprint(application_system)
 app.register_blueprint(settings_system)
 app.register_blueprint(error_pages)
 app.register_blueprint(flask_app)
+app.register_blueprint(application_store)

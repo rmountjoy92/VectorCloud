@@ -8,6 +8,11 @@
           <img src="{{ url_for('static', filename='icons/settings-menu.svg') }}" width="32px" height="32px">
           </a>
         </div>
+        <div class="column icon" data-toggle="tooltip" data-placement="top" title="App Store">
+          <a href="{{ url_for('application_store.app_store') }}">
+          <img src="{{ url_for('static', filename='icons/package.svg') }}" width="32px" height="32px">
+          </a>
+        </div>
         <div class="column icon" data-toggle="tooltip" data-placement="top" title="User Settings">
           <a href="{{ url_for('settings_system.settings_user') }}">
           <img src="{{ url_for('static', filename='icons/user.svg') }}" width="32px" height="32px">

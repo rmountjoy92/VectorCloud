@@ -46,7 +46,7 @@ class Application(db.Model):
     pid = db.Column(db.Integer, default=None)
 
     def __repr__(self):
-        return [self.id, self.script_name, self.script_name, self.author,
+        return [self.id, self.script_name, self.author,
                 self.website, self.description, self.icon, self.hex_id,
                 self.run_in_bkrd, self.pid]
 
@@ -87,3 +87,19 @@ class Settings(db.Model):
     def __repr__(self):
         return [self.id, self.greeting_message_enabled,
                 self.custom_greeting_message]
+
+
+class ApplicationStore(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    script_name = db.Column(db.Text)
+    author = db.Column(db.Text)
+    website = db.Column(db.Text)
+    description = db.Column(db.Text)
+    icon = db.Column(db.String(20))
+    installed = db.Column(db.Boolean, default=False)
+    zip_file = db.Column(db.Text)
+
+    def __repr__(self):
+        return [self.id, self.script_name, self.author,
+                self.website, self.description, self.icon,
+                self.installed, self.zip_file]

@@ -93,7 +93,7 @@ def get_stats(force=False):
 
     except _Rendezvous:
         time.sleep(3)
-        get_stats(force=force)
+        get_stats(force=True)
 
     except anki_vector.exceptions.VectorNotFoundException:
         return 'vector_not_found'

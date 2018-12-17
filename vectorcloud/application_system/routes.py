@@ -7,9 +7,11 @@ import multiprocessing
 import signal
 from flask import render_template, url_for, redirect, flash, request, Blueprint
 from vectorcloud.application_system.forms import UploadScript
-from vectorcloud.models import Application, AppSupport, Status, Output
+from vectorcloud.models import Application, AppSupport, Status, Output,\
+    ApplicationStore
 from vectorcloud import app, db
 from vectorcloud.main.utils import get_stats
+from vectorcloud.main.routes import sdk_version
 from vectorcloud.application_system.utils import save_icon, save_script,\
     save_script_helpers, get_script_folder, get_lib_folder
 
@@ -59,8 +61,17 @@ def upload():
 
     vector_status = Status.query.first()
     form = UploadScript()
+    applications = Application.query.all()
 
     if form.validate_on_submit():
+        if applications:
+            for application in applications:
+                if application.script_name.lower() == form.script_name.data.lower():
+                    flash('Application named "' + application.script_name +
+                          '" already exists, please rename the existing \
+                          application and try again.', 'warning')
+                    return redirect(url_for('application_system.upload'))
+
         if form.script.data:
             random_hex = save_script(form.script.data)
             if form.script_helpers.data:
@@ -90,7 +101,8 @@ def upload():
             flash("No script uploaded", 'warning')
         return redirect(url_for('application_system.upload'))
     return render_template(
-        'upload.html', title='Upload', form=form, vector_status=vector_status)
+        'upload.html', title='Upload', form=form, vector_status=vector_status,
+        sdk_version=sdk_version)
 
 
 def start_bkrd_script(py_cmd, script_path, application):
@@ -108,7 +120,7 @@ def start_bkrd_script(py_cmd, script_path, application):
         db.session.add(output)
 
     else:
-        msg = 'Something is not right with your script.'
+        msg = 'Something is not right, try again.'
         output = Output(output=msg)
         db.session.add(output)
 
@@ -145,6 +157,7 @@ def run_script(script_hex_id):
         return redirect(url_for('main.home'))
 
     else:
+        get_stats(force=True)
         t = multiprocessing.Process(target=start_bkrd_script,
                                     args=(py_cmd, script_path, application))
         t.start()
@@ -234,7 +247,7 @@ def edit_application(script_id):
         'edit_application.html', title='Edit Application', form=form,
         script_id=script_id, support_files=support_files,
         support_files_first=support_files_first, application=application,
-        vector_status=vector_status)
+        vector_status=vector_status, sdk_version=sdk_version)
 
 
 # this deletes an application by it's unique key (id column). This will delete:
@@ -246,6 +259,13 @@ def edit_application(script_id):
                           methods=['GET', 'POST'])
 def delete_application(script_id):
     application = Application.query.filter_by(id=script_id).first()
+    store_app = ApplicationStore.query.filter_by(script_name=application.script_name).first()
+
+    if store_app:
+        store_app.installed = False
+        db.session.merge(store_app)
+        db.session.commit()
+
     hex_id = application.hex_id
     script_fn = application.hex_id + '.py'
     script_path = os.path.join(scripts_folder, script_fn)

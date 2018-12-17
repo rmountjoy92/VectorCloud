@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 
+import os
+import signal
 from flask import render_template, url_for, redirect, flash, Blueprint
 from flask_login import login_user, logout_user, current_user
 from vectorcloud.user_system.forms import RegisterForm, LoginForm
-from vectorcloud.models import User
+from vectorcloud.models import User, Application
 from vectorcloud import db, bcrypt
 from vectorcloud.main.utils import public_route
 from vectorcloud.user_system.utils import login_message
@@ -90,5 +92,13 @@ def login():
 # this logs the user out and redirects to the login page
 @user_system.route("/logout")
 def logout():
+    applications = db.session.query(Application).\
+        filter(Application.pid.isnot(None)).all()
+    if len(applications) > 0:
+        for application in applications:
+            os.kill(int(application.pid), signal.SIGINT)
+            application.pid = None
+            db.session.merge(application)
+            db.session.commit()
     logout_user()
     return redirect(url_for('user_system.login'))
