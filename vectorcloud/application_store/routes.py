@@ -19,7 +19,15 @@ packages_folder = os.path.join(app_store_folder, 'packages')
 
 @application_store.route("/app_store", methods=['GET', 'POST'])
 def app_store():
-    app_list = ApplicationStore.query.all()
+    store_app_list = ApplicationStore.query.all()
+    main_app_list = Application.query.all()
+
+    for store_app in store_app_list:
+        for main_app in main_app_list:
+            if store_app.script_name.lower() == main_app.script_name.lower():
+                store_app.installed = True
+                db.session.merge(store_app)
+                db.session.commit()
 
     err_msg = get_stats()
     if err_msg:
@@ -37,9 +45,12 @@ def app_store():
             flash('No Package Uploaded!', 'warning')
         return redirect(url_for('application_store.app_store'))
 
-    return render_template(
-        'settings/app_store.html', title='App Store', vector_status=vector_status,
-        sdk_version=sdk_version, form=form, app_list=app_list)
+    return render_template('settings/app_store.html',
+                           title='App Store',
+                           vector_status=vector_status,
+                           sdk_version=sdk_version,
+                           form=form,
+                           app_list=store_app_list)
 
 
 @application_store.route("/app_store_admin_add", methods=['GET', 'POST'])
@@ -66,7 +77,8 @@ def app_store_admin_add():
         form=form, app_list=app_list)
 
 
-@application_store.route("/edit_store_application/<script_id>", methods=['GET', 'POST'])
+@application_store.route("/edit_store_application/<script_id>",
+                         methods=['GET', 'POST'])
 def edit_store_application(script_id):
     form = AdminAdd()
     store_app = ApplicationStore.query.filter_by(id=script_id).first()
@@ -95,21 +107,24 @@ def edit_store_application(script_id):
         form=form, store_app=store_app)
 
 
-@application_store.route("/delete_store_application/<script_id>", methods=['GET', 'POST'])
+@application_store.route("/delete_store_application/<script_id>",
+                         methods=['GET', 'POST'])
 def delete_store_application(script_id):
     db.session.query(ApplicationStore).filter_by(id=script_id).delete()
     db.session.commit()
     return redirect(url_for('application_store.app_store_admin_add'))
 
 
-@application_store.route("/install_store_application/<script_id>", methods=['GET', 'POST'])
+@application_store.route("/install_store_application/<script_id>",
+                         methods=['GET', 'POST'])
 def install_store_application(script_id):
     store_app = ApplicationStore.query.filter_by(id=script_id).first()
     applications = Application.query.all()
 
     if applications:
         for application in applications:
-            if application.script_name.lower() == store_app.script_name.lower():
+            if application.script_name.lower() == \
+                    store_app.script_name.lower():
                 flash('Application named "' + application.script_name +
                       '" already exists, please rename the existing \
                       application and try again.', 'warning')

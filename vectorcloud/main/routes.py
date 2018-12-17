@@ -6,7 +6,8 @@ import platform
 from flask import render_template, url_for, redirect, flash, request, Blueprint
 from flask_login import current_user
 from vectorcloud.main.forms import CommandForm
-from vectorcloud.models import Command, User, Status, Application, Output
+from vectorcloud.models import Command, User, Status, Application, Output,\
+    ApplicationStore
 from vectorcloud.main.utils import robot_do, get_stats
 from vectorcloud import db, app
 
@@ -82,6 +83,15 @@ def home():
     db.session.commit()
 
     app_list = Application.query.all()
+    store_app_list = ApplicationStore.query.all()
+
+    for store_app in store_app_list:
+        for main_app in app_list:
+            if store_app.script_name.lower() == main_app.script_name.lower():
+                store_app.installed = True
+                db.session.merge(store_app)
+                db.session.commit()
+
     form = CommandForm()
 
     if form.validate_on_submit():

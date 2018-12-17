@@ -5,6 +5,7 @@ import subprocess
 import platform
 import multiprocessing
 import signal
+from sqlalchemy import func
 from flask import render_template, url_for, redirect, flash, request, Blueprint
 from vectorcloud.application_system.forms import UploadScript
 from vectorcloud.models import Application, AppSupport, Status, Output,\
@@ -153,7 +154,7 @@ def run_script(script_hex_id):
                   str(out.stdout), 'success')
 
         else:
-            flash('Something is not right with your script.', 'warning')
+            flash('Something is not right. Try again', 'warning')
         return redirect(url_for('main.home'))
 
     else:
@@ -259,7 +260,8 @@ def edit_application(script_id):
                           methods=['GET', 'POST'])
 def delete_application(script_id):
     application = Application.query.filter_by(id=script_id).first()
-    store_app = ApplicationStore.query.filter_by(script_name=application.script_name).first()
+    store_app = ApplicationStore.query.filter(func.lower(
+        ApplicationStore.script_name) == func.lower(application.script_name)).first()
 
     if store_app:
         store_app.installed = False

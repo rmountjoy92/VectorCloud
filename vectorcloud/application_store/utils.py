@@ -17,7 +17,9 @@ packages_folder = os.path.join(curr_folder, 'packages')
 temp_folder = os.path.join(curr_folder, 'temp')
 scripts_folder = get_script_folder()
 lib_folder = get_lib_folder(scripts_folder)
-app_icons_folder = os.path.join(scripts_folder, 'vectorcloud', 'static',
+app_icons_folder = os.path.join(scripts_folder,
+                                'vectorcloud',
+                                'static',
                                 'app_icons')
 
 
@@ -32,22 +34,31 @@ def clear_installed_helpers(hex_id):
     for helper in helper_files:
         helper_fn = os.path.join(lib_folder, helper.file_name)
         os.remove(helper_fn)
-        db.session.query(AppSupport).filter_by(file_name=helper.file_name).delete()
+        db.session.query(AppSupport).\
+            filter_by(file_name=helper.file_name).delete()
         db.session.commit()
 
 
-def install_package(form_package, store_package='False', override_output=False):
+def install_package(form_package,
+                    store_package='False',
+                    override_output=False):
     temp_exists = os.path.isdir(temp_folder)
+
     if temp_exists is False:
         os.mkdir(temp_folder)
+
     package_fn = os.path.join(temp_folder, 'temp.zip')
     store_package_fn = os.path.join(packages_folder, store_package)
+
     if store_package is 'False':
         form_package.save(package_fn)
+
     else:
         copyfile(store_package_fn, package_fn)
+
     with zipfile.ZipFile(package_fn, 'r') as zip_ref:
         zip_ref.extractall(temp_folder)
+
     os.remove(package_fn)
 
     config_file = os.path.join(temp_folder, 'setup.ini')
@@ -183,5 +194,5 @@ def install_package(form_package, store_package='False', override_output=False):
                               run_in_bkrd=run_in_bkrd)
     db.session.add(application)
     db.session.commit()
-    if override_output == False:
+    if override_output is False:
         flash('Package Installed!', 'success')
