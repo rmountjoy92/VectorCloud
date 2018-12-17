@@ -41,10 +41,11 @@ py run.py
 
 
 ## Features I'm currently working on
+* document package install process; make examples/downloadable template
+* create more store apps
 * fix bugs
 * develop RESTFUL API
 * add network state and pose to status
-* create more store apps
 
 
 ## Features I plan to do in the future
