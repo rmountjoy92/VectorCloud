@@ -37,6 +37,9 @@ def clear_installed_helpers(hex_id):
 
 
 def install_package(form_package, store_package='False', override_output=False):
+    temp_exists = os.path.isdir(temp_folder)
+    if temp_exists is False:
+        os.mkdir(temp_folder)
     package_fn = os.path.join(temp_folder, 'temp.zip')
     store_package_fn = os.path.join(packages_folder, store_package)
     if store_package is 'False':
