@@ -1,10 +1,9 @@
+# VectorCloud
 ![alt text](https://i.imgur.com/yQ6QaWD.png)
 ![alt text](https://i.imgur.com/AMQkLEW.png)
 ![alt text](https://i.imgur.com/wMgj8X9.png)
-# VectorCloud
-My goal with this project is to create a web interface using Flask for controlling vector, displaying information, and organizing (and possibly scheduling) sdk programs to run. My inspiration for this project comes from https://octoprint.org/ which is a web interface for controlling my 3d printer.
 
-Here is a list of features I want to include in this project, if you have anything to add to list let me know and I will put it on here. I will be adding things as I learn more about the SDK.
+My goal with this project is to create a web interface using Flask for controlling vector, displaying information, and organizing (and possibly scheduling) sdk programs to run. My inspiration for this project comes from https://octoprint.org/ which is a web interface for controlling my 3d printer.
 
 Please feel free to contribute.
 
@@ -32,36 +31,25 @@ py run.py
 
 
 ## Current Features
-* view battery information provided by vector
-* display battery voltage level as icon on navbar
-* view cube information provided by vector
-* added a button for vector to go pick up his cube (unreliable; will get better with next SDK release)
-* dock/undock vector from buttons on navbar
-* display version number, ip address, and vector name provided by vector
-* stage mulitple robots commands via interactive form and bulk send commands to vector
-* SQLite database for storing data in tables
-* user authentication and registration, all routes are blocked unless user logs in
-* upload python scripts to server, save as application with name, description and picture, support files
-* edit and delete sdk apps
-* edit username & password
-* database integration for uploaded apps
-* welcome message and settings
-* remote control vector from the control page
+* view information exposed by Vector on a webpage - battery level, ip, name, and much more!
+* Install and manage applications for Vector by installing a VectorCloud package or uploading a script
+* Install sample applications from an App Store
+* Remote control Vector from the interface
+* Stage and send SDK commands from a form on the home page
+* Create, edit and delete a user login
+* Customizable login message
 
 
-## Soon
+## Features I'm currently working on
 * fix bugs
 * develop RESTFUL API
-* add network state, pose, status output to status
-* add more buttons to home screen for more robot functions
-* animations list page with links with ability to click to animate vector (all thousands of them) with search option.
-* create a text box to type in text to display on vector's face
+* add network state and pose to status
+* create more store apps
 
 
-
-## Eventually
-* set up uWSGI
+## Features I plan to do in the future
+* set up uWSGI, or some other production server
+* create a Raspberry Pi image - once someone figures out how to run the sdk on it.
 * plugin manager
 * manage photos and videos
-* interaction with cube lights
 * learn the 'events' module and integrate it in some way
