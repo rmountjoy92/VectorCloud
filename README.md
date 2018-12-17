@@ -8,6 +8,7 @@ My goal with this project is to create a web interface using Flask for controlli
 Please feel free to contribute.
 
 ## How to run
+* make sure git is installed on your machine
 * create a virtual environment https://packaging.python.org/guides/installing-using-pip-and-virtualenv/
 * from inside the virtual enviroment install the SDK as per the directions in the SDK docs
 * in a terminal, navigate to your virtual environment. From inside your virtual environment enter:
