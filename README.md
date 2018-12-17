@@ -1,5 +1,6 @@
-![alt text](https://i.imgur.com/XZvsWBr.png)
+![alt text](https://i.imgur.com/yQ6QaWD.png)
 ![alt text](https://i.imgur.com/AMQkLEW.png)
+![alt text](https://i.imgur.com/wMgj8X9.png)
 # VectorCloud
 My goal with this project is to create a web interface using Flask for controlling vector, displaying information, and organizing (and possibly scheduling) sdk programs to run. My inspiration for this project comes from https://octoprint.org/ which is a web interface for controlling my 3d printer.
 
