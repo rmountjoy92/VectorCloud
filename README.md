@@ -9,7 +9,7 @@ Please feel free to contribute.
 
 ## How to run
 * make sure git is installed on your machine
-* create a virtual environment https://packaging.python.org/guides/installing-using-pip-and-virtualenv/
+* create a virtual environment https://www.pythonforbeginners.com/basics/how-to-use-python-virtualenv/
 * from inside the virtual enviroment install the SDK as per the directions in the SDK docs
 * in a terminal, navigate to your virtual environment. From inside your virtual environment enter:
 ```
