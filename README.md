@@ -41,6 +41,7 @@ py run.py
 
 
 ## Features I'm currently working on
+* export installed packages
 * update system
 * document package install process; make examples/downloadable template
 * create view and sort options and search function for home page app list and store app list
