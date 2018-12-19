@@ -25,9 +25,10 @@ app_icons_folder = os.path.join(scripts_folder,
 
 
 def clear_temp_folder():
-    fileList = os.listdir(temp_folder)
-    for fileName in fileList:
-        os.remove(temp_folder+"/"+fileName)
+    file_list = os.listdir(temp_folder)
+    for file_name in file_list:
+        file_path = os.path.join(temp_folder, file_name)
+        os.remove(file_path)
 
 
 def clear_installed_helpers(hex_id):

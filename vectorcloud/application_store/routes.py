@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
 import os
-from flask import render_template, url_for, redirect, Blueprint, flash, request, send_file
+from flask import render_template, url_for, redirect, Blueprint, flash,\
+    request, send_file
 from vectorcloud import db
 from vectorcloud.models import Status, ApplicationStore, Application
 from vectorcloud.main.utils import get_stats
