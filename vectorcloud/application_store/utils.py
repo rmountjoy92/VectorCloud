@@ -3,9 +3,10 @@
 import os
 import zipfile
 import secrets
+import shutil
 from PIL import Image
 from shutil import copyfile
-from flask import flash, redirect, url_for
+from flask import flash, redirect, url_for, send_file
 from vectorcloud import db
 from vectorcloud.models import Application, AppSupport
 from vectorcloud.main.utils import config
@@ -196,3 +197,58 @@ def install_package(form_package,
     db.session.commit()
     if override_output is False:
         flash('Package Installed!', 'success')
+
+
+def export_package(script_id):
+    temp_exists = os.path.isdir(temp_folder)
+
+    if temp_exists is False:
+        os.mkdir(temp_folder)
+
+    application = Application.query.filter_by(id=script_id).first()
+    helper_files = AppSupport.query.filter_by(hex_id=application.hex_id).all()
+    helper_list = []
+
+    for helper in helper_files:
+        helper_list.append(helper.file_name)
+
+    helper_files_str = ' '.join(helper_list)
+
+    config_file_fn = os.path.join(temp_folder, 'setup.ini')
+    config_file = open(config_file_fn, "w+")
+    config_file.write('[' + application.script_name + ']\n')
+    config_file.write('script_name = ' + application.hex_id + '.py\n')
+    config_file.write('helper_files = ' + helper_files_str + '\n')
+    config_file.write('icon_file = ' + application.icon + '\n')
+    config_file.write('description = ' + application.description + '\n')
+    config_file.write('author = ' + application.author + '\n')
+    config_file.write('website = ' + application.website + '\n')
+    if application.run_in_bkrd is True:
+        run_in_bkrd = 'True'
+    if application.run_in_bkrd is False:
+        run_in_bkrd = 'False'
+    config_file.write('run_in_bkrd = ' + run_in_bkrd + '\n')
+    config_file.close()
+
+    script_fn = os.path.join(scripts_folder, application.hex_id + '.py')
+    new_script_fn = os.path.join(temp_folder, application.hex_id + '.py')
+    copyfile(script_fn, new_script_fn)
+
+    for helper in helper_list:
+        helper_fn = os.path.join(lib_folder, helper)
+        new_helper_fn = os.path.join(temp_folder, helper)
+        copyfile(helper_fn, new_helper_fn)
+
+    if application.icon != 'default.png':
+        icon_fn = os.path.join(scripts_folder, 'vectorcloud',
+                               'static', 'app_icons', application.icon)
+        new_icon_fn = os.path.join(temp_folder, application.icon)
+        copyfile(icon_fn, new_icon_fn)
+
+    zip_name = application.script_name
+    zip_name = zip_name.replace(' ', '_')
+    shutil.make_archive(zip_name, 'zip', temp_folder)
+    zip_fn = os.path.join(scripts_folder, zip_name + '.zip')
+    new_zip_fn = os.path.join(temp_folder, zip_name + '.zip')
+    os.rename(zip_fn, new_zip_fn)
+    return new_zip_fn

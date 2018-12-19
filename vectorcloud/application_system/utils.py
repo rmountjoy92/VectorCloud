@@ -4,7 +4,7 @@ import os
 import sys
 import secrets
 from pathlib import Path
-from vectorcloud.models import AppSupport
+from vectorcloud.models import AppSupport, Application
 from vectorcloud import db
 
 try:

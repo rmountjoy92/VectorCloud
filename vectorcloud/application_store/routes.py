@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 
 import os
-from flask import render_template, url_for, redirect, Blueprint, flash, request
+from flask import render_template, url_for, redirect, Blueprint, flash, request, send_file
 from vectorcloud import db
 from vectorcloud.models import Status, ApplicationStore, Application
 from vectorcloud.main.utils import get_stats
 from vectorcloud.main.routes import sdk_version
 from vectorcloud.application_store.forms import UploadPackage, AdminAdd
-from vectorcloud.application_store.utils import install_package
-
+from vectorcloud.application_store.utils import install_package,\
+    export_package, clear_temp_folder
 
 application_store = Blueprint('application_store', __name__)
 
@@ -19,6 +19,7 @@ packages_folder = os.path.join(app_store_folder, 'packages')
 
 @application_store.route("/app_store", methods=['GET', 'POST'])
 def app_store():
+    clear_temp_folder()
     store_app_list = ApplicationStore.query.all()
     main_app_list = Application.query.all()
 
@@ -138,3 +139,12 @@ def install_store_application(script_id):
     db.session.commit()
     flash(store_app.script_name + ' installed!', 'success')
     return redirect(url_for('application_store.app_store'))
+
+
+@application_store.route("/export_application/<script_id>",
+                         methods=['GET', 'POST'])
+def export_application(script_id):
+    zip_fn = export_package(script_id)
+    zip_name = os.path.basename(zip_fn)
+    return send_file(zip_fn, attachment_filename=zip_name)
+    return redirect(url_for('main.home'))

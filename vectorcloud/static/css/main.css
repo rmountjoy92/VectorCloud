@@ -1,5 +1,17 @@
+a {
+  color: #00EE93;
+}
+
+a:hover {
+  color: #FCFCFC;
+}
+
+.list-view-spinner {
+  margin: 5px 0px 0px 20px;
+}
+
 .store-icon {
-  margin: 0px 0px 0px 5px;
+  margin: 10px 0px 0px 5px;
 }
 .store-icon-main {
   margin: 0px 5px 0px 0px;

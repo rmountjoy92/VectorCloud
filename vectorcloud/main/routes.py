@@ -7,7 +7,7 @@ from flask import render_template, url_for, redirect, flash, request, Blueprint
 from flask_login import current_user
 from vectorcloud.main.forms import CommandForm
 from vectorcloud.models import Command, User, Status, Application, Output,\
-    ApplicationStore
+    ApplicationStore, Settings
 from vectorcloud.main.utils import robot_do, get_stats
 from vectorcloud import db, app
 
@@ -107,10 +107,39 @@ def home():
         return redirect(url_for('error_pages.' + err_msg))
 
     vector_status = Status.query.first()
-    return render_template('home.html', vector_status=vector_status,
-                           form=form, command_list=command_list,
-                           app_list=app_list,
-                           sdk_version=sdk_version)
+    settings = Settings.query.first()
+
+    if settings.view == 'card':
+        return render_template('home/home_card_view.html',
+                               vector_status=vector_status,
+                               form=form, command_list=command_list,
+                               app_list=app_list,
+                               sdk_version=sdk_version)
+
+    if settings.view == 'list':
+        return render_template('home/home_list_view.html',
+                               vector_status=vector_status,
+                               form=form, command_list=command_list,
+                               app_list=app_list,
+                               sdk_version=sdk_version)
+
+
+@main.route("/set_card_view")
+def set_card_view():
+    settings = Settings.query.first()
+    settings.view = 'card'
+    db.session.merge(settings)
+    db.session.commit()
+    return redirect(url_for('main.home'))
+
+
+@main.route("/set_list_view")
+def set_list_view():
+    settings = Settings.query.first()
+    settings.view = 'list'
+    db.session.merge(settings)
+    db.session.commit()
+    return redirect(url_for('main.home'))
 
 
 # executes all commmands in the command table(if present), redirects to home.
