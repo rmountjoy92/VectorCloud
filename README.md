@@ -43,7 +43,6 @@ py run.py
 
 ## Features I'm currently working on
 * update system
-* document package install process; make examples/downloadable template
 * create more store apps
 * fix bugs
 * develop RESTFUL API
