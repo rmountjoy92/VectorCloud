@@ -34,6 +34,7 @@ py run.py
 * view information exposed by Vector on a webpage - battery level, ip, name, and much more!
 * Install and manage applications for Vector by installing a VectorCloud package or uploading a script
 * Install sample applications from an App Store
+* export installed applications as packages
 * Remote control Vector from the interface
 * Stage and send SDK commands from a form on the home page
 * Create, edit and delete a user login
@@ -41,10 +42,8 @@ py run.py
 
 
 ## Features I'm currently working on
-* export installed applications as packages
 * update system
 * document package install process; make examples/downloadable template
-* create view and sort options and search function for home page app list and store app list
 * create more store apps
 * fix bugs
 * develop RESTFUL API
