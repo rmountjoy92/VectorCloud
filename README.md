@@ -9,9 +9,10 @@ Please feel free to contribute.
 
 ## How to run
 * make sure git is installed on your machine
-* create a virtual environment https://www.pythonforbeginners.com/basics/how-to-use-python-virtualenv/
-* from inside the virtual enviroment install the SDK as per the directions in the SDK docs
-* in a terminal, navigate to your virtual environment. From inside your virtual environment enter:
+* (recommended) create a virtual environment https://www.pythonforbeginners.com/basics/how-to-use-python-virtualenv/
+* (recommended) navigate to your virtual environment.
+* Install the SDK as per the directions in the SDK docs
+* In a terminal, enter:
 ```
 git clone https://github.com/rmountjoy92/VectorCloud
 pip3 install flask flask-sqlalchemy flask-bcrypt flask-login flask-wtf flask-bootstrap
