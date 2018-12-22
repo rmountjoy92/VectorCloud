@@ -6,6 +6,23 @@
             {{ form.hidden_tag() }}
             <fieldset class="form-group">
                 <legend class="border-bottom border-dark mb-4 text-center">Editing: {{ application.script_name }}</legend>
+                <div class="row image-container border-bottom border-dark mb-4">
+                  <div class="column icon" data-toggle="tooltip" data-placement="top" title="Application Settings">
+                    <a href="{{ url_for('application_system.edit_app_settings_file', hex_id=application.hex_id) }}">
+                    <img src="{{ url_for('static', filename='icons/settings-menu.svg') }}" width="32px" height="32px">
+                    </a>
+                  </div>
+                  <div class="column icon" data-toggle="tooltip" data-placement="top" title="Delete Application">
+                    <a href="{{ url_for('application_system.delete_application', script_id=script_id) }}">
+                    <img src="{{ url_for('static', filename='icons/trash-menu.svg') }}" width="32px" height="32px">
+                    </a>
+                  </div>
+                  <div class="column icon" data-toggle="tooltip" data-placement="top" title="Export Application">
+                    <a href="{{ url_for('application_store.export_application', script_id=script_id) }}">
+                    <img src="{{ url_for('static', filename='icons/download-menu.svg') }}" width="32px" height="32px">
+                    </a>
+                  </div>
+                </div>
                 <div class="text-center">
                   <p>Hex ID: {{ application.hex_id }}</p>
                 </div>
@@ -102,19 +119,6 @@
                     {% endif %}
                   </div>
             </fieldset>
-            <div class="form-group">
-              {% if support_files_first %}
-                <h5>Support Files</h5>
-              {% endif %}
-              {% for file in support_files %}
-                <p><font color="#898F91">
-                  {{ file.file_name }}
-                  <a href="{{ url_for('application_system.delete_support_file', file_id=file.id) }}">
-                  <img class="" align="right" src="{{ url_for('static', filename='icons/trash.svg') }}" width="18px" height="18px" data-toggle="tooltip" data-placement="top" title="Delete {{ file.file_name }}">
-                  </a>
-                </p>
-              {% endfor %}
-            </div>
             <div class="form-check">
               <p>
                 {{ form.run_in_bkrd(class="form-check-input") }}
@@ -122,12 +126,22 @@
               </p>
             </div>
             <div class="form-group">
+              <h5>Support Files</h5>
+              <p></p>
+              {% for file in support_files %}
+                {% if '.ini' in file.file_name %}
+                {% else %}
+                  <p><font color="#898F91">
+                    {{ file.file_name }}
+                    <a href="{{ url_for('application_system.delete_support_file', file_id=file.id) }}">
+                    <img class="" align="right" src="{{ url_for('static', filename='icons/trash.svg') }}" width="18px" height="18px" data-toggle="tooltip" data-placement="top" title="Delete {{ file.file_name }}">
+                    </a>
+                  </p>
+                {% endif %}
+              {% endfor %}
+            </div>
+            <div class="form-group">
                 {{ form.update(class="btn btn-dark") }}
-                <p></p>
-                <a href="{{ url_for('application_system.delete_application', script_id=script_id) }}" class="btn btn-dark" onclick="loading();" role="button">Delete Application</a>
-                <p></p>
-                <a href="{{ url_for('application_store.export_application', script_id=script_id) }}" class="btn btn-dark" role="button">Download Package</a>
-                <p></p>
                 <a href="{{ url_for('main.home') }}" class="btn btn-dark" onclick="loading();" role="button">Cancel</a>
             </div>
         </form>

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import os
 import sys
 import time
 from grpc._channel import _Rendezvous
@@ -50,14 +51,14 @@ def get_stats(force=False):
 
             # get robot name and ip from config file
             home = Path.home()
-            config_file = str(home / ".anki_vector" / "sdk_config.ini")
-            f = open(config_file)
+            sdk_config_file = os.path.join(home, '.anki_vector', 'sdk_config.ini')
+            f = open(sdk_config_file)
             serial = f.readline()
             serial = serial.replace(']', '')
             serial = serial.replace('[', '')
             serial = serial.replace('\n', '')
             f.close()
-            config.read(config_file)
+            config.read(sdk_config_file)
             ip = config.get(serial, 'ip')
             name = config.get(serial, 'name')
 
@@ -142,6 +143,7 @@ def robot_do(override_output=None):
 
     except anki_vector.exceptions.VectorControlTimeoutException:
         return 'vector_stuck'
+
     db.session.query(Command).delete()
     db.session.query(Output).delete()
     db.session.commit()

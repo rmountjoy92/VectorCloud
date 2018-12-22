@@ -7,7 +7,7 @@ import multiprocessing
 import signal
 from sqlalchemy import func
 from flask import render_template, url_for, redirect, flash, request, Blueprint
-from vectorcloud.application_system.forms import UploadScript
+from vectorcloud.application_system.forms import UploadScript, AppSettings
 from vectorcloud.models import Application, AppSupport, Status, Output,\
     ApplicationStore
 from vectorcloud import app, db
@@ -96,6 +96,14 @@ def upload():
                                       website=form.website.data)
             db.session.add(application)
             db.session.commit()
+            settings_file = AppSupport(hex_id=application.hex_id,
+                                       file_name=application.hex_id + '.ini')
+            db.session.add(settings_file)
+            db.session.commit()
+            settings_file_fn = os.path.join(lib_folder,
+                                            application.hex_id + '.ini')
+            config_file = open(settings_file_fn, "w+")
+            config_file.write('[' + application.script_name + ']\n')
             flash("Application Saved!", 'success')
             return redirect(url_for('main.home'))
         else:
@@ -244,11 +252,21 @@ def edit_application(script_id):
         form.description.data = application.description
         form.run_in_bkrd.data = application.run_in_bkrd
 
-    return render_template(
-        'edit_application.html', title='Edit Application', form=form,
-        script_id=script_id, support_files=support_files,
-        support_files_first=support_files_first, application=application,
-        vector_status=vector_status, sdk_version=sdk_version)
+    settings_file = application.hex_id + '.ini'
+    helper_list = []
+    for file in support_files:
+        helper_list.append(file.file_name)
+    return render_template('edit_application.html',
+                           title='Edit Application',
+                           form=form,
+                           script_id=script_id,
+                           support_files=support_files,
+                           support_files_first=support_files_first,
+                           application=application,
+                           vector_status=vector_status,
+                           sdk_version=sdk_version,
+                           settings_file=settings_file,
+                           helper_list=helper_list)
 
 
 # this deletes an application by it's unique key (id column). This will delete:
@@ -307,3 +325,40 @@ def delete_support_file(file_id):
     flash(support_file.file_name + ' Deleted!', 'success')
     return redirect(url_for('application_system.edit_application',
                             script_id=application.id))
+
+
+@application_system.route("/edit_app_settings_file/<hex_id>",
+                          methods=['GET', 'POST'])
+def edit_app_settings_file(hex_id):
+    form = AppSettings()
+
+    err_msg = get_stats()
+    if err_msg:
+        return redirect(url_for('error_pages.' + err_msg))
+    vector_status = Status.query.first()
+    application = Application.query.filter_by(hex_id=hex_id).first()
+    settings_file_fn = os.path.join(lib_folder, hex_id + '.ini')
+    f = open(settings_file_fn)
+    settings = []
+
+    for line in f.readlines():
+        settings.append(line)
+
+    if form.validate_on_submit():
+        settings_file = open(settings_file_fn, "w")
+        settings_file.write(form.variable.data)
+        settings_file.close()
+        flash('Settings saved!', 'success')
+        return redirect(url_for('main.home',
+                                script_id=application.id))
+
+    elif request.method == 'GET':
+        form.variable.data = ''.join(settings)
+
+    return render_template(
+        'applications/edit_app_settings_file.html',
+        title='Edit Application',
+        form=form,
+        vector_status=vector_status,
+        sdk_version=sdk_version,
+        application=application)

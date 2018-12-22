@@ -31,3 +31,11 @@ class UploadScript(FlaskForm):
     update = SubmitField('Update')
 
     run_in_bkrd = BooleanField('Run in Background?')
+
+
+class AppSettings(FlaskForm):
+    variable = TextAreaField('Enter settings variables', validators=[DataRequired()])
+
+    value = StringField('Value')
+
+    save = SubmitField('Save')

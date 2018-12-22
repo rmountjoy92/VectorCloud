@@ -146,6 +146,5 @@ def install_store_application(script_id):
                          methods=['GET', 'POST'])
 def export_application(script_id):
     zip_fn = export_package(script_id)
-    zip_name = os.path.basename(zip_fn)
-    return send_file(zip_fn, attachment_filename=zip_name)
+    return send_file(zip_fn)
     return redirect(url_for('main.home'))

@@ -4,7 +4,7 @@ import os
 import sys
 import secrets
 from pathlib import Path
-from vectorcloud.models import AppSupport, Application
+from vectorcloud.models import AppSupport
 from vectorcloud import db
 
 try:
@@ -53,6 +53,8 @@ def save_script_helpers(helper, random_hex):
     if len(helper_name) > 1:
         helper_name = helper_name.replace("<FileStorage: '", '')
         helper_name = helper_name.replace("' ('text/x-python')>", '')
+        helper_name = helper_name.replace("' ('image/jpeg')>", '')
+        helper_name = helper_name.replace("' ('image/png')>", '')
         fn = os.path.join(lib_folder, helper_name)
         find_helper = AppSupport.query.filter_by(file_name=helper_name).first()
 

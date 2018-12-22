@@ -72,9 +72,9 @@ def add_header(response):
 @main.route("/home", methods=['GET', 'POST'])
 def home():
     if sdk_version != vectorcloud_sdk_version:
-        return render_template('error_pages/sdk_error.html',
-                               sdk_version=sdk_version,
-                               vectorcloud_sdk_version=vectorcloud_sdk_version)
+        flash('You are using a different version of the SDK than VectorCloud!\
+               You are using ' + sdk_version + ' VectorCloud is using ' +
+              vectorcloud_sdk_version, 'warning')
 
     output = Output.query.all()
     for out in output:

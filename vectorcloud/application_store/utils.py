@@ -6,7 +6,7 @@ import secrets
 import shutil
 from PIL import Image
 from shutil import copyfile
-from flask import flash, redirect, url_for, send_file
+from flask import flash, redirect, url_for
 from vectorcloud import db
 from vectorcloud.models import Application, AppSupport
 from vectorcloud.main.utils import config
@@ -24,6 +24,7 @@ app_icons_folder = os.path.join(scripts_folder,
                                 'app_icons')
 
 
+# clears all files in /application_store/temp/
 def clear_temp_folder():
     file_list = os.listdir(temp_folder)
     for file_name in file_list:
@@ -31,6 +32,7 @@ def clear_temp_folder():
         os.remove(file_path)
 
 
+# deletes helper files in case an installation fails
 def clear_installed_helpers(hex_id):
     helper_files = AppSupport.query.filter_by(hex_id=hex_id).all()
     for helper in helper_files:
@@ -46,6 +48,7 @@ def install_package(form_package,
                     override_output=False):
     temp_exists = os.path.isdir(temp_folder)
 
+    # find out if application_store/temp/ exists, if not, make it
     if temp_exists is False:
         os.mkdir(temp_folder)
 
@@ -58,6 +61,7 @@ def install_package(form_package,
     else:
         copyfile(store_package_fn, package_fn)
 
+    # extract package to temp folder
     with zipfile.ZipFile(package_fn, 'r') as zip_ref:
         zip_ref.extractall(temp_folder)
 
@@ -83,6 +87,7 @@ def install_package(form_package,
     script_name = config.get(name, 'script_name')
     applications = Application.query.all()
 
+    # makes sure the new application is unique
     if applications:
         for application in applications:
             if application.script_name.lower() == name.lower():
@@ -167,6 +172,7 @@ def install_package(form_package,
         hex_icon_name = random_hex + f_ext
         new_icon_fn = os.path.join(app_icons_folder, hex_icon_name)
         output_size = (125, 125)
+
         try:
             i = Image.open(icon_fn)
 
@@ -196,10 +202,41 @@ def install_package(form_package,
                               run_in_bkrd=run_in_bkrd)
     db.session.add(application)
     db.session.commit()
+    helper_files = AppSupport.query.filter_by(hex_id=random_hex).all()
+    for helper in helper_files:
+        if '.ini' in helper.file_name:
+            settings_file_fn = os.path.join(lib_folder, helper.file_name)
+            new_settings_file_fn = os.path.join(lib_folder, helper.hex_id + '.ini')
+            os.rename(settings_file_fn, new_settings_file_fn)
+            helper.file_name = helper.hex_id + '.ini'
+            db.session.merge(helper)
+            db.session.commit()
+
+    settings_file_fn = os.path.join(lib_folder, random_hex + '.ini')
+    if os.path.isfile(settings_file_fn):
+        pass
+    else:
+        # settings_file = random_hex + '.ini'
+        # for helper in helper_files:
+        #     if settings_file == helper.file_name:
+        #         pass
+        #     else:
+        settings_file = AppSupport(hex_id=application.hex_id,
+                                   file_name=application.hex_id + '.ini')
+        db.session.add(settings_file)
+        db.session.commit()
+        config_file = open(settings_file_fn, "w+")
+        config_file.write('[' + application.script_name + ']\n')
     if override_output is False:
         flash('Package Installed!', 'success')
 
 
+# this creates a zip file that gets downloaded to the users download folder
+# first it creates a setup.ini file in application_store/temp and fills it
+# in with the metadata from the application's database entry.
+# Then it copies all the main python file, any associated helper files, and
+# the icon file to the temp folder, then it zips it up returns the zip file's
+# path
 def export_package(script_id):
     temp_exists = os.path.isdir(temp_folder)
 
@@ -224,10 +261,13 @@ def export_package(script_id):
     config_file.write('description = ' + application.description + '\n')
     config_file.write('author = ' + application.author + '\n')
     config_file.write('website = ' + application.website + '\n')
+
     if application.run_in_bkrd is True:
         run_in_bkrd = 'True'
+
     if application.run_in_bkrd is False:
         run_in_bkrd = 'False'
+
     config_file.write('run_in_bkrd = ' + run_in_bkrd + '\n')
     config_file.close()
 
