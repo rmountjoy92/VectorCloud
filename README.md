@@ -11,7 +11,7 @@ Please feel free to contribute.
 * make sure git is installed on your machine
 * (recommended) create a virtual environment https://www.pythonforbeginners.com/basics/how-to-use-python-virtualenv/
 * (recommended) navigate to your virtual environment.
-* Install the SDK as per the directions in the SDK docs
+* Install the SDK as per the directions in the SDK docs https://developer.anki.com/vector/docs/initial.html
 * In a terminal, enter:
 ```
 git clone https://github.com/rmountjoy92/VectorCloud
