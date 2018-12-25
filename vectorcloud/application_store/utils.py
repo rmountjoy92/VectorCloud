@@ -26,11 +26,16 @@ app_icons_folder = os.path.join(scripts_folder,
 
 # clears all files in /application_store/temp/
 def clear_temp_folder():
+    create_temp_folder()
     file_list = os.listdir(temp_folder)
     for file_name in file_list:
         file_path = os.path.join(temp_folder, file_name)
         os.remove(file_path)
 
+def create_temp_folder():
+    temp_exists = os.path.isdir(temp_folder)
+    if temp_exists is False:
+        os.mkdir(temp_folder)
 
 # deletes helper files in case an installation fails
 def clear_installed_helpers(hex_id):
@@ -46,11 +51,7 @@ def clear_installed_helpers(hex_id):
 def install_package(form_package,
                     store_package='False',
                     override_output=False):
-    temp_exists = os.path.isdir(temp_folder)
-
-    # find out if application_store/temp/ exists, if not, make it
-    if temp_exists is False:
-        os.mkdir(temp_folder)
+    create_temp_folder()
 
     package_fn = os.path.join(temp_folder, 'temp.zip')
     store_package_fn = os.path.join(packages_folder, store_package)
