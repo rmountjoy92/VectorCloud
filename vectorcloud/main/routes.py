@@ -143,7 +143,8 @@ def home():
                 if search_term.lower() in application.author.lower():
                     apps_searched.append(application.script_name)
 
-        app_list = Application.query.filter(Application.script_name.in_(apps_searched))
+        app_list = Application.query\
+            .filter(Application.script_name.in_(apps_searched))
         apps_searched = set(apps_searched)
         num_results = len(apps_searched)
 
