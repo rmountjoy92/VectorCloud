@@ -21,7 +21,15 @@
   <article class="media content-section">
     <div class="media-body">
       <div class="">
-        <img align="left" src="{{ url_for('static', filename='icons/info.svg') }}" width="24px" height="24px" data-toggle="popover" data-placement="right" title="{{ app.script_name }}" data-html="true" data-content="
+        <img align="left"
+             src="{{ url_for('static', filename='icons/info.svg') }}"
+             width="24px"
+             height="24px"
+             data-toggle="popover"
+             data-placement="right"
+             title="{{ app.script_name }} <a href='#' class='close' data-dismiss='alert'>&times;</a>"
+             data-html="true"
+             data-content="
         <p><b>Author:</b> {{ app.author }}</p>
         <p><b>Website:</b> {{ app.website }}</p>
         <p><b>Description:</b> {{ app.description }}</p>

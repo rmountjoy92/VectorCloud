@@ -27,7 +27,15 @@
                   <p>Hex ID: {{ application.hex_id }}</p>
                 </div>
                 <div class="">
-                  <img align="right" src="{{ url_for('static', filename='icons/info.svg') }}" width="24px" height="24px" data-toggle="popover" data-placement="left" title="Editing an SDK Application" data-html="true" data-content="
+                  <img align="right"
+                       src="{{ url_for('static', filename='icons/info.svg') }}"
+                       width="24px"
+                       height="24px"
+                       data-toggle="popover"
+                       data-placement="left"
+                       title="Editing an SDK Application <a href='#' class='close' data-dismiss='alert'>&times;</a>" 
+                       data-html="true"
+                       data-content="
                   <p><b>Name:</b> (optional) Change your application's name</p>
                   <p><b>Description:</b> (optional) Change your application's description</p>
                   <p><b>Set Main Python File:</b> (optional) Change your main python file for running your application. This deletes the old main file. This must have the extension '.py'</p>

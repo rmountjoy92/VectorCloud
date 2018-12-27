@@ -28,7 +28,7 @@
 </head>
 <body>
     <header class="site-header">
-      <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-steel fixed-top">
         <div class="container">
           <div class="icon" data-toggle="tooltip" data-placement="auto" title="Home">
             <a class="" href="{{ url_for('main.home') }}"><img src="{{ url_for('static', filename='icons/vectorcloud.svg') }}" width="35" height="35" class="d-inline-block align-top" onclick="loading();" alt=""></a>
@@ -41,91 +41,91 @@
             </div>
             <!-- Navbar Right Side -->
             <div class="navbar-nav">
-              <div class="icon" data-toggle="tooltip" data-placement="auto" title="Remote Control">
-                <a href="{{ url_for('flask_app.control') }}">
-                <img src="{{ url_for('static', filename='icons/remote.svg') }}" width="32px" height="32px" onclick="loading();">
-                </a>
+              <div class="row image-container">
+                <div class="image-container column" data-toggle="tooltip" data-placement="top" title="Remote Control">
+                  <a class="icon" href="{{ url_for('flask_app.control') }}">
+                  <img src="{{ url_for('static', filename='icons/remote.svg') }}" width="32px" height="32px" onclick="loading();">
+                  </a>
+                </div>
+                <div class="image-container column" data-toggle="tooltip" data-placement="top" title="Cube Info">
+                  <img class="icon" src="{{ url_for('static', filename='icons/cube.svg') }}" width="42px" height="42px"
+                    data-placement="bottom"
+                    title="Cube Info <a href='#' class='close' data-dismiss='alert'>&times;</a>"
+                    data-toggle="popover"
+                    data-content="
+                    {% if vector_status.cube_battery_volts == 0 %}
+                      <p><a href='{{ url_for('main.connect_cube') }}'>
+                        Connect to Cube
+                      </a></p>
+                    {% endif %}
+                    <p>Cube battery level: {{ vector_status.cube_battery_level }}</p>
+                    <p>Cube battery volts: {{ vector_status.cube_battery_volts }}</p>
+                    <p>Cube Factory ID: {{ vector_status.cube_id }}</p>"
+                    data-html="true">
+                </div>
+                {% if vector_status.status_charging == True %}
+                  <div class="image-container column" data-toggle="tooltip" data-placement="top" title="Battery Info">
+                    <img class="icon" src="{{ url_for('static', filename='icons/battery_charging.svg') }}" width="42px" height="42px42px" data-toggle="popover" data-placement="bottom"  title="Battery Info <a href='#' class='close' data-dismiss='alert'>&times;</a>" data-html="true" data-content="
+                    <p><h5>Battery Voltage: </h5>{{ vector_status.battery_voltage }}</p>
+                    <p><h5>Battery Charging: </h5>{{ vector_status.status_charging }}</p>
+                    ">
+                  </div>
+                {% elif vector_status.battery_voltage > 3.85 %}
+                  <div class="image-container column" data-toggle="tooltip" data-placement="top" title="Battery Info">
+                    <img class="icon" src="{{ url_for('static', filename='icons/battery_full.svg') }}" width="42px" height="42px" data-toggle="popover" data-placement="bottom"  title="Battery Info <a href='#' class='close' data-dismiss='alert'>&times;</a>" data-html="true" data-content="
+                    <p><h5>Battery Voltage: </h5>{{ vector_status.battery_voltage }}</p>
+                    <p><h5>Battery Charging: </h5>{{ vector_status.status_charging }}</p>
+                    ">
+                  </div>
+                {% elif 3.75 <= vector_status.battery_voltage <= 3.85 %}
+                  <div class="image-container column" data-toggle="tooltip" data-placement="top" title="Battery Info">
+                    <img class="icon" src="{{ url_for('static', filename='icons/battery_med.svg') }}" width="42px" height="42px" data-toggle="popover" data-placement="bottom"  title="Battery Info <a href='#' class='close' data-dismiss='alert'>&times;</a>" data-html="true" data-content="
+                    <p><h5>Battery Voltage: </h5>{{ vector_status.battery_voltage }}</p>
+                    <p><h5>Battery Charging: </h5>{{ vector_status.status_charging }}</p>
+                    ">
+                  </div>
+                {% elif 3.6 <= vector_status.battery_voltage < 3.75 %}
+                  <div class="image-container column" data-toggle="tooltip" data-placement="top" title="Battery Info">
+                    <img class="icon" src="{{ url_for('static', filename='icons/battery_low.svg') }}" width="42px" height="42px" data-toggle="popover" data-placement="bottom"  title="Battery Info <a href='#' class='close' data-dismiss='alert'>&times;</a>" data-html="true" data-content="
+                    <p><h5>Battery Voltage: </h5>{{ vector_status.battery_voltage }}</p>
+                    <p><h5>Battery Charging: </h5>{{ vector_status.status_charging }}</p>
+                    ">
+                  </div>
+                {% elif vector_status.battery_voltage < 3.6 %}
+                  <div class="image-container column" data-toggle="tooltip" data-placement="top" title="Battery Info">
+                    <img class="icon" src="{{ url_for('static', filename='icons/battery_empty.svg') }}" width="42px" height="42px" data-toggle="popover" data-placement="bottom"  title="Battery Info <a href='#' class='close' data-dismiss='alert'>&times;</a>" data-html="true" data-content="
+                    <p><h5>Battery Voltage: </h5>{{ vector_status.battery_voltage }}</p>
+                    <p><h5>Battery Charging: </h5>{{ vector_status.status_charging }}</p>
+                    ">
+                  </div>
+                {% endif %}
+                {% if vector_status.status_charging == True %}
+                  <div class="image-container column" data-toggle="tooltip" data-placement="top" title="Undock">
+                    <a class="icon" href="{{ url_for('main.undock') }}">
+                    <img src="{{ url_for('static', filename='icons/undock.svg') }}" width="32px" height="32px" onclick="loading();">
+                    </a>
+                  </div>
+                {% elif vector_status.status_charging == False %}
+                  <div class="image-container column" data-toggle="tooltip" data-placement="top" title="Dock">
+                    <a class="icon" href="{{ url_for('main.dock') }}">
+                    <img src="{{ url_for('static', filename='icons/dock.svg') }}" width="32px" height="32px" onclick="loading();">
+                    </a>
+                  </div>
+                {% endif %}
+                <div class="image-container column" data-toggle="tooltip" data-placement="top" title="Settings">
+                  <a class="icon" href="{{ url_for('settings_system.settings') }}">
+                  <img src="{{ url_for('static', filename='icons/settings-menu.svg') }}" width="32px" height="32px">
+                  </a>
+                </div>
+              {% if current_user.is_authenticated %}
+                <div class="image-container column" data-toggle="tooltip" data-placement="top" title="Logout">
+                  <a class="icon" href="{{ url_for('user_system.logout') }}">
+                  <img src="{{ url_for('static', filename='icons/logout.svg') }}" width="32px" height="32px" onclick="loading();">
+                  </a>
+                </div>
+              {% endif %}
               </div>
-              <div class="icon" data-toggle="tooltip" data-placement="auto" title="Cube Info">
-                <img src="{{ url_for('static', filename='icons/cube.svg') }}" width="32px" height="32px"
 
-                  data-trigger="focus"
-                  tabindex="0"
-                  data-placement="left"
-                  title="Cube Info"
-                  data-toggle="popover"
-                  data-content="
-                  {% if vector_status.cube_battery_volts == 0 %}
-                    <p><a href='{{ url_for('main.connect_cube') }}'>
-                      Connect to Cube
-                    </a></p>
-                  {% endif %}
-                  <p>Cube battery level: {{ vector_status.cube_battery_level }}</p>
-                  <p>Cube battery volts: {{ vector_status.cube_battery_volts }}</p>
-                  <p>Cube Factory ID: {{ vector_status.cube_id }}</p>"
-                  data-html="true">
-              </div>
-              {% if vector_status.status_charging == True %}
-                <div class="icon" data-toggle="tooltip" data-placement="auto" title="Battery Info">
-                  <img data-trigger="focus" tabindex="0" src="{{ url_for('static', filename='icons/battery_charging.svg') }}" width="32px" height="32px" data-toggle="popover" data-placement="left"  title="Battery Info" data-html="true" data-content="
-                  <p><h5>Battery Voltage: </h5>{{ vector_status.battery_voltage }}</p>
-                  <p><h5>Battery Charging: </h5>{{ vector_status.status_charging }}</p>
-                  ">
-                </div>
-              {% elif vector_status.battery_voltage > 3.85 %}
-                <div class="icon" data-toggle="tooltip" data-placement="auto" title="Battery Info">
-                  <img data-trigger="focus" tabindex="0" src="{{ url_for('static', filename='icons/battery_full.svg') }}" width="32px" height="32px" data-toggle="popover" data-placement="left"  title="Battery Info" data-html="true" data-content="
-                  <p><h5>Battery Voltage: </h5>{{ vector_status.battery_voltage }}</p>
-                  <p><h5>Battery Charging: </h5>{{ vector_status.status_charging }}</p>
-                  ">
-                </div>
-              {% elif 3.75 <= vector_status.battery_voltage <= 3.85 %}
-                <div class="icon" data-toggle="tooltip" data-placement="auto" title="Battery Info">
-                  <img data-trigger="focus" tabindex="0" src="{{ url_for('static', filename='icons/battery_med.svg') }}" width="32px" height="32px" data-toggle="popover" data-placement="left"  title="Battery Info" data-html="true" data-content="
-                  <p><h5>Battery Voltage: </h5>{{ vector_status.battery_voltage }}</p>
-                  <p><h5>Battery Charging: </h5>{{ vector_status.status_charging }}</p>
-                  ">
-                </div>
-              {% elif 3.6 <= vector_status.battery_voltage < 3.75 %}
-                <div class="icon" data-toggle="tooltip" data-placement="auto" title="Battery Info">
-                  <img data-trigger="focus" tabindex="0" src="{{ url_for('static', filename='icons/battery_low.svg') }}" width="32px" height="32px" data-toggle="popover" data-placement="left"  title="Battery Info" data-html="true" data-content="
-                  <p><h5>Battery Voltage: </h5>{{ vector_status.battery_voltage }}</p>
-                  <p><h5>Battery Charging: </h5>{{ vector_status.status_charging }}</p>
-                  ">
-                </div>
-              {% elif vector_status.battery_voltage < 3.6 %}
-                <div class="icon" data-toggle="tooltip" data-placement="auto" title="Battery Info">
-                  <img data-trigger="focus" tabindex="0" src="{{ url_for('static', filename='icons/battery_empty.svg') }}" width="32px" height="32px" data-toggle="popover" data-placement="left"  title="Battery Info" data-html="true" data-content="
-                  <p><h5>Battery Voltage: </h5>{{ vector_status.battery_voltage }}</p>
-                  <p><h5>Battery Charging: </h5>{{ vector_status.status_charging }}</p>
-                  ">
-                </div>
-              {% endif %}
-              {% if vector_status.status_charging == True %}
-                <div class="icon" data-toggle="tooltip" data-placement="auto" title="Undock">
-                  <a href="{{ url_for('main.undock') }}">
-                  <img src="{{ url_for('static', filename='icons/undock.svg') }}" width="32px" height="32px" onclick="loading();">
-                  </a>
-                </div>
-              {% elif vector_status.status_charging == False %}
-                <div class="icon" data-toggle="tooltip" data-placement="auto" title="Dock">
-                  <a href="{{ url_for('main.dock') }}">
-                  <img src="{{ url_for('static', filename='icons/dock.svg') }}" width="32px" height="32px" onclick="loading();">
-                  </a>
-                </div>
-              {% endif %}
-              <div class="icon" data-toggle="tooltip" data-placement="top" title="Settings">
-                <a href="{{ url_for('settings_system.settings') }}">
-                <img src="{{ url_for('static', filename='icons/settings-menu.svg') }}" width="32px" height="32px">
-                </a>
-              </div>
-            {% if current_user.is_authenticated %}
-              <div class="icon" data-toggle="tooltip" data-placement="auto" title="Logout">
-                <a href="{{ url_for('user_system.logout') }}">
-                <img src="{{ url_for('static', filename='icons/logout.svg') }}" width="32px" height="32px" onclick="loading();">
-                </a>
-              </div>
-            {% endif %}
             <div class="fixed">
               <div class="navbar-text" align="right">
                 <p>
@@ -147,12 +147,12 @@
     <div id="loading"><h5 class="text-center">Waiting for Vector..</h5></div>
     <main role="main" class="container">
       <div class="row justify-content-md-center">
-        <div class="col-md-6">
+        <div class="col-lg-6 layout-content">
           {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
               {% for category, message in messages %}
                 <div class="alert alert-{{ category }}">
-                  <button type="button" class="close" data-dismiss="alert">&times;</button>
+                  <button type="button" class="close close-dark" data-dismiss="alert">&times;</button>
                   {{ message }}
                 </div>
               {% endfor %}

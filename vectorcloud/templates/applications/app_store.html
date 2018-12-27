@@ -7,7 +7,7 @@
         <fieldset class="form-group">
           <div class="content-section">
             <div class="row image-container">
-              <div class="form-group column store-icon">
+              <div class="form-group column search-bar">
                 {{ search_form.search(autocomplete="off", class="form-control form-control-lg") }}
               </div>
               <div class="column search-icon">
@@ -70,7 +70,16 @@
           </div>
         {% endif %}
         <div>
-          <img class="store-icon" align="right" src="{{ url_for('static', filename='icons/info.svg') }}" width="18px" height="18px" data-toggle="popover" data-placement="top" title="{{ app.script_name }}" data-html="true" data-content="
+          <img class="store-icon"
+               align="right"
+               src="{{ url_for('static', filename='icons/info.svg') }}"
+               width="18px"
+               height="18px"
+               data-toggle="popover"
+               data-placement="top"
+               title="<img src='{{ url_for('static', filename='app_icons/' + app.icon) }}' height='48px' width='48px'> {{ app.script_name }} <a href='#' class='close' data-dismiss='alert'>&times;</a>"
+               data-html="true"
+               data-content="
           <p><b>Author:</b> {{ app.author }}</p>
           <p><b>Website:</b> {{ app.website }}</p>
           <p><b>Description:</b> {{ app.description }}</p>

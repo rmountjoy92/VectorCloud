@@ -13,7 +13,15 @@
               <fieldset class="form-group">
                   <legend class="border-bottom border-dark mb-4 text-center"><b>Vector Commands</b></legend>
                   <div class="">
-                    <img align="right" src="{{ url_for('static', filename='icons/info.svg') }}" width="24px" height="24px" data-toggle="popover" data-placement="left" title="Robot Commands" data-html="true" data-content="
+                    <img align="right"
+                         src="{{ url_for('static', filename='icons/info.svg') }}"
+                         width="24px"
+                         height="24px"
+                         data-toggle="popover"
+                         data-placement="left"
+                         title="Robot Commands <a href='#' class='close' data-dismiss='alert'>&times;</a>"
+                         data-html="true"
+                         data-content="
                     <p><b>Enter a robot. command: </b>In this command bar you can enter python code with the condition of: </p>
                     <p><code>with anki_vector.Robot(args.serial) as robot:</code></p>
                     <p><b>Sample Commands: </b></p>
@@ -68,7 +76,7 @@
         <fieldset class="form-group">
           <div class="content-section">
             <div class="row image-container">
-              <div class="form-group column store-icon">
+              <div class="form-group column search-bar">
                   {% if search_form.search.errors %}
                       {{ search_form.search(class="form-control form-control-lg is-invalid") }}
                       <div class="invalid-feedback">
