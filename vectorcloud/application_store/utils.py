@@ -6,10 +6,10 @@ import secrets
 import shutil
 from PIL import Image
 from shutil import copyfile
+from configparser import ConfigParser
 from flask import flash, redirect, url_for
 from vectorcloud import db
 from vectorcloud.models import Application, AppSupport
-from vectorcloud.main.utils import config
 from vectorcloud.application_system.utils import get_script_folder,\
     get_lib_folder
 
@@ -24,6 +24,9 @@ app_icons_folder = os.path.join(scripts_folder,
                                 'app_icons')
 
 
+config = ConfigParser()
+
+
 # clears all files in /application_store/temp/
 def clear_temp_folder():
     file_list = os.listdir(temp_folder)
@@ -35,6 +38,7 @@ def clear_temp_folder():
 # deletes helper files in case an installation fails
 def clear_installed_helpers(hex_id):
     helper_files = AppSupport.query.filter_by(hex_id=hex_id).all()
+
     for helper in helper_files:
         helper_fn = os.path.join(lib_folder, helper.file_name)
         os.remove(helper_fn)
@@ -95,7 +99,7 @@ def install_package(form_package,
                 flash('Application named "' + application.script_name +
                       '" already exists, please rename the existing \
                       application and try again.', 'warning')
-                return redirect(url_for('application_store.app_store'))
+                return redirect(url_for('application_store.upload_package'))
 
     helper_string = config.get(name, 'helper_files')
 
@@ -206,7 +210,8 @@ def install_package(form_package,
     for helper in helper_files:
         if '.ini' in helper.file_name:
             settings_file_fn = os.path.join(lib_folder, helper.file_name)
-            new_settings_file_fn = os.path.join(lib_folder, helper.hex_id + '.ini')
+            new_settings_file_fn = \
+                os.path.join(lib_folder, helper.hex_id + '.ini')
             os.rename(settings_file_fn, new_settings_file_fn)
             helper.file_name = helper.hex_id + '.ini'
             db.session.merge(helper)
@@ -216,11 +221,6 @@ def install_package(form_package,
     if os.path.isfile(settings_file_fn):
         pass
     else:
-        # settings_file = random_hex + '.ini'
-        # for helper in helper_files:
-        #     if settings_file == helper.file_name:
-        #         pass
-        #     else:
         settings_file = AppSupport(hex_id=application.hex_id,
                                    file_name=application.hex_id + '.ini')
         db.session.add(settings_file)

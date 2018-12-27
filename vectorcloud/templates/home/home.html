@@ -37,23 +37,14 @@
                   </div>
                   <div class="form-group">
                       {{ form.command.label(class="form-control-label") }}
-                      {% if form.command.errors %}
-                          {{ form.command(class="form-control form-control-lg is-invalid") }}
-                          <div class="invalid-feedback">
-                              {% for error in form.command.errors %}
-                                  <span>{{ error }}</span>
-                              {% endfor %}
-                          </div>
-                      {% else %}
                         <div onsubmit="loading();">
                           {{ form.command(autocomplete="off", class="form-control form-control-lg") }}
                         </div>
-                      {% endif %}
                   </div>
               </fieldset>
               <div class="form-group">
                   <div>
-                  {{ form.submit(onclick="loading();", class="btn btn-dark") }}
+                  {{ form.submit(class="btn btn-dark") }}
                   {% if command_list %}
                       <a href="{{ url_for('main.execute_commands') }}" class="btn btn-dark" onclick="loading();" role="button">Execute</a>
                       <a href="{{ url_for('main.clear_commands') }}" class="btn btn-dark" onclick="loading();" role="button">Clear</a>
@@ -63,17 +54,65 @@
       </div>
     </div>
     <div class="text-center">
-      <a href="{{ url_for('application_system.upload') }}">
-      <img class="store-icon" align="right" src="{{ url_for('static', filename='icons/upload.svg') }}" width="24px" height="24px" data-toggle="tooltip" data-placement="top" title="Upload Application">
-      </a>
       <a href="{{ url_for('application_store.app_store') }}">
-      <img class="store-icon" align="right" src="{{ url_for('static', filename='icons/package-grey.svg') }}" width="24px" height="24px" data-toggle="tooltip" data-placement="top" title="App Store">
+      <img class="store-icon" align="right" src="{{ url_for('static', filename='icons/package-grey.svg') }}" width="24px" height="24px" data-toggle="tooltip" data-placement="top" title="Add Applications">
       </a>
     </div>
     {% block view %}{% endblock %}
     <div>
       <legend class="text-left border-dark mb-4">Applications</legend>
     </div>
+    {% if app_list %}
+    <form method="POST" action="/home">
+        {{ form.hidden_tag() }}
+        <fieldset class="form-group">
+          <div class="content-section">
+            <div class="row image-container">
+              <div class="form-group column store-icon">
+                  {% if search_form.search.errors %}
+                      {{ search_form.search(class="form-control form-control-lg is-invalid") }}
+                      <div class="invalid-feedback">
+                          {% for error in search_form.search.errors %}
+                              <span>{{ error }}</span>
+                          {% endfor %}
+                      </div>
+                  {% else %}
+                    <div onsubmit="loading();">
+                      {{ search_form.search(autocomplete="off", class="form-control form-control-lg") }}
+                    </div>
+                  {% endif %}
+              </div>
+              <div class="column search-icon">
+                {{ search_form.go(class="btn btn-dark") }}
+              </div>
+            </div>
+            <div class="row image-container">
+              <div class="form-check column">
+                  {{ search_form.by_name(class="form-check-input") }}
+                  {{ search_form.by_name.label(class="form-check-label") }}
+              </div>
+              <div class="form-check column">
+                  {{ search_form.by_description(class="form-check-input") }}
+                  {{ search_form.by_description.label(class="form-check-label") }}
+              </div>
+              <div class="form-check column" >
+                  {{ search_form.by_author(class="form-check-input") }}
+                  {{ search_form.by_author.label(class="form-check-label") }}
+              </div>
+            </div>
+            {% if search_term %}
+            <p></p>
+            <div class="border-bottom border-dark grey-text">
+              <b>Searching: </b>{{ search_term }} | {{ num_results }} results
+              <a href="{{ url_for('main.home') }}">
+              <img class="store-icon" align="right" src="{{ url_for('static', filename='icons/close.svg') }}" width="16px" height="16px">
+              </a>
+            </div>
+            {% endif %}
+          </div>
+        </fieldset>
+    </form>
+    {% endif %}
     {% block applications %}{% endblock %}
 
 {% endblock content %}

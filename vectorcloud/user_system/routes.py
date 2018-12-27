@@ -49,7 +49,7 @@ def register():
         return redirect(url_for('user_system.login'))
 
     return render_template(
-        'register.html', title='Register', form=form)
+        'user/register.html', title='Register', form=form)
 
 
 # login page
@@ -86,7 +86,7 @@ def login():
             return redirect(url_for('user_system.login'))
 
     return render_template(
-        'login.html', title='Login', form=form)
+        'user/login.html', title='Login', form=form)
 
 
 # this logs the user out and redirects to the login page

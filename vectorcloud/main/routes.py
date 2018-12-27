@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
 
+import os
 import sys
 import time
 import platform
 from flask import render_template, url_for, redirect, flash, request, Blueprint
 from flask_login import current_user
-from vectorcloud.main.forms import CommandForm
+from vectorcloud.main.forms import CommandForm, SearchForm
 from vectorcloud.models import Command, User, Status, Application, Output,\
     ApplicationStore, Settings
 from vectorcloud.main.utils import robot_do, get_stats
+from vectorcloud.application_store.utils import temp_folder
 from vectorcloud import db, app
 
 try:
@@ -29,6 +31,9 @@ operating_system = platform.system()
 
 # create all tables in the database if they don't exist
 db.create_all()
+settings = Settings()
+db.session.add(settings)
+db.session.commit()
 
 
 # blocks access to all pages (except public routes) unless the user is
@@ -71,10 +76,23 @@ def add_header(response):
 @main.route("/")
 @main.route("/home", methods=['GET', 'POST'])
 def home():
+    search_term = None
+    num_results = 0
+
     if sdk_version != vectorcloud_sdk_version:
         flash('You are using a different version of the SDK than VectorCloud!\
                You are using ' + sdk_version + ' VectorCloud is using ' +
               vectorcloud_sdk_version, 'warning')
+
+    temp_exists = os.path.isdir(temp_folder)
+    if temp_exists is False:
+        os.mkdir(temp_folder)
+
+    settings = Settings.query.first()
+    if not settings:
+        settings = Settings(id=1)
+        db.session.add(settings)
+        db.session.commit()
 
     output = Output.query.all()
     for out in output:
@@ -93,12 +111,46 @@ def home():
                 db.session.commit()
 
     form = CommandForm()
+    search_form = SearchForm()
 
     if form.validate_on_submit():
         robot_command = Command(command=form.command.data)
         db.session.add(robot_command)
         db.session.commit()
         return redirect(url_for('main.home'))
+
+    if search_form.validate_on_submit():
+        settings.search_by_name = search_form.by_name.data
+        settings.search_by_description = search_form.by_description.data
+        settings.search_by_author = search_form.by_author.data
+        db.session.merge(settings)
+        db.session.commit()
+        search_term = search_form.search.data
+        apps_searched = []
+
+        if search_form.by_name.data is True:
+            for application in app_list:
+                if search_term.lower() in application.script_name.lower():
+                    apps_searched.append(application.script_name)
+
+        if search_form.by_description.data is True:
+            for application in app_list:
+                if search_term.lower() in application.description.lower():
+                    apps_searched.append(application.script_name)
+
+        if search_form.by_author.data is True:
+            for application in app_list:
+                if search_term.lower() in application.author.lower():
+                    apps_searched.append(application.script_name)
+
+        app_list = Application.query.filter(Application.script_name.in_(apps_searched))
+        apps_searched = set(apps_searched)
+        num_results = len(apps_searched)
+
+    elif request.method == 'GET':
+        search_form.by_name.data = settings.search_by_name
+        search_form.by_description.data = settings.search_by_description
+        search_form.by_author.data = settings.search_by_author
 
     command_list = Command.query.all()
 
@@ -114,14 +166,20 @@ def home():
                                vector_status=vector_status,
                                form=form, command_list=command_list,
                                app_list=app_list,
-                               sdk_version=sdk_version)
+                               sdk_version=sdk_version,
+                               search_form=search_form,
+                               search_term=search_term,
+                               num_results=num_results)
 
     if settings.view == 'list':
         return render_template('home/home_list_view.html',
                                vector_status=vector_status,
                                form=form, command_list=command_list,
                                app_list=app_list,
-                               sdk_version=sdk_version)
+                               sdk_version=sdk_version,
+                               search_form=search_form,
+                               search_term=search_term,
+                               num_results=num_results)
 
 
 @main.route("/set_card_view")

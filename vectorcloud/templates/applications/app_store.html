@@ -1,0 +1,88 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container">
+  <h3 class="text-center">App Store</h3> <p></p>
+    <form method="POST" action="">
+        {{ search_form.hidden_tag() }}
+        <fieldset class="form-group">
+          <div class="content-section">
+            <div class="row image-container">
+              <div class="form-group column store-icon">
+                {{ search_form.search(autocomplete="off", class="form-control form-control-lg") }}
+              </div>
+              <div class="column search-icon">
+                {{ search_form.go(class="btn btn-dark") }}
+              </div>
+            </div>
+            <div class="row image-container">
+              <div class="form-check column">
+                  {{ search_form.by_name(class="form-check-input") }}
+                  {{ search_form.by_name.label(class="form-check-label") }}
+              </div>
+              <div class="form-check column">
+                  {{ search_form.by_description(class="form-check-input") }}
+                  {{ search_form.by_description.label(class="form-check-label") }}
+              </div>
+              <div class="form-check column" >
+                  {{ search_form.by_author(class="form-check-input") }}
+                  {{ search_form.by_author.label(class="form-check-label") }}
+              </div>
+            </div>
+            {% if search_term %}
+            <p></p>
+            <div class="border-bottom border-dark grey-text">
+              <b>Searching: </b>{{ search_term }} | {{ num_results }} results
+              <a href="{{ url_for('application_store.app_store') }}">
+              <img class="store-icon" align="right" src="{{ url_for('static', filename='icons/close.svg') }}" width="16px" height="16px">
+              </a>
+            </div>
+            {% endif %}
+          </div>
+        </fieldset>
+    </form>
+  </div>
+  <div class="row image-container">
+    <div class="column">
+      <a href="{{ url_for('application_system.upload') }}">
+      <img class="store-icon" src="{{ url_for('static', filename='icons/edit.svg') }}" width="24px" height="24px" data-toggle="tooltip" data-placement="top" title="Create Application">
+      </a>
+    </div>
+    <div class="column">
+      <a href="{{ url_for('application_store.upload_package') }}">
+      <img class="store-icon" src="{{ url_for('static', filename='icons/upload.svg') }}" width="24px" height="24px" data-toggle="tooltip" data-placement="top" title="Install Local Package">
+      </a>
+    </div>
+  </div>
+  <p></p>
+  <div class="content-section">
+    <div class="border-bottom border-dark mb-4">
+      {% for app in app_list %}
+      <div class="border-top border-dark pt-3">
+        {% if app.installed == True %}
+          <div>
+            <img class="store-icon" align="right" src="{{ url_for('static', filename='icons/installed.svg') }}" width="20px" height="20px" data-toggle="tooltip" data-placement="top" title="Installed">
+          </div>
+        {% elif app.installed == False %}
+          <div>
+            <a href="{{ url_for('application_store.install_store_application', script_id=app.id) }}">
+            <img class="store-icon" align="right" src="{{ url_for('static', filename='icons/download.svg') }}" width="20px" height="20px" data-toggle="tooltip" data-placement="top" title="Install">
+            </a>
+          </div>
+        {% endif %}
+        <div>
+          <img class="store-icon" align="right" src="{{ url_for('static', filename='icons/info.svg') }}" width="18px" height="18px" data-toggle="popover" data-placement="top" title="{{ app.script_name }}" data-html="true" data-content="
+          <p><b>Author:</b> {{ app.author }}</p>
+          <p><b>Website:</b> {{ app.website }}</p>
+          <p><b>Description:</b> {{ app.description }}</p>
+          ">
+        </div>
+        <div align="left">
+          <img class="store-icon-main" src="{{ url_for('static', filename='app_icons/' + app.icon) }}" width="48px" height="48px">
+          <b>{{ app.script_name }}</b>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+{% endblock content %}

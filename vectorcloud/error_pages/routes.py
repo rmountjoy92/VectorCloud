@@ -2,12 +2,14 @@
 
 import os
 from flask import Blueprint, render_template, redirect, url_for, flash
+from configparser import ConfigParser
 from pathlib import Path
 from vectorcloud.models import Status
 from vectorcloud.error_pages.forms import ChangeIP
-from vectorcloud.main.utils import config
 
 error_pages = Blueprint('error_pages', __name__)
+
+config = ConfigParser()
 
 # ------------------------------------------------------------------------------
 # Error Pages

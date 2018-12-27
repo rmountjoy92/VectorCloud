@@ -67,7 +67,8 @@ def upload():
     if form.validate_on_submit():
         if applications:
             for application in applications:
-                if application.script_name.lower() == form.script_name.data.lower():
+                if application.script_name.lower() == \
+                        form.script_name.data.lower():
                     flash('Application named "' + application.script_name +
                           '" already exists, please rename the existing \
                           application and try again.', 'warning')
@@ -110,7 +111,10 @@ def upload():
             flash("No script uploaded", 'warning')
         return redirect(url_for('application_system.upload'))
     return render_template(
-        'upload.html', title='Upload', form=form, vector_status=vector_status,
+        'applications/upload.html',
+        title='Upload',
+        form=form,
+        vector_status=vector_status,
         sdk_version=sdk_version)
 
 
@@ -256,7 +260,7 @@ def edit_application(script_id):
     helper_list = []
     for file in support_files:
         helper_list.append(file.file_name)
-    return render_template('edit_application.html',
+    return render_template('applications/edit_application.html',
                            title='Edit Application',
                            form=form,
                            script_id=script_id,
@@ -279,7 +283,8 @@ def edit_application(script_id):
 def delete_application(script_id):
     application = Application.query.filter_by(id=script_id).first()
     store_app = ApplicationStore.query.filter(func.lower(
-        ApplicationStore.script_name) == func.lower(application.script_name)).first()
+        ApplicationStore.script_name) ==
+        func.lower(application.script_name)).first()
 
     if store_app:
         store_app.installed = False

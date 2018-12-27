@@ -84,10 +84,14 @@ class Settings(db.Model):
     greeting_message_enabled = db.Column(db.Boolean, default=True)
     custom_greeting_message = db.Column(db.Text, default='default')
     view = db.Column(db.Text, default='card')
+    search_by_name = db.Column(db.Boolean, default=True)
+    search_by_description = db.Column(db.Boolean, default=False)
+    search_by_author = db.Column(db.Boolean, default=False)
 
     def __repr__(self):
         return [self.id, self.greeting_message_enabled,
-                self.custom_greeting_message, self.view]
+                self.custom_greeting_message, self.view, self.search_by_name,
+                self.search_by_description, self.search_by_author]
 
 
 class ApplicationStore(db.Model):

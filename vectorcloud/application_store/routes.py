@@ -4,10 +4,11 @@ import os
 from flask import render_template, url_for, redirect, Blueprint, flash,\
     request, send_file
 from vectorcloud import db
-from vectorcloud.models import Status, ApplicationStore, Application
+from vectorcloud.models import Status, ApplicationStore, Application, Settings
 from vectorcloud.main.utils import get_stats
 from vectorcloud.main.routes import sdk_version
 from vectorcloud.application_store.forms import UploadPackage, AdminAdd
+from vectorcloud.main.forms import SearchForm
 from vectorcloud.application_store.utils import install_package,\
     export_package, clear_temp_folder
 
@@ -20,8 +21,10 @@ packages_folder = os.path.join(app_store_folder, 'packages')
 
 @application_store.route("/app_store", methods=['GET', 'POST'])
 def app_store():
+    search_term = None
+    num_results = 0
     clear_temp_folder()
-    store_app_list = ApplicationStore.query.all()
+    store_app_list = ApplicationStore.query.order_by(ApplicationStore.author)
     main_app_list = Application.query.all()
 
     for store_app in store_app_list:
@@ -37,6 +40,55 @@ def app_store():
 
     vector_status = Status.query.first()
 
+    search_form = SearchForm()
+    settings = Settings.query.first()
+
+    if search_form.validate_on_submit():
+        settings.search_by_name = search_form.by_name.data
+        settings.search_by_description = search_form.by_description.data
+        settings.search_by_author = search_form.by_author.data
+        db.session.merge(settings)
+        db.session.commit()
+        search_term = search_form.search.data
+        apps_searched = []
+
+        if search_form.by_name.data is True:
+            for application in store_app_list:
+                if search_term.lower() in application.script_name.lower():
+                    apps_searched.append(application.script_name)
+
+        if search_form.by_description.data is True:
+            for application in store_app_list:
+                if search_term.lower() in application.description.lower():
+                    apps_searched.append(application.script_name)
+
+        if search_form.by_author.data is True:
+            for application in store_app_list:
+                if search_term.lower() in application.author.lower():
+                    apps_searched.append(application.script_name)
+
+        store_app_list = ApplicationStore.query.filter(
+            ApplicationStore.script_name.in_(apps_searched))
+        apps_searched = set(apps_searched)
+        num_results = len(apps_searched)
+
+    if request.method == 'GET':
+        search_form.by_name.data = settings.search_by_name
+        search_form.by_description.data = settings.search_by_description
+        search_form.by_author.data = settings.search_by_author
+
+    return render_template('applications/app_store.html',
+                           title='App Store',
+                           vector_status=vector_status,
+                           sdk_version=sdk_version,
+                           app_list=store_app_list,
+                           search_form=search_form,
+                           search_term=search_term,
+                           num_results=num_results)
+
+
+@application_store.route("/upload_package", methods=['GET', 'POST'])
+def upload_package():
     form = UploadPackage()
 
     if form.validate_on_submit():
@@ -45,14 +97,11 @@ def app_store():
 
         else:
             flash('No Package Uploaded!', 'warning')
-        return redirect(url_for('application_store.app_store'))
+        return redirect(url_for('application_store.upload_package'))
 
-    return render_template('settings/app_store.html',
-                           title='App Store',
-                           vector_status=vector_status,
-                           sdk_version=sdk_version,
-                           form=form,
-                           app_list=store_app_list)
+    return render_template('applications/install_package.html',
+                           title='Install Package',
+                           form=form)
 
 
 @application_store.route("/app_store_admin_add", methods=['GET', 'POST'])
@@ -75,7 +124,7 @@ def app_store_admin_add():
         return redirect(url_for('application_store.app_store_admin_add'))
 
     return render_template(
-        'settings/app_store_admin_add.html', title='App Store - Admin',
+        'applications/app_store_admin_add.html', title='App Store - Admin',
         form=form, app_list=app_list)
 
 
@@ -105,7 +154,7 @@ def edit_store_application(script_id):
         form.zip_file.data = store_app.zip_file
 
     return render_template(
-        'settings/app_store_admin_edit.html', title='App Store - Admin',
+        'applications/app_store_admin_edit.html', title='App Store - Admin',
         form=form, store_app=store_app)
 
 
