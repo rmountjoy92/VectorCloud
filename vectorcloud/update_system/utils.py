@@ -27,14 +27,14 @@ def upgrade_vectorcloud():
     if out.returncode == 0:
         flash(str(out.stdout), 'success')
 
-    out = subprocess.run(migrate_cmd, stdout=subprocess.PIPE,
+    out = subprocess.run(migrate_cmd, stderr=subprocess.PIPE,
                          shell=True, encoding='utf-8')
 
     if out.returncode == 0:
-        flash(str(out.sterr), 'success')
+        flash(str(out.stderr), 'success')
 
-    out = subprocess.run(upgrade_cmd, stdout=subprocess.PIPE,
+    out = subprocess.run(upgrade_cmd, stderr=subprocess.PIPE,
                          shell=True, encoding='utf-8')
 
     if out.returncode == 0:
-        flash(str(out.sterr), 'success')
+        flash(str(out.stderr), 'success')
