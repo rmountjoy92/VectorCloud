@@ -1,4 +1,8 @@
 {% extends "settings/settings.html" %}
 {% block settings %}
-
+  {% if needed == True %}
+    <a href="{{ url_for('update_system.run_upgrade') }}" class="btn btn-dark" onclick="loading();" role="button">Update</a>
+  {% else %}
+    <p> You're up to date </p>
+  {% endif %}
 {% endblock %}
