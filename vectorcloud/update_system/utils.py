@@ -7,7 +7,8 @@ from flask import flash
 from vectorcloud.application_system.utils import scripts_folder
 
 operating_system = platform.system()
-manage_fn = os.path.join(scripts_folder + 'manage_db.py')
+migrate_fn = os.path.join(scripts_folder, 'manage_db.py db migrate')
+upgrade_fn = os.path.join(scripts_folder, 'manage_db.py db upgrade')
 
 if operating_system == 'Windows':
     py_cmd = 'py '
@@ -15,8 +16,8 @@ if operating_system == 'Windows':
 else:
     py_cmd = 'python3 '
 
-migrate_cmd = py_cmd + manage_fn + ' db migrate'
-upgrade_cmd = py_cmd + manage_fn + ' db upgrade'
+migrate_cmd = py_cmd + migrate_fn
+upgrade_cmd = py_cmd + upgrade_fn
 
 
 def upgrade_vectorcloud():
