@@ -35,20 +35,27 @@ def check_needed():
 
 def upgrade_vectorcloud():
 
-    out = subprocess.run('git pull origin master', stdout=subprocess.PIPE,
-                         shell=True, encoding='utf-8')
+    pull_out = subprocess.run('git pull origin master', stdout=subprocess.PIPE,
+                              shell=True, encoding='utf-8')
 
-    if out.returncode == 0:
-        flash(str(out.stdout), 'success')
+    if pull_out.returncode == 0:
+        # flash(str(out.stdout), 'success')
+        pass
 
-    out = subprocess.run(migrate_cmd, stderr=subprocess.PIPE,
-                         shell=True, encoding='utf-8')
+    migrate_out = subprocess.run(migrate_cmd, stderr=subprocess.PIPE,
+                                 shell=True, encoding='utf-8')
 
-    if out.returncode == 0:
-        flash(str(out.stderr), 'success')
+    if migrate_out.returncode == 0:
+        # flash(str(out.stderr), 'success')
+        pass
 
-    out = subprocess.run(upgrade_cmd, stderr=subprocess.PIPE,
-                         shell=True, encoding='utf-8')
+    upgrade_out = subprocess.run(upgrade_cmd, stderr=subprocess.PIPE,
+                                 shell=True, encoding='utf-8')
 
-    if out.returncode == 0:
-        flash(str(out.stderr), 'success')
+    if upgrade_out.returncode == 0:
+        # flash(str(out.stderr), 'success')
+        pass
+
+    flash("Update Complete. For now it's a good idea to restart the server in \
+           the terminal by pressing ctrl+c and rerunning vectorcloud. This \
+           will change when we move to a production server")

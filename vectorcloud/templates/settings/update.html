@@ -1,8 +1,23 @@
 {% extends "settings/settings.html" %}
 {% block settings %}
   {% if needed == True %}
-    <a href="{{ url_for('update_system.run_upgrade') }}" class="btn btn-dark" onclick="loading();" role="button">Update</a>
+    <div class="image-container">
+      <img src="{{ url_for('static', filename='icons/update-needed.svg') }}" height="125" width="125">
+    </div>
+    <p></p>
+    <div class="grey-text text-center">
+      <p>An update is available!</p>
+    </div>
+    <div class="text-center">
+      <a href="{{ url_for('update_system.run_upgrade') }}" class="btn btn-dark" onclick="loading();" role="button">Update</a>
+    </div>
   {% else %}
-    <p> You're up to date </p>
+  <div class="image-container">
+    <img src="{{ url_for('static', filename='icons/updated.svg') }}" height="125" width="125">
+  </div>
+  <p></p>
+  <div class="grey-text text-center">
+    <p>You're up to date.</p>
+  </div>
   {% endif %}
 {% endblock %}
