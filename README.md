@@ -45,6 +45,7 @@ py run.py
 
 
 ## Features I'm currently working on
+* production server
 * create more store apps
 * fix bugs
 * develop RESTFUL API
