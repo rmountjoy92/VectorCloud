@@ -56,5 +56,3 @@ py run.py
 * plugin manager
 * manage photos and videos
 * learn the 'events' module and integrate it in some way
-
-update test
