@@ -72,7 +72,6 @@ class Status(db.Model):
     timestamp = db.Column(db.Float)
     ip = db.Column(db.Text)
     name = db.Column(db.Text)
-    test = db.Column(db.Text)
 
     def __repr__(self):
         return [self.id, self.battery_voltage, self.battery_level,
