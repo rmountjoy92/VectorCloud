@@ -5,9 +5,9 @@
         <form method="POST" action="" enctype="multipart/form-data">
             {{ form.hidden_tag() }}
             <fieldset class="form-group">
-                <legend class="border-bottom border-dark mb-4 text-center">Upload SDK Application</legend>
-                <div class="">
+                <legend class="border-bottom border-dark mb-4 text-center">Upload SDK Application
                   <img align="right"
+                       class="legend-icon"
                        src="{{ url_for('static', filename='icons/info.svg') }}"
                        width="24px"
                        height="24px"
@@ -20,7 +20,7 @@
                   <p><b>Add Support File:</b> (optional) Add supporting python files for your application. These files are placed in the lib package. Be sure your main python application imports support files from 'lib'.
                     E.g. <p><code>from lib import <i>your_file</i></code></p> These file must all also have the extension '.py' Support file names must be unique. </p>
                   <p><b>Add Icon Image:</b> (optional) Give your application an icon. Custom icons should be 125px x 125px </p>">
-                </div>
+                </legend>
                 <div class="form-group">
                     {{ form.script_name.label(class="form-control-label") }}
                     {% if form.script_name.errors %}

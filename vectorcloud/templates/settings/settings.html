@@ -18,6 +18,16 @@
           <img src="{{ url_for('static', filename='icons/user.svg') }}" width="32px" height="32px">
           </a>
         </div>
+        <div class="column icon" data-toggle="tooltip" data-placement="top" title="VectorCloud Info">
+          <a href="{{ url_for('settings_system.settings_info') }}">
+          <img src="{{ url_for('static', filename='icons/info-menu.svg') }}" width="32px" height="32px">
+          </a>
+        </div>
+        <div class="column icon" data-toggle="tooltip" data-placement="top" title="VectorCloud Update">
+          <a href="{{ url_for('update_system.update') }}">
+          <img src="{{ url_for('static', filename='icons/update.svg') }}" width="32px" height="32px">
+          </a>
+        </div>
       </div>
       {% block settings %}{% endblock %}
     </div>

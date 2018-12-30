@@ -31,9 +31,6 @@ operating_system = platform.system()
 
 # create all tables in the database if they don't exist
 db.create_all()
-settings = Settings()
-db.session.add(settings)
-db.session.commit()
 
 
 # blocks access to all pages (except public routes) unless the user is

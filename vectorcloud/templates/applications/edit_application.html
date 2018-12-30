@@ -5,7 +5,28 @@
         <form method="POST" action="" enctype="multipart/form-data">
             {{ form.hidden_tag() }}
             <fieldset class="form-group">
-                <legend class="border-bottom border-dark mb-4 text-center">Editing: {{ application.script_name }}</legend>
+                <legend class="border-bottom border-dark mb-4 text-center">Editing: {{ application.script_name }}
+                  <img align="right"
+                       class="legend-icon"
+                       src="{{ url_for('static', filename='icons/info.svg') }}"
+                       width="24px"
+                       height="24px"
+                       data-toggle="popover"
+                       data-placement="left"
+                       title="Editing an SDK Application <a href='#' class='close' data-dismiss='alert'>&times;</a>"
+                       data-html="true"
+                       data-content="
+                  <p><b>Name:</b> (optional) Change your application's name</p>
+                  <p><b>Description:</b> (optional) Change your application's description</p>
+                  <p><b>Set Main Python File:</b> (optional) Change your main python file for running your application. This deletes the old main file. This must have the extension '.py'</p>
+                  <p><b>Add Support File:</b> (optional) Add supporting python files for your application. These files are placed in the lib package. Be sure your main python application imports support files from 'lib'.
+                    E.g. <p><code>from lib import <i>your_file</i></code></p> These file must all also have the extension '.py' Support file names must be unique. </p>
+                  <p><b>Add Icon Image:</b> (optional) Give your application an icon. Custom icons should be 125px x 125px </p>
+                  ">
+                  <div class="grey-text">
+                    <p>Hex ID: {{ application.hex_id }}</p>
+                  </div>
+                </legend>
                 <div class="row image-container border-bottom border-dark mb-4">
                   <div class="column icon" data-toggle="tooltip" data-placement="top" title="Application Settings">
                     <a href="{{ url_for('application_system.edit_app_settings_file', hex_id=application.hex_id) }}">
@@ -23,30 +44,14 @@
                     </a>
                   </div>
                 </div>
-                <div class="text-center">
-                  <p>Hex ID: {{ application.hex_id }}</p>
-                </div>
-                <div class="">
-                  <img align="right"
-                       src="{{ url_for('static', filename='icons/info.svg') }}"
-                       width="24px"
-                       height="24px"
-                       data-toggle="popover"
-                       data-placement="left"
-                       title="Editing an SDK Application <a href='#' class='close' data-dismiss='alert'>&times;</a>" 
-                       data-html="true"
-                       data-content="
-                  <p><b>Name:</b> (optional) Change your application's name</p>
-                  <p><b>Description:</b> (optional) Change your application's description</p>
-                  <p><b>Set Main Python File:</b> (optional) Change your main python file for running your application. This deletes the old main file. This must have the extension '.py'</p>
-                  <p><b>Add Support File:</b> (optional) Add supporting python files for your application. These files are placed in the lib package. Be sure your main python application imports support files from 'lib'.
-                    E.g. <p><code>from lib import <i>your_file</i></code></p> These file must all also have the extension '.py' Support file names must be unique. </p>
-                  <p><b>Add Icon Image:</b> (optional) Give your application an icon. Custom icons should be 125px x 125px </p>
-                  ">
-                </div>
-                {% if application.icon != 'default.png' %}
-                  <img src="{{ url_for('static', filename='app_icons/' + application.icon) }}" class="rounded mx-auto d-block">
-                {% endif %}
+                <a href="{{ url_for('application_system.run_script', script_hex_id=application.hex_id) }}">
+                  <img src="{{ url_for('static', filename='app_icons/' + application.icon) }}"
+                       class="rounded mx-auto d-block"
+                       onclick="loading();"
+                       data-toggle="tooltip"
+                       data-placement="top"
+                       title="Run Application">
+                </a>
                 <div class="form-group">
                     {{ form.script_name.label(class="form-control-label") }}
                     {% if form.script_name.errors %}

@@ -91,3 +91,16 @@ def delete_user():
     db.session.query(User).delete()
     db.session.commit()
     return redirect(url_for('user_system.register'))
+
+
+@settings_system.route("/settings_info", methods=['GET', 'POST'])
+def settings_info():
+
+    err_msg = get_stats()
+    if err_msg:
+        return redirect(url_for('error_pages.' + err_msg))
+
+    vector_status = Status.query.first()
+    return render_template('settings/info.html',
+                           vector_status=vector_status,
+                           sdk_version=sdk_version)

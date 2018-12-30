@@ -115,10 +115,10 @@ def install_package(form_package,
     website = config.get(name, 'website')
     run_in_bkrd = config.get(name, 'run_in_bkrd')
 
-    if run_in_bkrd == 'True' or run_in_bkrd == 'true':
+    if run_in_bkrd.lower() == 'true':
         run_in_bkrd = True
 
-    elif run_in_bkrd == 'False' or run_in_bkrd == 'false':
+    elif run_in_bkrd.lower() == 'false':
         run_in_bkrd = False
 
     is_in_db = False

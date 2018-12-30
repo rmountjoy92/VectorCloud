@@ -11,9 +11,9 @@
           <form method="POST" action="/home">
               {{ form.hidden_tag() }}
               <fieldset class="form-group">
-                  <legend class="border-bottom border-dark mb-4 text-center"><b>Vector Commands</b></legend>
-                  <div class="">
+                  <legend class="border-bottom border-dark text-center"><b>Vector Commands</b>
                     <img align="right"
+                         class="legend-icon"
                          src="{{ url_for('static', filename='icons/info.svg') }}"
                          width="24px"
                          height="24px"
@@ -31,6 +31,7 @@
                     <p><code>robot.behavior.drive_on_charger()</code></p>
                     <p><code>robot.say_text('Hello World')</code></p>
                     <p><code>robot.behavior.set_eye_color(hue=0.0, saturation=0.0)</code></p>
+                    <p><code>time.sleep(10)</code></p>
                     <p>Refer to the API section of the docs in the SDK folder for a full list of commands.</p>
                     <p><b>Database Commands: </b>The command bar sends python code to the running application, so a side effect is that
                     we can send database queries from the bar as well. Full documentation on the database is coming, but some common database queries would be:</p>
@@ -42,23 +43,31 @@
                     <p><code>db.session.query(AppSupport).delete()</code></p>
                     <p>Note: This will clear the application table and support files entries in the database, but will not delete the files from the folders</p>
                     ">
-                  </div>
-                  <div class="form-group">
-                      {{ form.command.label(class="form-control-label") }}
-                        <div onsubmit="loading();">
-                          {{ form.command(autocomplete="off", class="form-control form-control-lg") }}
-                        </div>
+                  </legend>
+                  <div class="row image-container">
+                    <div class="column search-bar">
+                          <div onsubmit="loading();">
+                            {{ form.command(autocomplete="off",
+                                            class="form-control form-control-lg",
+                                            placeholder="Enter a command..") }}
+                          </div>
+                    </div>
+                    <div class="column search-icon">
+                      {{ form.submit(class="btn btn-dark") }}
+                    </div>
                   </div>
               </fieldset>
-              <div class="form-group">
-                  <div>
-                  {{ form.submit(class="btn btn-dark") }}
-                  {% if command_list %}
-                      <a href="{{ url_for('main.execute_commands') }}" class="btn btn-dark" onclick="loading();" role="button">Execute</a>
-                      <a href="{{ url_for('main.clear_commands') }}" class="btn btn-dark" onclick="loading();" role="button">Clear</a>
-                  {% endif %}
-                  </div>
           </form>
+          <div class="image-container row">
+            {% if command_list %}
+                <a href="{{ url_for('main.execute_commands') }}">
+                <img class="store-icon column mb-4" src="{{ url_for('static', filename='icons/play.svg') }}" onclick="loading();" width="32px" height="32px" data-toggle="tooltip" data-placement="top" title="Execute Commands">
+                </a>
+                <a href="{{ url_for('main.clear_commands') }}">
+                <img class="store-icon column mb-4" src="{{ url_for('static', filename='icons/trash.svg') }}" width="32px" height="32px" data-toggle="tooltip" data-placement="top" title="Clear Commands">
+                </a>
+            {% endif %}
+          </div>
       </div>
     </div>
     <div class="text-center">
