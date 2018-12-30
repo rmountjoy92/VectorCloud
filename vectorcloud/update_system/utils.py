@@ -21,7 +21,8 @@ upgrade_cmd = py_cmd + upgrade_fn
 
 
 def check_needed():
-    out = subprocess.run('git status origin master', stdout=subprocess.PIPE,
+    subprocess.run('git remote update', shell=True)
+    out = subprocess.run('git status -uno', stdout=subprocess.PIPE,
                          shell=True, encoding='utf-8')
     if str(out.stdout).find("Your branch is up to date") > -1:
         needed = False
