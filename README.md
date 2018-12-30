@@ -57,4 +57,3 @@ py run.py
 * manage photos and videos
 * learn the 'events' module and integrate it in some way
 
-test
