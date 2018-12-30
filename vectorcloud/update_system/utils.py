@@ -21,12 +21,6 @@ upgrade_cmd = py_cmd + upgrade_fn
 
 
 def upgrade_vectorcloud():
-    check_needed = subprocess.run('git status -uno', stdout=subprocess.PIPE,
-                                  shell=True, encoding='utf-8')
-
-    if 'up to date' in str(check_needed.stdout):
-        flash('Already up to date, no need to update.', 'success')
-        return
 
     out = subprocess.run('git pull origin master', stdout=subprocess.PIPE,
                          shell=True, encoding='utf-8')
