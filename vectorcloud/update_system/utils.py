@@ -31,10 +31,10 @@ def upgrade_vectorcloud():
                          shell=True, encoding='utf-8')
 
     if out.returncode == 0:
-        flash(str(out.stdout), 'success')
+        flash(str(out.sterr), 'success')
 
     out = subprocess.run(upgrade_cmd, stdout=subprocess.PIPE,
                          shell=True, encoding='utf-8')
 
     if out.returncode == 0:
-        flash(str(out.stdout), 'success')
+        flash(str(out.sterr), 'success')
