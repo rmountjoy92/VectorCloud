@@ -3,7 +3,6 @@
 from vectorcloud import db, login_manager
 from flask_login import UserMixin
 
-test = 1
 
 @login_manager.user_loader
 def load_user(user_id):
