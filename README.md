@@ -30,6 +30,8 @@ py run.py
 * Open a browser and go to http://localhost:5000
 * to stop the server press ctrl+c in the terminal
 
+## Notes
+* do not update vectorcloud with git pull, use the built-in update system, as it makes the necessary changes to the database file.
 
 ## Current Features
 * view information exposed by Vector on a webpage - battery level, ip, name, and much more!
