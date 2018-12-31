@@ -58,4 +58,4 @@ def upgrade_vectorcloud():
 
     flash("Update Complete. For now it's a good idea to restart the server in \
            the terminal by pressing ctrl+c and rerunning vectorcloud. This \
-           will change when we move to a production server", 'success')
+           will change when we move to a production server.", 'success')

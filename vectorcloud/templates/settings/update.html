@@ -1,7 +1,10 @@
 {% extends "settings/settings.html" %}
 {% block settings %}
+<legend class="border-bottom border-dark legend-box text-center"><b>
+Update</b></legend>
+
   {% if needed == True %}
-    <div class="image-container">
+    <div class="text-center">
       <img src="{{ url_for('static', filename='icons/update-needed.svg') }}" height="125" width="125">
     </div>
     <p></p>
@@ -11,13 +14,17 @@
     <div class="text-center">
       <a href="{{ url_for('update_system.run_upgrade') }}" class="btn btn-dark" onclick="loading();" role="button">Update</a>
     </div>
+    <p></p>
   {% else %}
-  <div class="image-container">
-    <img src="{{ url_for('static', filename='icons/updated.svg') }}" height="125" width="125">
-  </div>
-  <p></p>
-  <div class="grey-text text-center">
-    <p>You're up to date.</p>
-  </div>
+    <div class="text-center">
+      <img align="center" src="{{ url_for('static', filename='icons/updated.svg') }}" height="125" width="125">
+    </div>
+    <p></p>
+    <div class="grey-text text-center">
+      <p>You're up to date.</p>
+    </div>
   {% endif %}
+  <div class="grey-text text-center">
+    <p><b>VectorCloud Version: </b>{{ vectorcloud_version }}</p>
+  </div>
 {% endblock %}

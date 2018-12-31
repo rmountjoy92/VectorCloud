@@ -1,9 +1,11 @@
 {% extends "settings/settings.html" %}
 {% block settings %}
+<legend class="border-bottom border-dark legend-box text-center"><b>
+General Settings</b></legend>
+
 <form method="POST" action="">
   {{ form.hidden_tag() }}
   <fieldset class="form-group">
-    <legend class="border-bottom border-dark mb-4 text-center"><b>VectorCloud Settings</b></legend>
     <h5>Welcome Message</h5>
     <div class="form-check">
         {{ form.greeting_message_enabled(class="form-check-input") }}
@@ -16,7 +18,7 @@
               src="{{ url_for('static', filename='icons/info.svg') }}"
               width="24px"
               height="24px"
-              title="Custom Greeting <a href='#' class='close' data-dismiss='alert'>&times;</a>" 
+              title="Custom Greeting <a href='#' class='close' data-dismiss='alert'>&times;</a>"
               data-toggle="popover"
               data-placement="left"
               data-html="true"

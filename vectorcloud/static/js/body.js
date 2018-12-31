@@ -16,3 +16,7 @@ $(document).ready(function(){
 $('.popover-dismiss').popover({
   trigger: 'focus'
 })
+
+$('.collapse').collapse({
+  toggle: false
+})

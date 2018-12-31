@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="wiki-icon">
+    <a data-toggle="collapse" href="#wiki-nav" role="button" aria-expanded="false" aria-controls="collapseExample">
+      <img class=""
+           src="{{ url_for('static', filename='icons/arrow-down.svg') }}"
+           width="24px" height="24px">
+    </a>
+
+  <div class="collapse" id="wiki-nav">
+    <div class="list-group">
+      <a href="{{ url_for('wiki_system.wiki') }}"
+      class="list-group-item wiki-list">Welcome</a>
+
+      <a href="{{ url_for('wiki_system.applications') }}"
+      class="list-group-item wiki-list">Applications</a>
+
+      <a href="{{ url_for('wiki_system.database') }}"
+      class="list-group-item wiki-list">Database</a>
+
+      <a href="{{ url_for('wiki_system.api') }}"
+      class="list-group-item wiki-list">API</a>
+
+      <a href="{{ url_for('wiki_system.tutorials') }}"
+      class="list-group-item wiki-list">Tutorials</a>
+    </div>
+  </div>
+</div>
+<div class="content-section">
+  {% block wiki %}{% endblock %}
+</div>
+{% endblock content %}

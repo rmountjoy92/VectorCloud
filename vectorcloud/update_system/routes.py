@@ -1,14 +1,10 @@
 #!/usr/bin/env python3
 
-import multiprocessing
-import os
-import subprocess
-from sys import exit
-from time import sleep
 from flask import render_template, url_for, redirect, Blueprint, flash
 from vectorcloud.models import Status
 from vectorcloud.main.utils import get_stats
 from vectorcloud.main.routes import sdk_version
+from vectorcloud.version import vectorcloud_version
 from vectorcloud.update_system.utils import upgrade_vectorcloud, check_needed
 
 
@@ -32,7 +28,8 @@ def update():
     return render_template('settings/update.html',
                            vector_status=vector_status,
                            sdk_version=sdk_version,
-                           needed=needed)
+                           needed=needed,
+                           vectorcloud_version=vectorcloud_version)
 
 
 @update_system.route("/run_upgrade")

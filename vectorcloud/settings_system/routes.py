@@ -93,14 +93,14 @@ def delete_user():
     return redirect(url_for('user_system.register'))
 
 
-@settings_system.route("/settings_info", methods=['GET', 'POST'])
-def settings_info():
+@settings_system.route("/credits", methods=['GET', 'POST'])
+def credits():
 
     err_msg = get_stats()
     if err_msg:
         return redirect(url_for('error_pages.' + err_msg))
 
     vector_status = Status.query.first()
-    return render_template('settings/info.html',
+    return render_template('settings/credits.html',
                            vector_status=vector_status,
                            sdk_version=sdk_version)
