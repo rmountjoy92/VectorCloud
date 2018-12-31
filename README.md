@@ -42,6 +42,7 @@ py run.py
 * Stage and send SDK commands from a form on the home page
 * Create, edit and delete a user login
 * Customizable login message
+* Update system that uses git to detect changes in the repository, updates using git pull and upgrades database using flask-migrate (alembic)
 
 
 ## Features I'm currently working on
