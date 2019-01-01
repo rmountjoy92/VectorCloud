@@ -157,27 +157,15 @@ def home():
         return redirect(url_for('error_pages.' + err_msg))
 
     vector_status = Status.query.first()
-    settings = Settings.query.first()
 
-    if settings.view == 'card':
-        return render_template('home/home_card_view.html',
-                               vector_status=vector_status,
-                               form=form, command_list=command_list,
-                               app_list=app_list,
-                               sdk_version=sdk_version,
-                               search_form=search_form,
-                               search_term=search_term,
-                               num_results=num_results)
-
-    if settings.view == 'list':
-        return render_template('home/home_list_view.html',
-                               vector_status=vector_status,
-                               form=form, command_list=command_list,
-                               app_list=app_list,
-                               sdk_version=sdk_version,
-                               search_form=search_form,
-                               search_term=search_term,
-                               num_results=num_results)
+    return render_template('home.html',
+                           vector_status=vector_status,
+                           form=form, command_list=command_list,
+                           app_list=app_list,
+                           sdk_version=sdk_version,
+                           search_form=search_form,
+                           search_term=search_term,
+                           num_results=num_results)
 
 
 @main.route("/set_card_view")

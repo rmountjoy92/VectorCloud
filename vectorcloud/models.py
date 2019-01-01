@@ -83,7 +83,6 @@ class Settings(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     greeting_message_enabled = db.Column(db.Boolean, default=True)
     custom_greeting_message = db.Column(db.Text, default='default')
-    view = db.Column(db.Text, default='card')
     search_by_name = db.Column(db.Boolean, default=True)
     search_by_description = db.Column(db.Boolean, default=True)
     search_by_author = db.Column(db.Boolean, default=True)

@@ -10,7 +10,11 @@ a:hover {
 
 
 .list-view-spinner {
-  margin: 5px 0px 0px 20px;
+  margin: 10px 0px 0px 20px;
+}
+
+.list-info {
+  padding: 15px;
 }
 
 .search-box {
@@ -42,9 +46,18 @@ a:hover {
   margin: 0px 5px 0px 0px;
 }
 
+.border-top {
+  border:1px solid #222D32 !important;
+}
+
 .grey-text {
   color: #898F91 !important;
   font-size: 20px;
+}
+
+.grey-text-md {
+  color: #898F91 !important;
+  font-size: 16px;
 }
 
 .grey-text-small {
@@ -92,6 +105,16 @@ a:hover {
 .image-container {
   display: flex;
   justify-content: center;
+}
+
+.image-container-right {
+  display: flex;
+  justify-content: right;
+}
+
+.image-container-left {
+  display: flex;
+  justify-content: left;
 }
 
 .border-bottom {
@@ -399,7 +422,7 @@ div.fixed {
   background-color: #29353B;
   border: 2px solid #00EE93;
   border-radius: 25px;
-  padding: 15px;
+  padding: 12px;
   margin: 12px 20px 12px 12px;
   -webkit-box-shadow: 0px 0px 2px 2px rgba(0,0,0,0.2);
   -moz-box-shadow: 0px 0px 2px 2px rgba(0,0,0,0.2);

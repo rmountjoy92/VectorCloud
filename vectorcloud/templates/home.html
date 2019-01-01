@@ -130,6 +130,77 @@
         </fieldset>
     </form>
     {% endif %}
-    {% block applications %}{% endblock %}
+    {% if not app_list %}
+      <p></p>
+      <div class="text-center">
+        <a href="{{ url_for('application_store.app_store') }}">
+        <img class="mb-4" src="{{ url_for('static', filename='icons/package-grey.svg') }}" width="128px" height="128px" data-toggle="tooltip" data-placement="top" title="App Store">
+        </a>
+        <div class="grey-text">
+          <p>No applications installed. Go to the app store or upload a local package.</p>
+        </div>
+      </div>
+    {% else %}
+      <div class="content-section">
+          {% for app in app_list %}
+          <div class="border-bottom border-dark">
+            <div class="image-container">
+
+              <a href="{{ url_for('application_system.run_script', script_hex_id=app.hex_id) }}" onclick="loading();">
+              <img class="store-icon-main" src="{{ url_for('static', filename='app_icons/' + app.icon) }}" width="48px" height="48px">
+              <b>{{ app.script_name }}</b>
+              </a>
+
+              {% if app.pid != None %}
+                <a href="{{ url_for('application_system.kill_process', pid=app.pid) }}">
+                <img class="list-view-spinner" align="right" src="{{ url_for('static', filename='icons/running_in_bkrd.svg') }}" data-toggle="tooltip" data-placement="top" title="Process Running. Click here to kill.">
+                </a>
+              {% endif %}
+
+              <a data-toggle="collapse" href="#{{ app.script_name }}" role="button" aria-expanded="false" aria-controls="collapseExample">
+                <img class="list-view-spinner"
+                     src="{{ url_for('static', filename='icons/arrow-down.svg') }}"
+                     width="24px" height="24px">
+              </a>
+            </div>
+            <div class="collapse" id="{{ app.script_name }}">
+              <div class="border-top border-dark mt-4"></div>
+              <div class="row mt-4 image-container">
+                <div class="column store-icon-main">
+                  <a href="{{ url_for('application_system.edit_application', script_id=app.id) }}">
+                  <img class="" src="{{ url_for('static', filename='icons/edit.svg') }}" width="24px" height="24px" data-toggle="tooltip" data-placement="top" title="Edit">
+                  </a>
+                </div>
+                <div class="column store-icon-main">
+                  <a href="{{ url_for('application_store.export_application', script_id=app.id) }}">
+                  <img src="{{ url_for('static', filename='icons/download.svg') }}" width="24px" height="24px" data-toggle="tooltip" data-placement="top" title="Download Package">
+                  </a>
+                </div>
+                <div class="column store-icon-main">
+                  <a href="{{ url_for('application_system.delete_application', script_id=app.id) }}">
+                  <img align="left" src="{{ url_for('static', filename='icons/trash.svg') }}" width="24px" height="24px" data-toggle="tooltip" data-placement="top" title="Delete">
+                  </a>
+                </div>
+                <div class="column store-icon-main" data-toggle="tooltip" data-placement="top" title="Application Settings">
+                  <a href="{{ url_for('application_system.edit_app_settings_file', hex_id=app.hex_id) }}">
+                  <img src="{{ url_for('static', filename='icons/settings.svg') }}" width="24px" height="24px">
+                  </a>
+                </div>
+              </div>
+              <div class="border-top border-dark mt-4"></div>
+              <div class="grey-text-md mt-2 text-center list-info">
+                <p><b><u>Author</u></b></p>
+                <p>{{ app.author }}</p>
+                <p><b><u>Website</u></b></p>
+                <p>{{ app.website }}</p>
+                <p><b><u>Description</u></b></p>
+                <p>{{ app.description }}</p>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
 
 {% endblock content %}
