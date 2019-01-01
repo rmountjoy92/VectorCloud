@@ -57,7 +57,7 @@
   <div class="content-section">
     <div class="border-bottom border-dark mb-4">
       {% for app in app_list %}
-      <div class="border-top border-dark pt-3">
+      <div class="pt-3">
         {% if app.installed == True %}
           <div>
             <img class="store-icon" align="right" src="{{ url_for('static', filename='icons/installed.svg') }}" width="20px" height="20px" data-toggle="tooltip" data-placement="top" title="Installed">
@@ -90,6 +90,7 @@
           <b>{{ app.script_name }}</b>
         </div>
       </div>
+      <div class="border-top border-dark mt-4 mb-4"></div>
       {% endfor %}
     </div>
   </div>
