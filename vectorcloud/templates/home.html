@@ -188,6 +188,11 @@
                 </div>
               </div>
               <div class="border-top border-dark mt-4"></div>
+              <div class="image-container mt-4">
+                <a href="{{ url_for('application_system.run_script', script_hex_id=app.hex_id) }}" onclick="loading();">
+                <img class="store-icon-main" src="{{ url_for('static', filename='app_icons/' + app.icon) }}" width="125px" height="125px">
+                </a>
+              </div>
               <div class="grey-text-md mt-2 text-center list-info">
                 <p><b><u>Author</u></b></p>
                 <p>{{ app.author }}</p>

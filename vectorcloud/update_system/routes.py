@@ -34,12 +34,5 @@ def update():
 
 @update_system.route("/run_upgrade")
 def run_upgrade():
-    needed = check_needed()
-
-    if needed is True:
-        upgrade_vectorcloud()
-
-    else:
-        flash('Already up to date, no need to update', 'success')
-        return redirect(url_for('main.home'))
+    upgrade_vectorcloud()
     return redirect(url_for('update_system.update'))
