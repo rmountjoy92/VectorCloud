@@ -7,7 +7,9 @@ from grpc._channel import _Rendezvous
 from pathlib import Path
 from flask import flash
 from configparser import ConfigParser
-from vectorcloud.models import Command, Output, Status
+from vectorcloud.models import Command, Output, Status, ApplicationStore,\
+    Settings
+from vectorcloud.application_system.utils import scripts_folder
 from vectorcloud import db
 
 try:
@@ -147,3 +149,50 @@ def robot_do(override_output=None):
     db.session.query(Command).delete()
     db.session.query(Output).delete()
     db.session.commit()
+
+
+def database_init():
+
+    # Create the settings table if it doesn't exist
+    settings = Settings.query.first()
+    if not settings:
+        settings = Settings(id=1)
+        db.session.add(settings)
+        db.session.commit()
+
+    # Initialize app store table
+    db.session.query(ApplicationStore).delete()
+    db.session.commit()
+
+    list_folder = os.path.join(scripts_folder,
+                               'vectorcloud',
+                               'application_store',
+                               'list')
+
+    store_app_list = os.listdir(list_folder)
+
+    for app_name in store_app_list:
+        app_path = os.path.join(list_folder, app_name)
+        f = open(app_path)
+        name = f.readline()
+        name = name.replace(']', '')
+        name = name.replace('[', '')
+        name = name.replace('\n', '')
+        f.close()
+        config.read(app_path)
+        icon = config.get(name, 'icon')
+        description = config.get(name, 'description')
+        author = config.get(name, 'author')
+        website = config.get(name, 'website')
+        zip_file = config.get(name, 'zip_file')
+
+        store_app = ApplicationStore(script_name=name,
+                                     author=author,
+                                     website=website,
+                                     description=description,
+                                     icon=icon,
+                                     installed=False,
+                                     zip_file=zip_file)
+
+        db.session.add(store_app)
+        db.session.commit()

@@ -73,6 +73,7 @@ def add_header(response):
 @main.route("/")
 @main.route("/home", methods=['GET', 'POST'])
 def home():
+    settings = Settings.query.first()
     search_term = None
     num_results = 0
 
@@ -84,12 +85,6 @@ def home():
     temp_exists = os.path.isdir(temp_folder)
     if temp_exists is False:
         os.mkdir(temp_folder)
-
-    settings = Settings.query.first()
-    if not settings:
-        settings = Settings(id=1)
-        db.session.add(settings)
-        db.session.commit()
 
     output = Output.query.all()
     for out in output:

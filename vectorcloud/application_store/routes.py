@@ -33,8 +33,6 @@ def app_store():
                 store_app.installed = True
                 db.session.merge(store_app)
                 db.session.commit()
-            else:
-                store_app.installed = False
 
     err_msg = get_stats()
     if err_msg:
@@ -104,68 +102,6 @@ def upload_package():
     return render_template('applications/install_package.html',
                            title='Install Package',
                            form=form)
-
-
-@application_store.route("/app_store_admin_add", methods=['GET', 'POST'])
-def app_store_admin_add():
-    form = AdminAdd()
-    app_list = ApplicationStore.query.all()
-
-    if form.validate_on_submit():
-        store_app = ApplicationStore(
-            script_name=form.script_name.data,
-            description=form.description.data,
-            author=form.author.data,
-            website=form.website.data,
-            icon=form.icon.data,
-            zip_file=form.zip_file.data,
-        )
-        db.session.add(store_app)
-        db.session.commit()
-        flash(form.script_name.data + ' added to app store.', 'success')
-        return redirect(url_for('application_store.app_store_admin_add'))
-
-    return render_template(
-        'applications/app_store_admin_add.html', title='App Store - Admin',
-        form=form, app_list=app_list)
-
-
-@application_store.route("/edit_store_application/<script_id>",
-                         methods=['GET', 'POST'])
-def edit_store_application(script_id):
-    form = AdminAdd()
-    store_app = ApplicationStore.query.filter_by(id=script_id).first()
-
-    if form.validate_on_submit():
-        store_app.script_name = form.script_name.data
-        store_app.author = form.author.data
-        store_app.website = form.website.data
-        store_app.description = form.description.data
-        store_app.icon = form.icon.data
-        store_app.zip_file = form.zip_file.data
-        db.session.merge(store_app)
-        db.session.commit()
-        flash('App updated!', 'success')
-
-    elif request.method == 'GET':
-        form.script_name.data = store_app.script_name
-        form.author.data = store_app.author
-        form.website.data = store_app.website
-        form.description.data = store_app.description
-        form.icon.data = store_app.icon
-        form.zip_file.data = store_app.zip_file
-
-    return render_template(
-        'applications/app_store_admin_edit.html', title='App Store - Admin',
-        form=form, store_app=store_app)
-
-
-@application_store.route("/delete_store_application/<script_id>",
-                         methods=['GET', 'POST'])
-def delete_store_application(script_id):
-    db.session.query(ApplicationStore).filter_by(id=script_id).delete()
-    db.session.commit()
-    return redirect(url_for('application_store.app_store_admin_add'))
 
 
 @application_store.route("/install_store_application/<script_id>",
