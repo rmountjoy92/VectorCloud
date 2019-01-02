@@ -144,21 +144,24 @@
       <div class="content-section">
           {% for app in app_list %}
           <div class="border-bottom border-dark">
-            <div class="image-container">
+            <div class="image-container row">
 
               <a href="{{ url_for('application_system.run_script', script_hex_id=app.hex_id) }}" onclick="loading();">
-              <img class="store-icon-main" src="{{ url_for('static', filename='app_icons/' + app.icon) }}" width="48px" height="48px">
-              <b>{{ app.script_name }}</b>
+              <img class="store-icon-main column" src="{{ url_for('static', filename='app_icons/' + app.icon) }}" width="48px" height="48px">
               </a>
-
+              <a href="{{ url_for('application_system.run_script', script_hex_id=app.hex_id) }}" onclick="loading();">
+              <div class="app-name column">
+                <b>{{ app.script_name }}</b>
+              </div>
+              </a>
               {% if app.pid != None %}
                 <a href="{{ url_for('application_system.kill_process', pid=app.pid) }}">
-                <img class="list-view-spinner" align="right" src="{{ url_for('static', filename='icons/running_in_bkrd.svg') }}" data-toggle="tooltip" data-placement="top" title="Process Running. Click here to kill.">
+                <img class="list-view-spinner column" align="right" src="{{ url_for('static', filename='icons/running_in_bkrd.svg') }}" data-toggle="tooltip" data-placement="top" title="Process Running. Click here to kill.">
                 </a>
               {% endif %}
 
               <a data-toggle="collapse" href="#{{ app.script_name }}" role="button" aria-expanded="false" aria-controls="collapseExample">
-                <img class="list-view-spinner"
+                <img class="list-view-spinner column"
                      src="{{ url_for('static', filename='icons/arrow-down.svg') }}"
                      width="24px" height="24px">
               </a>
@@ -179,6 +182,11 @@
                 <div class="column store-icon-main">
                   <a href="{{ url_for('application_system.delete_application', script_id=app.id) }}">
                   <img align="left" src="{{ url_for('static', filename='icons/trash.svg') }}" width="24px" height="24px" data-toggle="tooltip" data-placement="top" title="Delete">
+                  </a>
+                </div>
+                <div class="column store-icon-main" data-toggle="tooltip" data-placement="top" title="Duplicate Application">
+                  <a href="{{ url_for('application_system.duplicate_application', script_id=app.id) }}">
+                  <img src="{{ url_for('static', filename='icons/copy.svg') }}" width="24px" height="24px">
                   </a>
                 </div>
                 <div class="column store-icon-main" data-toggle="tooltip" data-placement="top" title="Application Settings">

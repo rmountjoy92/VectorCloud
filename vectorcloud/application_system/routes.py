@@ -5,7 +5,9 @@ import subprocess
 import platform
 import multiprocessing
 import signal
+import secrets
 from sqlalchemy import func
+from shutil import copyfile
 from flask import render_template, url_for, redirect, flash, request, Blueprint
 from vectorcloud.application_system.forms import UploadScript, AppSettings
 from vectorcloud.models import Application, AppSupport, Status, Output,\
@@ -367,3 +369,47 @@ def edit_app_settings_file(hex_id):
         vector_status=vector_status,
         sdk_version=sdk_version,
         application=application)
+
+
+@application_system.route("/duplicate_application/<script_id>")
+def duplicate_application(script_id):
+    application = Application.query.filter_by(id=script_id).first()
+
+    script_fn = application.hex_id + '.py'
+    config_fn = application.hex_id + '.ini'
+    script_path = os.path.join(scripts_folder, script_fn)
+    config_path = os.path.join(lib_folder, config_fn)
+    icon_path = os.path.join(app.root_path,
+                             'static/app_icons', application.icon)
+
+    new_hex = secrets.token_hex(8)
+    new_script_fn = new_hex + '.py'
+    new_config_fn = new_hex + '.ini'
+    new_script_path = os.path.join(scripts_folder, new_script_fn)
+    new_config_path = os.path.join(lib_folder, new_config_fn)
+    _, f_ext = os.path.splitext(application.icon)
+    new_icon_fn = new_hex + f_ext
+    new_icon_path = os.path.join(app.root_path,
+                                 'static/app_icons', new_icon_fn)
+
+    copyfile(script_path, new_script_path)
+    copyfile(config_path, new_config_path)
+    if application.icon != 'default.png':
+        copyfile(icon_path, new_icon_path)
+    else:
+        new_icon_fn = 'default.png'
+    application = Application(script_name=new_hex,
+                              author=application.author,
+                              website=application.website,
+                              description=application.description,
+                              icon=new_icon_fn,
+                              hex_id=new_hex,
+                              run_in_bkrd=application.run_in_bkrd)
+
+    app_support = AppSupport(hex_id=new_hex,
+                             file_name=new_config_fn)
+
+    db.session.add(application)
+    db.session.add(app_support)
+    db.session.commit()
+    return redirect(url_for('main.home'))

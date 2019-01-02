@@ -10,7 +10,7 @@ a:hover {
 
 
 .list-view-spinner {
-  margin: 10px 0px 0px 20px;
+  margin: 13px 0px 0px 20px;
 }
 
 .list-info {
@@ -31,6 +31,11 @@ a:hover {
 
 .menu-icon-text {
   margin: 0px 0px 0px 10px;
+}
+
+.app-name {
+  margin: 5px 0px 0px 10px;
+  font-size: 1.5em;
 }
 
 .store-icon {

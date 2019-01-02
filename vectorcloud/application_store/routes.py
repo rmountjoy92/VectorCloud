@@ -33,6 +33,8 @@ def app_store():
                 store_app.installed = True
                 db.session.merge(store_app)
                 db.session.commit()
+            else:
+                store_app.installed = False
 
     err_msg = get_stats()
     if err_msg:

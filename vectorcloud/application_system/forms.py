@@ -4,12 +4,13 @@ from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from wtforms import StringField, SubmitField, TextAreaField,\
     MultipleFileField, BooleanField
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, Length
 
 
 class UploadScript(FlaskForm):
     script_name = StringField('Name of SDK application',
-                              validators=[DataRequired()])
+                              validators=[DataRequired(),
+                                          Length(min=1, max=18)])
 
     description = TextAreaField('Description')
 

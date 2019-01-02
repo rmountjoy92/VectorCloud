@@ -106,6 +106,8 @@ def home():
                 store_app.installed = True
                 db.session.merge(store_app)
                 db.session.commit()
+            else:
+                store_app.installed = False
 
     form = CommandForm()
     search_form = SearchForm()
