@@ -10,18 +10,8 @@ from configparser import ConfigParser
 from flask import flash, redirect, url_for
 from vectorcloud import db
 from vectorcloud.models import Application, AppSupport
-from vectorcloud.application_system.utils import get_script_folder,\
-    get_lib_folder
-
-curr_folder = os.path.dirname(os.path.realpath(__file__))
-packages_folder = os.path.join(curr_folder, 'packages')
-temp_folder = os.path.join(curr_folder, 'temp')
-scripts_folder = get_script_folder()
-lib_folder = get_lib_folder(scripts_folder)
-app_icons_folder = os.path.join(scripts_folder,
-                                'vectorcloud',
-                                'static',
-                                'app_icons')
+from vectorcloud.paths import root_folder, lib_folder, packages_folder,\
+    temp_folder, app_icons_folder
 
 
 config = ConfigParser()
@@ -158,7 +148,7 @@ def install_package(form_package,
         return
 
     script_fn = os.path.join(temp_folder, script_name)
-    new_script_fn = os.path.join(scripts_folder, random_hex + '.py')
+    new_script_fn = os.path.join(root_folder, random_hex + '.py')
 
     try:
         os.rename(script_fn, new_script_fn)
@@ -271,7 +261,7 @@ def export_package(script_id):
     config_file.write('run_in_bkrd = ' + run_in_bkrd + '\n')
     config_file.close()
 
-    script_fn = os.path.join(scripts_folder, application.hex_id + '.py')
+    script_fn = os.path.join(root_folder, application.hex_id + '.py')
     new_script_fn = os.path.join(temp_folder, application.hex_id + '.py')
     copyfile(script_fn, new_script_fn)
 
@@ -281,7 +271,7 @@ def export_package(script_id):
         copyfile(helper_fn, new_helper_fn)
 
     if application.icon != 'default.png':
-        icon_fn = os.path.join(scripts_folder, 'vectorcloud',
+        icon_fn = os.path.join(root_folder, 'vectorcloud',
                                'static', 'app_icons', application.icon)
         new_icon_fn = os.path.join(temp_folder, application.icon)
         copyfile(icon_fn, new_icon_fn)
@@ -289,7 +279,7 @@ def export_package(script_id):
     zip_name = application.script_name
     zip_name = zip_name.replace(' ', '_')
     shutil.make_archive(zip_name, 'zip', temp_folder)
-    zip_fn = os.path.join(scripts_folder, zip_name + '.zip')
+    zip_fn = os.path.join(root_folder, zip_name + '.zip')
     new_zip_fn = os.path.join(temp_folder, zip_name + '.zip')
     os.rename(zip_fn, new_zip_fn)
     return new_zip_fn

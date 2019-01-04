@@ -3,4 +3,39 @@
 <legend class="border-bottom border-dark legend-box text-center"><b>
 VectorCloud Wiki</b></legend>
 
+<div class="image-container">
+  <img src="{{ url_for('static', filename='icons/vectorcloud.svg') }}" width="200px" height="200px">
+</div>
+
+<div class="border-bottom border-dark mb-2 mt-2 text-center">
+  <a href="{{ url_for('wiki_system.applications') }}"
+  class="list-group-item wiki-list">Applications</a>
+
+  <a href="{{ url_for('wiki_system.database') }}"
+  class="list-group-item wiki-list">Database</a>
+
+  <a href="{{ url_for('wiki_system.api') }}"
+  class="list-group-item wiki-list">API</a>
+
+  <a href="{{ url_for('wiki_system.tutorials') }}"
+  class="list-group-item wiki-list">Tutorials</a>
+</div>
+
+<div class="text-center mb-4">
+  <h3>Welcome to the VectorCloud Wiki!</h3>
+</div>
+
+<div class="border-bottom border-dark mb-4 mt-4">
+
+  <div class="mb-2 mt-2">
+    <h4>What is VectorCloud?</h4>
+  </div>
+
+  <div class="grey-text">
+    VectorCloud is a web interface for Anki's Vector robot. It is made using
+    Flask, which uses files written in Python to serve HTML based webpages.
+    VectorCloud uses Anki's SDK to get information and send commands to Vector.
+  </div>
+
+</div>
 {% endblock wiki %}

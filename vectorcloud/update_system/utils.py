@@ -4,11 +4,11 @@ import platform
 import os
 import subprocess
 from flask import flash
-from vectorcloud.application_system.utils import scripts_folder
+from vectorcloud.paths import root_folder
 
 operating_system = platform.system()
-migrate_fn = os.path.join(scripts_folder, 'manage_db.py db migrate')
-upgrade_fn = os.path.join(scripts_folder, 'manage_db.py db upgrade')
+migrate_fn = os.path.join(root_folder, 'manage_db.py db migrate')
+upgrade_fn = os.path.join(root_folder, 'manage_db.py db upgrade')
 
 if operating_system == 'Windows':
     py_cmd = 'py '

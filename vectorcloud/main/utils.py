@@ -5,11 +5,11 @@ import sys
 import time
 from grpc._channel import _Rendezvous
 from pathlib import Path
-from flask import flash
+from flask import flash, redirect, url_for
 from configparser import ConfigParser
 from vectorcloud.models import Command, Output, Status, ApplicationStore,\
     Settings
-from vectorcloud.application_system.utils import scripts_folder
+from vectorcloud.paths import list_folder
 from vectorcloud import db
 
 try:
@@ -53,7 +53,8 @@ def get_stats(force=False):
 
             # get robot name and ip from config file
             home = Path.home()
-            sdk_config_file = os.path.join(home, '.anki_vector', 'sdk_config.ini')
+            sdk_config_file = os.path.join(home, '.anki_vector',
+                                           'sdk_config.ini')
             f = open(sdk_config_file)
             serial = f.readline()
             serial = serial.replace(']', '')
@@ -164,11 +165,6 @@ def database_init():
     db.session.query(ApplicationStore).delete()
     db.session.commit()
 
-    list_folder = os.path.join(scripts_folder,
-                               'vectorcloud',
-                               'application_store',
-                               'list')
-
     store_app_list = os.listdir(list_folder)
 
     for app_name in store_app_list:
@@ -196,3 +192,73 @@ def database_init():
 
         db.session.add(store_app)
         db.session.commit()
+
+
+def undock_robot():
+    db.session.query(Command).delete()
+    robot_command = Command(command='robot.behavior.drive_off_charger()')
+    db.session.add(robot_command)
+    db.session.commit()
+
+    err_msg = robot_do(override_output='Undock Command Complete!')
+    if err_msg:
+        db.session.query(Command).delete()
+        db.session.commit()
+        return redirect(url_for('error_pages.' + err_msg))
+
+    err_msg = get_stats(force=True)
+    if err_msg:
+        return redirect(url_for('error_pages.' + err_msg))
+
+
+def dock_robot():
+    db.session.query(Command).delete()
+    robot_command = Command(command='robot.behavior.drive_on_charger()')
+    db.session.add(robot_command)
+    db.session.commit()
+
+    err_msg = robot_do(override_output='Dock Command Complete!')
+    if err_msg:
+        db.session.query(Command).delete()
+        db.session.commit()
+        return redirect(url_for('error_pages.' + err_msg))
+
+    err_msg = get_stats(force=True)
+    if err_msg:
+        return redirect(url_for('error_pages.' + err_msg))
+
+
+def robot_connect_cube():
+    db.session.query(Command).delete()
+    robot_command = Command(command='robot.world.connect_cube()')
+    db.session.add(robot_command)
+    db.session.commit()
+
+    err_msg = robot_do(override_output='Cube Connected!')
+    if err_msg:
+        return redirect(url_for('error_pages.' + err_msg))
+
+
+def robot_dock_cube():
+    args = anki_vector.util.parse_command_args()
+    with anki_vector.Robot(args.serial) as robot:
+        robot.behavior.drive_off_charger()
+        cube = robot.world.connect_cube()
+        if cube:
+            robot.behavior.dock_with_cube(cube)
+            robot.behavior.set_lift_height(100.0)
+            time.sleep(5)
+            robot.behavior.set_lift_height(0,  max_speed=10.0)
+            robot.world.disconnect_cube()
+            flash('Cube picked up!', 'success')
+
+
+def execute_db_commands():
+    robot_commands = Command.query.all()
+    if robot_commands:
+        err_msg = robot_do()
+        if err_msg:
+            return err_msg
+
+    else:
+        flash('No command staged!', 'warning')

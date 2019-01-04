@@ -1,29 +1,24 @@
 #!/usr/bin/env python3
 
 import os
-import subprocess
-import platform
-import multiprocessing
 import signal
 import secrets
 from sqlalchemy import func
 from shutil import copyfile
 from flask import render_template, url_for, redirect, flash, request, Blueprint
 from vectorcloud.application_system.forms import UploadScript, AppSettings
-from vectorcloud.models import Application, AppSupport, Status, Output,\
+from vectorcloud.models import Application, AppSupport, Status,\
     ApplicationStore
 from vectorcloud import app, db
 from vectorcloud.main.utils import get_stats
 from vectorcloud.main.routes import sdk_version
 from vectorcloud.application_system.utils import save_icon, save_script,\
-    save_script_helpers, get_script_folder, get_lib_folder
+    save_script_helpers, run_script_func
+from vectorcloud.paths import root_folder, lib_folder
 
 
 application_system = Blueprint('application_system', __name__)
 
-
-scripts_folder = get_script_folder()
-lib_folder = get_lib_folder(scripts_folder)
 
 # ------------------------------------------------------------------------------
 # Application system routes
@@ -120,28 +115,6 @@ def upload():
         sdk_version=sdk_version)
 
 
-def start_bkrd_script(py_cmd, script_path, application):
-    pid = os.getpid()
-    application.pid = pid
-    db.session.commit()
-
-    out = subprocess.run(py_cmd + script_path, stdout=subprocess.PIPE,
-                         shell=True, encoding='utf-8')
-
-    if out.returncode == 0:
-        msg = application.script_name + ' ran succussfully! Output: ' +\
-            str(out.stdout)
-        output = Output(output=msg)
-        db.session.add(output)
-
-    else:
-        msg = 'Something is not right, try again.'
-        output = Output(output=msg)
-        db.session.add(output)
-
-    application.pid = None
-    db.session.commit()
-
 # runs a script from the database by hex id. Hex id is passed into the url
 # e.g. /run_script/cb893c1cee6d7e87 would run the script with hex id
 # cb893c1cee6d7e87 in the database
@@ -150,34 +123,20 @@ def start_bkrd_script(py_cmd, script_path, application):
 @application_system.route("/run_script/<script_hex_id>")
 def run_script(script_hex_id):
     application = Application.query.filter_by(hex_id=script_hex_id).first()
-    scriptn = script_hex_id + '.py'
-    script_path = os.path.join(scripts_folder, scriptn)
 
-    if platform.system() == 'Windows':
-        py_cmd = 'py '
+    out = run_script_func(script_hex_id)
 
-    else:
-        py_cmd = 'python3 '
+    if out != 'error':
+        flash(application.script_name + ' ran succussfully! Output: ' + out,
+              'success')
 
-    if application.run_in_bkrd is False:
-        out = subprocess.run(py_cmd + script_path, stdout=subprocess.PIPE,
-                             shell=True, encoding='utf-8')
-
-        if out.returncode == 0:
-            flash(application.script_name + ' ran succussfully! Output: ' +
-                  str(out.stdout), 'success')
-
-        else:
-            flash('Something is not right. Try again', 'warning')
-        return redirect(url_for('main.home'))
+    elif out == 'Process Started!':
+        flash(out, 'success')
 
     else:
-        get_stats(force=True)
-        t = multiprocessing.Process(target=start_bkrd_script,
-                                    args=(py_cmd, script_path, application))
-        t.start()
-        flash('Process Started!', 'success')
-        return redirect(url_for('main.home'))
+        flash('Something is not right. Try again', 'warning')
+
+    return redirect(url_for('main.home'))
 
 
 @application_system.route("/kill_process/<pid>")
@@ -218,7 +177,7 @@ def edit_application(script_id):
 
         if form.script.data:
             scriptn = script_hex_id + '.py'
-            script_path = os.path.join(scripts_folder, scriptn)
+            script_path = os.path.join(root_folder, scriptn)
             os.remove(script_path)
             form.script.data.save(script_path)
 
@@ -295,7 +254,7 @@ def delete_application(script_id):
 
     hex_id = application.hex_id
     script_fn = application.hex_id + '.py'
-    script_path = os.path.join(scripts_folder, script_fn)
+    script_path = os.path.join(root_folder, script_fn)
     icon_path = os.path.join(app.root_path,
                              'static/app_icons', application.icon)
     support_files = AppSupport.query.filter_by(hex_id=hex_id)
@@ -377,7 +336,7 @@ def duplicate_application(script_id):
 
     script_fn = application.hex_id + '.py'
     config_fn = application.hex_id + '.ini'
-    script_path = os.path.join(scripts_folder, script_fn)
+    script_path = os.path.join(root_folder, script_fn)
     config_path = os.path.join(lib_folder, config_fn)
     icon_path = os.path.join(app.root_path,
                              'static/app_icons', application.icon)
@@ -385,7 +344,7 @@ def duplicate_application(script_id):
     new_hex = secrets.token_hex(8)
     new_script_fn = new_hex + '.py'
     new_config_fn = new_hex + '.ini'
-    new_script_path = os.path.join(scripts_folder, new_script_fn)
+    new_script_path = os.path.join(root_folder, new_script_fn)
     new_config_path = os.path.join(lib_folder, new_config_fn)
     _, f_ext = os.path.splitext(application.icon)
     new_icon_fn = new_hex + f_ext

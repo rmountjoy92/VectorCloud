@@ -16,12 +16,12 @@ Please feel free to contribute.
 * Once you've verified your SDK install, in a terminal, enter:
 ```
 git clone https://github.com/rmountjoy92/VectorCloud
-pip3 install flask flask-sqlalchemy flask-bcrypt flask-login flask-wtf flask-bootstrap flask-migrate flask-script
+pip3 install flask flask-sqlalchemy flask-bcrypt flask-login flask-wtf flask-bootstrap flask-migrate flask-script flask-restful
 ```
 * navigate to the VectorCloud folder, make sure run.py is executable and enter:
 On Linux or Mac:
 ```
-./run.py 
+./run.py
 ```
 On Windows:
 ```
@@ -60,4 +60,3 @@ py run.py
 * plugin manager
 * manage photos and videos
 * learn the 'events' module and integrate it in some way
-

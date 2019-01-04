@@ -1,6 +1,142 @@
 {% extends "/wiki/wiki_layout.html" %}
 {% block wiki %}
 <legend class="border-bottom border-dark legend-box text-center"><b>
-Api Documentation</b></legend>
+API</b></legend>
+
+<div class="text-center">
+  <h3>Resources</h3>
+</div>
+
+<div class="border-bottom border-dark">
+  <p>All following examples use the requests module of python, though
+    any method of get/put on the URL will trigger the resource. To use the
+    following examples in a python project, you will need to include:</p>
+    <p><code>from requests import get, post</code></p>
+</div>
+
+<div class="border-bottom border-dark">
+
+  <div class="mt-4">
+    <h4>UndockRobot, '/api/undock'</h4>
+    <div class="code-box grey-text-md mb-4">
+      <p>Undock robot from charger</p>
+      <code>
+      get('http://localhost:5000/api/undock').json()
+      </code>
+    </div>
+  </div>
+
+  <div class="border-top border dark"></div>
+  <div class="mt-4">
+    <h4>DockRobot, '/api/dock'</h4>
+    <div class="code-box grey-text-md mb-4">
+      <p>Dock robot on charger</p>
+      <code>
+      get('http://localhost:5000/api/dock').json()
+      </code>
+    </div>
+  </div>
+
+  <div class="border-top border dark"></div>
+  <div class="mt-4">
+    <h4>ConnectCube, '/api/connect_cube'</h4>
+    <div class="code-box grey-text-md mb-4">
+      <p>Connect to cube</p>
+      <code>
+      get('http://localhost:5000/api/connect_cube').json()
+      </code>
+    </div>
+  </div>
+
+  <div class="border-top border dark"></div>
+  <div class="mt-4">
+    <h4>DockCube, '/api/dock_cube'</h4>
+    <div class="code-box grey-text-md mb-4">
+      <p>Dock cube and pick it up</p>
+      <code>
+      get('http://localhost:5000/api/dock_cube').json()
+      </code>
+    </div>
+  </div>
+
+  <div class="border-top border dark"></div>
+  <div class="mt-4">
+    <h4>GetStatus, '/api/status'</h4>
+    <div class="code-box grey-text-md mb-4">
+      <p>Get the data from the Status table</p>
+      <code>
+      get('http://localhost:5000/api/status').json()
+      </code>
+    </div>
+  </div>
+
+  <div class="border-top border dark"></div>
+  <div class="mt-4">
+    <h4>AddCommand, '/api/add_command'</h4>
+    <div class="code-box grey-text-md mb-2">
+      <p>Get the data from the Command table</p>
+      <code>
+      get('http://localhost:5000/api/add_command').json()
+      </code>
+    </div>
+  </div>
+
+  <div class="code-box grey-text-md mb-4">
+    <p></p>
+    <p>Add a command to the Command table</p>
+    <code>
+    put('http://localhost:5000/api/add_command', data={'data': 'robot.behavior.drive_off_charger()'}).json()
+    </code>
+  </div>
+
+  <div class="border-top border dark"></div>
+  <div class="mt-4">
+    <h4>ExecuteCommands, '/api/execute'</h4>
+
+    <div class="code-box grey-text-md mb-4">
+      <p>Execute all commands in the Command table</p>
+      <code>
+      get('http://localhost:5000/api/undock').json()
+      </code>
+    </div>
+  </div>
+
+  <div class="border-top border dark"></div>
+  <div class="mt-4">
+    <h4>ClearCommands, '/api/clear_commands'</h4>
+    <div class="code-box grey-text-md mb-4">
+      <p>Clear all commands in the Command table</p>
+      <code>
+      get('http://localhost:5000/api/undock').json()
+    </div>
+  </div>
+
+  <div class="border-top border dark"></div>
+  <div class="mt-4">
+    <h4>RunApplication, '/api/app/app_name'</h4>
+    <div class="code-box grey-text-md mb-4">
+      <p>If application Hello World is installed,</p>
+      <p>you can run it with:</p>
+      <code>
+      get('http://localhost:5000/api/app/Hello-World').json()
+    </div>
+  </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 {% endblock wiki %}

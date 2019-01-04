@@ -2,10 +2,15 @@
 
 import os
 import sys
+import subprocess
 import secrets
-from pathlib import Path
-from vectorcloud.models import AppSupport
+from multiprocessing import Process
+from platform import system as operating_system
 from vectorcloud import db
+from vectorcloud.models import AppSupport, Output, Application
+from vectorcloud.main.utils import get_stats
+from vectorcloud.paths import root_folder, lib_folder
+
 
 try:
     from PIL import Image
@@ -14,31 +19,13 @@ except ImportError:
              - -user Pillow` to install")
 
 
-# script folder is the root path of the application
-def get_script_folder():
-    curr_folder = os.path.dirname(__file__)
-    vc_folder = Path(curr_folder).parent
-    scripts_folder = Path(vc_folder).parent
-    return scripts_folder
-
-
-# lib folder is where helper files are stored it is within the root folder
-def get_lib_folder(scripts_folder):
-    lib_folder = os.path.join(scripts_folder, 'lib')
-    return lib_folder
-
-
-scripts_folder = get_script_folder()
-lib_folder = get_lib_folder(scripts_folder)
-
-
 # this function takes the main python file from the form on the upload page,
 # generates a hex id, renames the file with the hex id, saves the file to the
 # scripts folder, then returns the hex id.
 def save_script(form_script):
     random_hex = secrets.token_hex(8)
     file_name = random_hex + '.py'
-    script_path = os.path.join(scripts_folder, file_name)
+    script_path = os.path.join(root_folder, file_name)
     form_script.save(script_path)
     return random_hex
 
@@ -81,7 +68,7 @@ def save_script_helpers(helper, random_hex):
 def save_icon(form_icon, random_hex):
     _, f_ext = os.path.splitext(form_icon.filename)
     file_name = random_hex + f_ext
-    icon_path = os.path.join(scripts_folder, 'vectorcloud',
+    icon_path = os.path.join(root_folder, 'vectorcloud',
                              'static/app_icons', file_name)
 
     output_size = (125, 125)
@@ -90,3 +77,58 @@ def save_icon(form_icon, random_hex):
     i.save(icon_path)
 
     return file_name
+
+
+def start_bkrd_script(py_cmd, script_path, application):
+    pid = os.getpid()
+    application.pid = pid
+    db.session.commit()
+
+    out = subprocess.run(py_cmd + script_path, stdout=subprocess.PIPE,
+                         shell=True, encoding='utf-8')
+
+    if out.returncode == 0:
+        msg = application.script_name + ' ran succussfully! Output: ' +\
+            str(out.stdout)
+        output = Output(output=msg)
+        db.session.add(output)
+
+    else:
+        msg = 'Something is not right, try again.'
+        output = Output(output=msg)
+        db.session.add(output)
+
+    application.pid = None
+    db.session.commit()
+
+
+def run_script_func(script_hex_id):
+    application = Application.query.filter_by(hex_id=script_hex_id).first()
+    scriptn = script_hex_id + '.py'
+    script_path = os.path.join(root_folder, scriptn)
+
+    if operating_system() == 'Windows':
+        py_cmd = 'py '
+
+    else:
+        py_cmd = 'python3 '
+
+    if application.run_in_bkrd is False:
+        out = subprocess.run(py_cmd + script_path, stdout=subprocess.PIPE,
+                             shell=True, encoding='utf-8')
+
+        if out.returncode == 0:
+            out = str(out.stdout)
+
+        else:
+            out = 'error'
+
+        return out
+
+    else:
+        get_stats(force=True)
+        t = Process(target=start_bkrd_script,
+                    args=(py_cmd, script_path, application))
+        t.start()
+        out = 'Process Started!'
+        return out

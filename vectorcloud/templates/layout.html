@@ -31,7 +31,7 @@
       <nav class="navbar navbar-expand-lg navbar-dark bg-steel fixed-top">
         <div class="container">
           <div class="icon" data-toggle="tooltip" data-placement="auto" title="Home">
-            <a class="" href="{{ url_for('main.home') }}"><img src="{{ url_for('static', filename='icons/vectorcloud.svg') }}" width="35" height="35" class="d-inline-block align-top" onclick="loading();" alt=""></a>
+            <a class="" href="{{ url_for('main.home') }}"><img src="{{ url_for('static', filename='icons/vectorcloud.svg') }}" width="40px" height="40px" class="d-inline-block align-top" onclick="loading();" alt=""></a>
           </div>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -114,7 +114,12 @@
                 {% endif %}
                 <div class="image-container column" data-toggle="tooltip" data-placement="top" title="Settings">
                   <a class="icon" href="{{ url_for('settings_system.settings') }}">
-                  <img src="{{ url_for('static', filename='icons/settings-menu.svg') }}" width="32px" height="32px">
+                  <img src="{{ url_for('static', filename='icons/settings-menu.svg') }}" width="32px" height="32px" onclick="loading();">
+                  </a>
+                </div>
+                <div class="image-container column" data-toggle="tooltip" data-placement="top" title="Wiki">
+                  <a class="icon" href="{{ url_for('wiki_system.wiki') }}">
+                  <img src="{{ url_for('static', filename='icons/help.svg') }}" width="32px" height="32px" onclick="loading();">
                   </a>
                 </div>
               {% if current_user.is_authenticated %}
@@ -144,7 +149,7 @@
         </div>
       </nav>
     </header>
-    <div id="loading"><h5 class="text-center">Waiting for Vector..</h5></div>
+    <div id="loading"><h5 class="text-center"><b>Waiting for Vector..</b></h5></div>
     <main role="main" class="container">
       <div class="row justify-content-md-center">
         <div class="col-lg-6 layout-content">
@@ -158,7 +163,7 @@
               {% endfor %}
             {% endif %}
           {% endwith %}
-          <div id="bod">
+          <div id="bod" class="mt-4">
           {% block content %}{% endblock %}
           </div>
         </div>
