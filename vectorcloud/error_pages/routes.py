@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
 import os
-import subprocess
 from flask import Blueprint, render_template, redirect, url_for, flash
 from configparser import ConfigParser
 from pathlib import Path
+from vectorcloud import db
 from vectorcloud.models import Status
 from vectorcloud.error_pages.forms import ChangeIP, ChangeSerial
 
@@ -50,6 +50,12 @@ def multiple_vectors():
     status = Status.query.first()
 
     if form.validate_on_submit():
+        status = Status.query.first()
+        if status:
+            status.serial = form.new_serial.data
+            db.session.merge(status)
+            db.session.commit()
+
         serial = form.new_serial.data
         os.environ["ANKI_ROBOT_SERIAL"] = serial
         flash('Serial updated!', 'success')

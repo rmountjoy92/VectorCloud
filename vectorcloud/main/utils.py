@@ -86,7 +86,8 @@ def get_stats(force=False):
                                 cube_battery.battery_volts,
                                 timestamp=timestamp,
                                 ip=ip,
-                                name=name)
+                                name=name,
+                                serial=serial)
                 db.session.add(status)
                 db.session.commit()
 
