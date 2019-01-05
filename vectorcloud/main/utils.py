@@ -131,6 +131,7 @@ def robot_do(override_output=None):
 
             if override_output:
                 flash(override_output, 'success')
+                func_out = override_output
 
             else:
                 for out in command_output:
