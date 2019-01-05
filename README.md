@@ -44,13 +44,12 @@ py run.py
 * Create, edit and delete a user login
 * Customizable login message
 * Update system that uses git to detect changes in the repository, updates using git pull and upgrades database using flask-migrate (alembic)
-
+* REST API
 
 ## Features I'm currently working on
 * production server
 * create more store apps
 * fix bugs
-* develop RESTFUL API
 * add network state and pose to status
 
 
