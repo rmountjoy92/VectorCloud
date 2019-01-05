@@ -137,19 +137,23 @@ def robot_do(override_output=None):
                         out_string = 'Command completed successfully! Output: \
                             ' + str(out)
                         flash(out_string, 'success')
+                        func_out = out_string
 
     except NameError:
         flash('Command not found!', 'warning')
+        func_out = 'Command not found!'
 
     except anki_vector.exceptions.VectorNotFoundException:
-        return 'vector_not_found'
+        func_out = 'vector_not_found'
 
     except anki_vector.exceptions.VectorControlTimeoutException:
-        return 'vector_stuck'
+        func_out = 'vector_stuck'
 
     db.session.query(Command).delete()
     db.session.query(Output).delete()
     db.session.commit()
+
+    return func_out
 
 
 def database_init():

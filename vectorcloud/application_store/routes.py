@@ -7,7 +7,7 @@ from vectorcloud import db
 from vectorcloud.models import Status, ApplicationStore, Application, Settings
 from vectorcloud.main.utils import get_stats
 from vectorcloud.main.routes import sdk_version
-from vectorcloud.application_store.forms import UploadPackage, AdminAdd
+from vectorcloud.application_store.forms import UploadPackage
 from vectorcloud.main.forms import SearchForm
 from vectorcloud.application_store.utils import install_package,\
     export_package, clear_temp_folder
