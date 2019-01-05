@@ -72,7 +72,7 @@ class Status(db.Model):
     timestamp = db.Column(db.Float)
     ip = db.Column(db.Text)
     name = db.Column(db.Text)
-    serial = db.Column(db.Text)
+    serial = db.Column(db.Text, default=None)
 
     def __repr__(self):
         return [self.id, self.battery_voltage, self.battery_level,

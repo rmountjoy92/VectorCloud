@@ -28,3 +28,6 @@ def login_message():
 
     except anki_vector.exceptions.VectorControlTimeoutException:
         return 'vector_stuck'
+
+    except Exception:
+        return 'multiple_vectors'

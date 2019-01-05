@@ -163,6 +163,14 @@ def robot_do(override_output=None):
 
 def database_init():
 
+    status = Status.query.first()
+    if not status:
+        timestamp = time()
+        new_stamp = timestamp - 20
+        status = Status(id=1, timestamp=new_stamp)
+        db.session.add(status)
+        db.session.commit()
+
     # Create the settings table if it doesn't exist
     settings = Settings.query.first()
     if not settings:
