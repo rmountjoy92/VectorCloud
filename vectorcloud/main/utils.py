@@ -208,8 +208,9 @@ def undock_robot():
     db.session.add(robot_command)
     db.session.commit()
 
-    err_msg = robot_do(override_output='Undock Command Complete!')
-    if err_msg:
+    override_message = 'Undock Command Complete!'
+    err_msg = robot_do(override_output=override_message)
+    if err_msg != override_message:
         db.session.query(Command).delete()
         db.session.commit()
         return redirect(url_for('error_pages.' + err_msg))
@@ -225,8 +226,9 @@ def dock_robot():
     db.session.add(robot_command)
     db.session.commit()
 
-    err_msg = robot_do(override_output='Dock Command Complete!')
-    if err_msg:
+    override_message = 'Dock Command Complete!'
+    err_msg = robot_do(override_output=override_message)
+    if err_msg != override_message:
         db.session.query(Command).delete()
         db.session.commit()
         return redirect(url_for('error_pages.' + err_msg))
@@ -242,8 +244,9 @@ def robot_connect_cube():
     db.session.add(robot_command)
     db.session.commit()
 
-    err_msg = robot_do(override_output='Cube Connected!')
-    if err_msg:
+    override_message = 'Cube Connected!'
+    err_msg = robot_do(override_output=override_message)
+    if err_msg != override_message:
         return redirect(url_for('error_pages.' + err_msg))
 
 
