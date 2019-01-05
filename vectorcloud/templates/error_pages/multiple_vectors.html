@@ -1,0 +1,32 @@
+{% extends "utility_window.html" %}
+{% block content %}
+<div class="container">
+  <div class="content-section">
+      <form method="POST" action="" enctype="multipart/form-data">
+          {{ form.hidden_tag() }}
+          <fieldset class="form-group">
+              <div class="container text-center">
+                <h3>Multiple Vectors Detected.</h3>
+                <p><h5>Enter the Vector you want to use's serial number below.</h5></p>
+              </div>
+              <div class="form-group text-center">
+                  <b>{{ form.new_serial.label(class="form-control-label") }}</b>
+                  {% if form.new_serial.errors %}
+                      {{ form.new_serial(class="form-control form-control-lg is-invalid") }}
+                      <div class="invalid-feedback">
+                          {% for error in form.new_serial.errors %}
+                              <span>{{ error }}</span>
+                          {% endfor %}
+                      </div>
+                  {% else %}
+                      {{ form.new_serial(autocomplete="off", class="form-control form-control-lg") }}
+                  {% endif %}
+              </div>
+              <div class="form-group text-center">
+                {{ form.update(class="btn btn-dark") }}
+              </div>
+         </fieldset>
+      </form>
+   </div>
+</div>
+{% endblock content %}

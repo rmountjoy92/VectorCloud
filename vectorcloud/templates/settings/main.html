@@ -6,7 +6,7 @@ General</b></legend>
 <form method="POST" action="">
   {{ form.hidden_tag() }}
   <fieldset class="form-group">
-    <h5>Welcome Message</h5>
+    <h4>Welcome Message</h4>
     <div class="form-check">
         {{ form.greeting_message_enabled(class="form-check-input") }}
         {{ form.greeting_message_enabled.label(class="form-check-label") }}
@@ -45,4 +45,6 @@ General</b></legend>
     </div>
   </fieldset>
 </form>
+<h4>Switch Vectors</h4>
+<a href="{{ url_for('error_pages.multiple_vectors') }}">Change serial number</a>
 {% endblock %}

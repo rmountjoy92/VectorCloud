@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 
 import os
+import subprocess
 from flask import Blueprint, render_template, redirect, url_for, flash
 from configparser import ConfigParser
 from pathlib import Path
 from vectorcloud.models import Status
-from vectorcloud.error_pages.forms import ChangeIP
+from vectorcloud.error_pages.forms import ChangeIP, ChangeSerial
 
 error_pages = Blueprint('error_pages', __name__)
 
@@ -40,6 +41,20 @@ def vector_not_found():
         flash('IP address updated!', 'success')
         return redirect(url_for('main.home'))
     return render_template('/error_pages/vector_not_found.html',
+                           form=form, status=status)
+
+
+@error_pages.route("/multiple_vectors", methods=['GET', 'POST'])
+def multiple_vectors():
+    form = ChangeSerial()
+    status = Status.query.first()
+
+    if form.validate_on_submit():
+        serial = form.new_serial.data
+        os.environ["ANKI_ROBOT_SERIAL"] = serial
+        flash('Serial updated!', 'success')
+        return redirect(url_for('main.home'))
+    return render_template('/error_pages/multiple_vectors.html',
                            form=form, status=status)
 
 

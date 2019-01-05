@@ -36,7 +36,7 @@ class DockCube(Resource):
 
 class GetStatus(Resource):
     def get(self):
-        err_msg = get_stats()
+        err_msg = get_stats(force=True)
 
         if err_msg:
             return err_msg

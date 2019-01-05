@@ -10,3 +10,10 @@ class ChangeIP(FlaskForm):
     new_ip = StringField('New IP address', validators=[DataRequired()])
 
     update = SubmitField('Update')
+
+
+class ChangeSerial(FlaskForm):
+
+    new_serial = StringField('Serial', validators=[DataRequired()])
+
+    update = SubmitField('Update')

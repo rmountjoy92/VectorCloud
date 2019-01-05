@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
 import os
-import sys
-import time
+from sys import exit as sys_exit
+from time import sleep, time
 from grpc._channel import _Rendezvous
 from pathlib import Path
 from flask import flash, redirect, url_for
@@ -16,7 +16,7 @@ try:
     import anki_vector
     from anki_vector.util import degrees, radians
 except ImportError:
-    sys.exit("Cannot import from anki_vector: Install per Anki instructions")
+    sys_exit("Cannot import from anki_vector: Install per Anki instructions")
 
 
 # establishes routes decorated w/ @public_route as accessible while not signed
@@ -41,7 +41,7 @@ config = ConfigParser()
 def get_stats(force=False):
     try:
         status = Status.query.first()
-        timestamp = time.time()
+        timestamp = time()
 
         if status is None:
             new_stamp = timestamp - 20
@@ -96,7 +96,7 @@ def get_stats(force=False):
             db.session.commit()
 
     except _Rendezvous:
-        time.sleep(3)
+        sleep(3)
         get_stats(force=True)
 
     except anki_vector.exceptions.VectorNotFoundException:
@@ -104,6 +104,9 @@ def get_stats(force=False):
 
     except anki_vector.exceptions.VectorControlTimeoutException:
         return 'vector_stuck'
+
+    except Exception:
+        return 'multiple_vectors'
 
 
 # robot_do(): this function executes all commands in the command table in order
@@ -251,7 +254,7 @@ def robot_dock_cube():
         if cube:
             robot.behavior.dock_with_cube(cube)
             robot.behavior.set_lift_height(100.0)
-            time.sleep(5)
+            sleep(5)
             robot.behavior.set_lift_height(0,  max_speed=10.0)
             robot.world.disconnect_cube()
             flash('Cube picked up!', 'success')
