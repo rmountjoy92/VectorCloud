@@ -46,6 +46,12 @@ py run.py
 * Update system that uses git to detect changes in the repository, updates using git pull and upgrades database using flask-migrate (alembic)
 * REST API
 
+## How to contribute to the App Store
+* Create an application in VectorCloud
+* Export the application from the interface
+* Create a {your_application}.ini file like one found in: vectorcloud/application_store/list
+* Message me on GitHub or Anki's Forum with your email address and I'll send you an invite to a Google Drive folder where you can upload your .zip and .ini file
+
 ## Features I'm currently working on
 * production server
 * create more store apps
