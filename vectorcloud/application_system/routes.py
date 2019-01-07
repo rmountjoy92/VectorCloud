@@ -15,9 +15,19 @@ from vectorcloud.main.routes import sdk_version
 from vectorcloud.application_system.utils import save_icon, save_script,\
     save_script_helpers, run_script_func
 from vectorcloud.paths import root_folder, lib_folder
+from vectorcloud.application_store.utils import clear_temp_folder
 
 
 application_system = Blueprint('application_system', __name__)
+
+
+@application_system.after_request
+def add_header(response):
+    if 'Cache-Control' not in response.headers:
+        response.headers['Cache-Control'] = 'no-store'
+    return response
+    clear_temp_folder()
+    return response
 
 
 # ------------------------------------------------------------------------------

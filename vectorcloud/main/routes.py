@@ -9,8 +9,9 @@ from vectorcloud.main.forms import CommandForm, SearchForm
 from vectorcloud.models import Command, User, Status, Application, Output,\
     ApplicationStore, Settings
 from vectorcloud.main.utils import execute_db_commands, get_stats,\
-    undock_robot, dock_robot, robot_connect_cube, robot_dock_cube
-from vectorcloud.application_store.utils import temp_folder
+    undock_robot, dock_robot, robot_connect_cube
+from vectorcloud.application_store.utils import clear_temp_folder
+from vectorcloud.paths import temp_folder
 from vectorcloud import db, app
 
 try:
@@ -35,6 +36,8 @@ db.create_all()
 
 # blocks access to all pages (except public routes) unless the user is
 # signed in.
+
+
 @main.before_request
 def check_valid_login():
     user = db.session.query(User).first()
@@ -56,12 +59,10 @@ def check_valid_login():
 # a new image is uploaded
 @main.after_request
 def add_header(response):
-    """
-    Add headers to both force latest IE rendering engine or Chrome Frame,
-    and also to cache the rendered page for 10 minutes.
-    """
-    response.headers['X-UA-Compatible'] = 'IE=Edge,chrome=1'
-    response.headers['Cache-Control'] = 'public, max-age=0'
+    if 'Cache-Control' not in response.headers:
+        response.headers['Cache-Control'] = 'no-store'
+    return response
+    clear_temp_folder()
     return response
 
 

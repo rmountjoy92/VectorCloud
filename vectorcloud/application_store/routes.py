@@ -19,6 +19,15 @@ app_store_folder = os.path.join(curr_folder, 'application_store')
 packages_folder = os.path.join(app_store_folder, 'packages')
 
 
+@application_store.after_request
+def add_header(response):
+    if 'Cache-Control' not in response.headers:
+        response.headers['Cache-Control'] = 'no-store'
+    return response
+    clear_temp_folder()
+    return response
+
+
 @application_store.route("/app_store", methods=['GET', 'POST'])
 def app_store():
     search_term = None

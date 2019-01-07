@@ -7,10 +7,20 @@ from vectorcloud.settings_system.forms import SettingsForms
 from vectorcloud.models import User, Status, Settings
 from vectorcloud.main.utils import get_stats
 from vectorcloud.main.routes import sdk_version
+from vectorcloud.application_store.utils import clear_temp_folder
 from vectorcloud import db, bcrypt
 
 
 settings_system = Blueprint('settings_system', __name__)
+
+
+@settings_system.after_request
+def add_header(response):
+    if 'Cache-Control' not in response.headers:
+        response.headers['Cache-Control'] = 'no-store'
+    return response
+    clear_temp_folder()
+    return response
 
 
 # ------------------------------------------------------------------------------
