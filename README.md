@@ -47,10 +47,7 @@ py run.py
 * REST API
 
 ## How to contribute to the App Store
-* Create an application in VectorCloud
-* Export the application from the interface
-* Create a {your_application}.ini file like one found in: vectorcloud/application_store/list
-* Message me on GitHub or Anki's Forum with your email address and I'll send you an invite to a Google Drive folder where you can upload your .zip and .ini file
+https://goo.gl/forms/OXI4jWu7hEDRAKd23
 
 ## Features I'm currently working on
 * production server
