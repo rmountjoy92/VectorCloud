@@ -4,6 +4,10 @@
   overflow: auto;
 }
 
+.vector-box {
+  width: 300px !important;
+}
+
 a {
   color: #00EE93;
 }
@@ -36,6 +40,11 @@ a:hover {
 
 .menu-icon-text {
   margin: 0px 0px 0px 10px;
+}
+
+.vector-icon {
+  position: relative;
+  top: -4px
 }
 
 .app-name {

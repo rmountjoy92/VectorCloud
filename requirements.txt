@@ -1,3 +1,4 @@
+anki-vector
 Pillow
 flask
 flask-sqlalchemy

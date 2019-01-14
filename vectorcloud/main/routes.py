@@ -152,7 +152,7 @@ def home():
 
     err_msg = get_stats()
     if err_msg:
-        return redirect(url_for('error_pages.' + err_msg))
+        flash('No Vector is Connected. Error message: ' + err_msg, 'warning')
 
     vector_status = Status.query.first()
 
@@ -172,7 +172,7 @@ def execute_commands():
     err_msg = execute_db_commands()
 
     if err_msg:
-        return redirect(url_for('error_pages.' + err_msg))
+        flash('No Vector is Connected. Error message: ' + err_msg, 'warning')
 
     return redirect(url_for('main.home'))
 

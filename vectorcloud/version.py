@@ -1,3 +1,3 @@
 #!/usr/bin/env python3
 
-vectorcloud_version = 'v1.0.12'
+vectorcloud_version = 'v1.1.0'

@@ -11,12 +11,10 @@ Please feel free to contribute.
 * make sure git is installed on your machine
 * (recommended) create a virtual environment https://www.pythonforbeginners.com/basics/how-to-use-python-virtualenv/
 * (recommended) navigate to your virtual environment.
-* Install the SDK as per the directions in the SDK docs https://developer.anki.com/vector/docs/initial.html
-* Verify your SDK install works by running an example from the Anki Docs. If it does not work please contact Anki support at https://forums.anki.com/c/vector-sdk
-* Once you've verified your SDK install, in a terminal, enter:
+* In a terminal, enter:
 ```
 git clone https://github.com/rmountjoy92/VectorCloud
-pip3 install flask flask-sqlalchemy flask-bcrypt flask-login flask-wtf flask-bootstrap flask-migrate flask-script flask-restful
+pip3 install flask flask-sqlalchemy flask-bcrypt flask-login flask-wtf flask-bootstrap flask-migrate flask-script flask-restful anki-vector
 ```
 * navigate to the VectorCloud folder, make sure run.py is executable and enter:
 On Linux or Mac:

@@ -1,0 +1,114 @@
+{% extends "utility_window.html" %}
+{% block content %}
+
+  <div class="text-center mt-4">
+    <h1>Welcome to VectorCloud!</h1>
+  </div>
+
+  {% if not vectors %}
+    <div class="content-section">
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <legend class="border-bottom border-dark mb-4 text-center">Add a Vector</legend>
+                <div class="border-bottom border-dark grey-text-md">
+                  <p align="center"><b>Anki Vector Python SDK Setup</b></p>
+                  <p>Vector requires all requests be authorized by an authenticated Anki user.</p>
+
+                  <p>This script will enable this device to authenticate with your Vector
+                  robot for use with a Vector Python SDK program.</p>
+
+                  <p>Vector must be powered on and connected on the same network as your
+                  computer. By running this script, you will be asked to provide your
+                  Anki account credentials, and the script will download an authentication
+                  token and cert that will grant you access to the robot and his
+                  capabilities (such as camera and audio) as well as data stored on the
+                  robot (such as faces and photos).</p>
+
+                  <p>See the README for more information.</p>
+
+                  <p>Use of Vector and the Vector SDK is subject to Anki's Privacy Policy and Terms and Conditions.</p>
+
+                  <p>https://www.anki.com/en-us/company/privacy</p>
+                  <p>https://www.anki.com/en-us/company/terms-and-conditions</p>
+                </div>
+                <div class="form-group">
+                    {{ form.email.label(class="form-control-label") }}
+                    {% if form.email.errors %}
+                        {{ form.email(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.email.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.email(autocomplete="off", class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.password.label(class="form-control-label") }}
+                    {% if form.password.errors %}
+                        {{ form.password(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.password.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.password(onsubmit="loading();", class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.vector_name.label(class="form-control-label") }}
+                    {% if form.vector_name.errors %}
+                        {{ form.vector_name(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.vector_name.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.vector_name(onsubmit="loading();", class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.vector_serial.label(class="form-control-label") }}
+                    {% if form.vector_serial.errors %}
+                        {{ form.vector_serial(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.vector_serial.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.vector_serial(onsubmit="loading();", class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.vector_ip.label(class="form-control-label") }}
+                    {% if form.vector_ip.errors %}
+                        {{ form.vector_ip(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.vector_ip.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.vector_ip(onsubmit="loading();", class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+            </fieldset>
+            <div class="form-group">
+                {{ form.add(onclick="loading();", class="btn btn-dark") }}
+            </div>
+        </form>
+    </div>
+
+  {% else %}
+  <div class="text-center mt-5">
+    <a href="{{ url_for('user_system.register') }}" class="btn btn-dark" role="button">Get started!</a>
+  </div>
+
+  {% endif %}
+
+{% endblock content %}

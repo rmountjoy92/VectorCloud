@@ -1,0 +1,184 @@
+{% extends "settings/settings.html" %}
+{% block settings %}
+<legend class="border-bottom border-dark text-center"><b>
+Vectors</b></legend>
+{% endblock settings %}
+{% block app_store %}
+  {% for vector in vectors %}
+    <div class="image-container">
+      <div class="vector-box">
+        <div class="content-section">
+          <div class="text-center border-dark border-bottom">
+            <div class="image-container mt-4 mb-4">
+              <img src="{{ url_for('static', filename='icons/vector.svg') }}" width="120px" height="120px">
+            </div>
+            <div class="border-top border-dark mb-2"></div>
+            <div class="row mt-2 mb-2 image-container">
+              {% if vector.default == True %}
+                <div class="column store-icon-main" data-toggle="tooltip" data-placement="top" title="Default Vector">
+                  <img src="{{ url_for('static', filename='icons/bullseye.svg') }}" width="24px" height="24px">
+                </div>
+              {% else %}
+                <div class="column store-icon-main" data-toggle="tooltip" data-placement="top" title="Make Default">
+                  <a href="{{ url_for('manage_vectors.set_default_vector', vector_id=vector.id) }}">
+                  <img src="{{ url_for('static', filename='icons/bullseye-grey.svg') }}" width="24px" height="24px">
+                  </a>
+                </div>
+              {% endif %}
+              <div class="column store-icon-main" data-toggle="tooltip" data-placement="top" title="Delete Vector">
+                <a href="{{ url_for('manage_vectors.delete_vector', vector_id=vector.id) }}">
+                <img src="{{ url_for('static', filename='icons/trash.svg') }}" width="24px" height="24px">
+                </a>
+              </div>
+              <div class="column store-icon-main" data-toggle="tooltip" data-placement="top" title="Ping Vector">
+                <a href="{{ url_for('manage_vectors.ping_vector', vector_id=vector.id) }}" onclick="loading();">
+                <img src="{{ url_for('static', filename='icons/send.svg') }}" width="24px" height="24px">
+                </a>
+              </div>
+            </div>
+            <div class="border-top border-dark mt-2 mb-2"></div>
+
+            <div class="grey-text-md">
+              Name:
+            </div>
+             {{ vector.name }}
+
+            <div class="border-top border-dark mb-2 mt-2"></div>
+
+            <div class="grey-text-md">
+              Serial:
+            </div>
+             {{ vector.serial }}
+
+            <div class="border-top border-dark mb-2 mt-2"></div>
+
+            <div class="grey-text-md">
+              IP:
+            </div>
+             {{ vector.ip }}
+             <div class="image-container">
+               <a data-toggle="collapse" href="#edit_ip" role="button" aria-expanded="false" aria-controls="collapseExample">
+                 <img class="mb-4 mt-4"
+                      src="{{ url_for('static', filename='icons/edit.svg') }}"
+                      width="20px" height="20px"
+                      data-toggle="tooltip" data-placement="top" title="Edit IP">
+               </a>
+             </div>
+             <div class="collapse" id="edit_ip">
+               <form method="POST" action="" enctype="multipart/form-data">
+                   {{ ip_form.hidden_tag() }}
+                   <fieldset class="form-group">
+                       <div class="form-group text-center">
+                           <b>{{ ip_form.new_ip.label(class="form-control-label") }}</b>
+                           {% if ip_form.new_ip.errors %}
+                               {{ ip_form.new_ip(class="form-control form-control-lg is-invalid") }}
+                               <div class="invalid-feedback">
+                                   {% for error in ip_form.new_ip.errors %}
+                                       <span>{{ error }}</span>
+                                   {% endfor %}
+                               </div>
+                           {% else %}
+                               {{ ip_form.new_ip(autocomplete="off", class="form-control form-control-lg") }}
+                           {% endif %}
+                       </div>
+                       <div class="form-group text-center">
+                         {{ ip_form.update(class="btn btn-dark") }}
+                       </div>
+                  </fieldset>
+               </form>
+             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+
+  <div class="image-container">
+    <a data-toggle="collapse" href="#add" role="button" aria-expanded="false" aria-controls="collapseExample">
+      <img class="mb-4"
+           src="{{ url_for('static', filename='icons/add.svg') }}"
+           width="32px" height="32px"
+           data-toggle="tooltip" data-placement="top" title="Add Vector">
+    </a>
+  </div>
+
+  <div class="collapse" id="add">
+    <div class="content-section mt-4">
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <legend class="border-bottom border-dark mb-4 text-center">Add a Vector</legend>
+                <div class="form-group">
+                    {{ form.email.label(class="form-control-label") }}
+                    {% if form.email.errors %}
+                        {{ form.email(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.email.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.email(autocomplete="off", class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.password.label(class="form-control-label") }}
+                    {% if form.password.errors %}
+                        {{ form.password(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.password.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.password(onsubmit="loading();", class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.vector_name.label(class="form-control-label") }}
+                    {% if form.vector_name.errors %}
+                        {{ form.vector_name(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.vector_name.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.vector_name(onsubmit="loading();", class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.vector_serial.label(class="form-control-label") }}
+                    {% if form.vector_serial.errors %}
+                        {{ form.vector_serial(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.vector_serial.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.vector_serial(onsubmit="loading();", class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.vector_ip.label(class="form-control-label") }}
+                    {% if form.vector_ip.errors %}
+                        {{ form.vector_ip(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.vector_ip.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.vector_ip(onsubmit="loading();", class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+            </fieldset>
+            <div class="form-group">
+                {{ form.add(onclick="loading();", class="btn btn-dark") }}
+            </div>
+        </form>
+    </div>
+  </div>
+
+{% endblock app_store %}

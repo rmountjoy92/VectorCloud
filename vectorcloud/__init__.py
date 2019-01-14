@@ -27,6 +27,7 @@ from vectorcloud.flask_app.routes import flask_app
 from vectorcloud.application_store.routes import application_store
 from vectorcloud.update_system.routes import update_system
 from vectorcloud.wiki_system.routes import wiki_system
+from vectorcloud.manage_vectors.routes import manage_vectors
 
 app.register_blueprint(main)
 app.register_blueprint(user_system)
@@ -37,6 +38,7 @@ app.register_blueprint(flask_app)
 app.register_blueprint(application_store)
 app.register_blueprint(update_system)
 app.register_blueprint(wiki_system)
+app.register_blueprint(manage_vectors)
 
 from vectorcloud.rest_api.resources import *
 

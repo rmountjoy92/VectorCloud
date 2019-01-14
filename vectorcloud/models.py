@@ -82,6 +82,7 @@ class Status(db.Model):
 
 class Settings(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    first_run = db.Column(db.Boolean, default=True)
     greeting_message_enabled = db.Column(db.Boolean, default=True)
     custom_greeting_message = db.Column(db.Text, default='default')
     search_by_name = db.Column(db.Boolean, default=True)
@@ -89,7 +90,7 @@ class Settings(db.Model):
     search_by_author = db.Column(db.Boolean, default=True)
 
     def __repr__(self):
-        return [self.id, self.greeting_message_enabled,
+        return [self.id, self.first_run, self.greeting_message_enabled,
                 self.custom_greeting_message, self.view, self.search_by_name,
                 self.search_by_description, self.search_by_author]
 
@@ -108,3 +109,29 @@ class ApplicationStore(db.Model):
         return [self.id, self.script_name, self.author,
                 self.website, self.description, self.icon,
                 self.installed, self.zip_file]
+
+
+class Vectors(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    serial = db.Column(db.Text)
+    cert = db.Column(db.Text)
+    ip = db.Column(db.Text)
+    name = db.Column(db.Text)
+    guid = db.Column(db.Text)
+    default = db.Column(db.Boolean, default=False)
+
+    def __repr__(self):
+        return [self.id, self.cert, self.ip, self.name, self.guid]
+
+
+class AnkiConf(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.Text)
+    password = db.Column(db.Text)
+    serial = db.Column(db.Text)
+    ip = db.Column(db.Text)
+    name = db.Column(db.Text)
+
+    def __repr__(self):
+        return [self.id, self.email, self.password,
+                self.serial, self.ip, self.name]

@@ -59,7 +59,7 @@ def settings():
 
     err_msg = get_stats()
     if err_msg:
-        return redirect(url_for('error_pages.' + err_msg))
+        flash('No Vector is Connected. Error message: ' + err_msg, 'warning')
 
     vector_status = Status.query.first()
     return render_template('settings/main.html', form=form,
@@ -86,7 +86,7 @@ def settings_user():
 
     err_msg = get_stats()
     if err_msg:
-        return redirect(url_for('error_pages.' + err_msg))
+        flash('No Vector is Connected. Error message: ' + err_msg, 'warning')
 
     vector_status = Status.query.first()
     return render_template('settings/user.html', form=form,
@@ -108,7 +108,7 @@ def credits():
 
     err_msg = get_stats()
     if err_msg:
-        return redirect(url_for('error_pages.' + err_msg))
+        flash('No Vector is Connected. Error message: ' + err_msg, 'warning')
 
     vector_status = Status.query.first()
     return render_template('settings/credits.html',

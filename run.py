@@ -3,9 +3,11 @@
 import os
 from vectorcloud import app
 from vectorcloud.main.utils import database_init
+from vectorcloud.manage_vectors.utils import init_vectors
 from vectorcloud.models import Status
 
 database_init()
+init_vectors()
 status = Status.query.first()
 if status.serial is not None:
     os.environ["ANKI_ROBOT_SERIAL"] = status.serial

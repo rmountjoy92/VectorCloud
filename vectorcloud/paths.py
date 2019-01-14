@@ -26,3 +26,7 @@ packages_folder = os.path.join(app_store_folder, 'packages')
 temp_folder = os.path.join(app_store_folder, 'temp')
 
 list_folder = os.path.join(app_store_folder, 'list')
+
+home_folder = Path.home()
+
+sdk_config_file = os.path.join(home_folder, '.anki_vector', 'sdk_config.ini')

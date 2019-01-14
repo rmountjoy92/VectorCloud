@@ -4,12 +4,11 @@ import os
 from sys import exit as sys_exit
 from time import sleep, time
 from grpc._channel import _Rendezvous
-from pathlib import Path
 from flask import flash, redirect, url_for
 from configparser import ConfigParser
 from vectorcloud.models import Command, Output, Status, ApplicationStore,\
     Settings
-from vectorcloud.paths import list_folder
+from vectorcloud.paths import list_folder, sdk_config_file
 from vectorcloud import db
 
 try:
@@ -52,9 +51,6 @@ def get_stats(force=False):
         elif timestamp - status.timestamp > 15 or force is True:
 
             # get robot name and ip from config file
-            home = Path.home()
-            sdk_config_file = os.path.join(home, '.anki_vector',
-                                           'sdk_config.ini')
             f = open(sdk_config_file)
             serial = f.readline()
             serial = serial.replace(']', '')
@@ -70,7 +66,8 @@ def get_stats(force=False):
             args = anki_vector.util.parse_command_args()
             with anki_vector.Robot(args.serial,
                                    requires_behavior_control=False,
-                                   cache_animation_list=False) as robot:
+                                   cache_animation_list=False,
+                                   behavior_activation_timeout=3) as robot:
 
                 version_state = robot.get_version_state()
                 battery_state = robot.get_battery_state()
@@ -222,11 +219,11 @@ def undock_robot():
     if err_msg != override_message:
         db.session.query(Command).delete()
         db.session.commit()
-        return redirect(url_for('error_pages.' + err_msg))
+        flash('No Vector is Connected. Error message: ' + err_msg, 'warning')
 
     err_msg = get_stats(force=True)
     if err_msg:
-        return redirect(url_for('error_pages.' + err_msg))
+        flash('No Vector is Connected. Error message: ' + err_msg, 'warning')
 
 
 def dock_robot():
@@ -240,11 +237,11 @@ def dock_robot():
     if err_msg != override_message:
         db.session.query(Command).delete()
         db.session.commit()
-        return redirect(url_for('error_pages.' + err_msg))
+        flash('No Vector is Connected. Error message: ' + err_msg, 'warning')
 
     err_msg = get_stats(force=True)
     if err_msg:
-        return redirect(url_for('error_pages.' + err_msg))
+        flash('No Vector is Connected. Error message: ' + err_msg, 'warning')
 
 
 def robot_connect_cube():
@@ -256,7 +253,7 @@ def robot_connect_cube():
     override_message = 'Cube Connected!'
     err_msg = robot_do(override_output=override_message)
     if err_msg != override_message:
-        return redirect(url_for('error_pages.' + err_msg))
+        flash('No Vector is Connected. Error message: ' + err_msg, 'warning')
 
 
 def robot_dock_cube():

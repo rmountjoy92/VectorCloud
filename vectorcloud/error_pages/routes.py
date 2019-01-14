@@ -3,10 +3,10 @@
 import os
 from flask import Blueprint, render_template, redirect, url_for, flash
 from configparser import ConfigParser
-from pathlib import Path
 from vectorcloud import db
 from vectorcloud.models import Status
 from vectorcloud.error_pages.forms import ChangeIP, ChangeSerial
+from vectorcloud.paths import sdk_config_file
 
 error_pages = Blueprint('error_pages', __name__)
 
@@ -23,8 +23,6 @@ def vector_not_found():
     status = Status.query.first()
 
     if form.validate_on_submit():
-        home = Path.home()
-        sdk_config_file = os.path.join(home, '.anki_vector', 'sdk_config.ini')
         f = open(sdk_config_file)
         serial = f.readline()
         serial = serial.replace(']', '')

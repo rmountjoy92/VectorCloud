@@ -65,7 +65,7 @@ def add_header(response):
 def upload():
     err_msg = get_stats()
     if err_msg:
-        return redirect(url_for('error_pages.' + err_msg))
+        flash('No Vector is Connected. Error message: ' + err_msg, 'warning')
 
     vector_status = Status.query.first()
     form = UploadScript()
@@ -173,7 +173,7 @@ def kill_process(pid):
 def edit_application(script_id):
     err_msg = get_stats()
     if err_msg:
-        return redirect(url_for('error_pages.' + err_msg))
+        flash('No Vector is Connected. Error message: ' + err_msg, 'warning')
 
     vector_status = Status.query.first()
     form = UploadScript()
@@ -310,7 +310,7 @@ def edit_app_settings_file(hex_id):
 
     err_msg = get_stats()
     if err_msg:
-        return redirect(url_for('error_pages.' + err_msg))
+        flash('No Vector is Connected. Error message: ' + err_msg, 'warning')
     vector_status = Status.query.first()
     application = Application.query.filter_by(hex_id=hex_id).first()
     settings_file_fn = os.path.join(lib_folder, hex_id + '.ini')
