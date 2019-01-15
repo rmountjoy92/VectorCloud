@@ -29,5 +29,20 @@ def login_message():
     except anki_vector.exceptions.VectorControlTimeoutException:
         return 'vector_stuck'
 
+    except anki_vector.exceptions.VectorInvalidVersionException:
+        return 'invalid_sdk_version'
+
+    except anki_vector.exceptions.VectorNotReadyException:
+        return 'vector_not_ready'
+
+    except anki_vector.exceptions.VectorTimeoutException:
+        return 'vector_timed_out'
+
+    except anki_vector.exceptions.VectorUnavailableException:
+        return 'vector_unavailable'
+
+    except anki_vector.exceptions.VectorUnimplementedException:
+        return 'vector_unimplemented'
+
     except Exception:
-        return 'multiple_vectors'
+        return 'general_error'

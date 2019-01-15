@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField
-from wtforms.validators import DataRequired, Length, EqualTo, ValidationError
-from vectorcloud.models import User
+from wtforms import StringField, PasswordField, SubmitField
+from wtforms.validators import DataRequired, Length
 
 
 class AddVector(FlaskForm):
@@ -22,3 +21,12 @@ class AddVector(FlaskForm):
                             validators=[DataRequired()])
 
     add = SubmitField('Add')
+
+
+class ChangeIP(FlaskForm):
+
+    new_ip = StringField('New IP address', validators=[DataRequired()])
+
+    serial = StringField('Serial', validators=[DataRequired()])
+
+    update = SubmitField('Update')

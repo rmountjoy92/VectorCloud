@@ -25,24 +25,26 @@ def init_vectors():
             ip = config.get(vector, 'ip')
             name = config.get(vector, 'name')
             guid = config.get(vector, 'guid')
+            try:
+                default = config.get(vector, 'default')
+                if default == 'False':
+                    default = False
+                else:
+                    default = True
+            except Exception:
+                default = False
 
             vector_db = Vectors(serial=serial,
                                 cert=cert,
                                 ip=ip,
                                 name=name,
-                                guid=guid)
+                                guid=guid,
+                                default=default)
             db.session.add(vector_db)
             db.session.commit()
 
-            default_vector = Vectors.query.filter_by(default=True).first()
-
-            if default_vector is None:
-                first_vector = Vectors.query.first()
-                first_vector.default = True
-                db.session.merge(first_vector)
-                db.session.commit()
-                default_vector = Vectors.query.filter_by(default=True).first()
-
+        default_vector = Vectors.query.filter_by(default=True).first()
+        if default_vector:
             os.environ["ANKI_ROBOT_SERIAL"] = default_vector.serial
 
     except FileNotFoundError:

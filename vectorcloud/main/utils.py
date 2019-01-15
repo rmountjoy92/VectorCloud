@@ -103,8 +103,23 @@ def get_stats(force=False):
     except anki_vector.exceptions.VectorControlTimeoutException:
         return 'vector_stuck'
 
+    except anki_vector.exceptions.VectorInvalidVersionException:
+        return 'invalid_sdk_version'
+
+    except anki_vector.exceptions.VectorNotReadyException:
+        return 'vector_not_ready'
+
+    except anki_vector.exceptions.VectorTimeoutException:
+        return 'vector_timed_out'
+
+    except anki_vector.exceptions.VectorUnavailableException:
+        return 'vector_unavailable'
+
+    except anki_vector.exceptions.VectorUnimplementedException:
+        return 'vector_unimplemented'
+
     except Exception:
-        return 'multiple_vectors'
+        return 'general_error'
 
 
 # robot_do(): this function executes all commands in the command table in order
@@ -150,6 +165,24 @@ def robot_do(override_output=None):
 
     except anki_vector.exceptions.VectorControlTimeoutException:
         func_out = 'vector_stuck'
+
+    except anki_vector.exceptions.VectorInvalidVersionException:
+        func_out = 'invalid_sdk_version'
+
+    except anki_vector.exceptions.VectorNotReadyException:
+        func_out = 'vector_not_ready'
+
+    except anki_vector.exceptions.VectorTimeoutException:
+        func_out = 'vector_timed_out'
+
+    except anki_vector.exceptions.VectorUnavailableException:
+        func_out = 'vector_unavailable'
+
+    except anki_vector.exceptions.VectorUnimplementedException:
+        func_out = 'vector_unimplemented'
+
+    except Exception:
+        func_out = 'general_error'
 
     db.session.query(Command).delete()
     db.session.query(Output).delete()

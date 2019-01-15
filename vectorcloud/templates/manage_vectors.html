@@ -20,7 +20,7 @@ Vectors</b></legend>
                 </div>
               {% else %}
                 <div class="column store-icon-main" data-toggle="tooltip" data-placement="top" title="Make Default">
-                  <a href="{{ url_for('manage_vectors.set_default_vector', vector_id=vector.id) }}">
+                  <a href="{{ url_for('manage_vectors.set_default_vector', vector_id=vector.id) }}" onclick="loading();">
                   <img src="{{ url_for('static', filename='icons/bullseye-grey.svg') }}" width="24px" height="24px">
                   </a>
                 </div>
@@ -57,14 +57,14 @@ Vectors</b></legend>
             </div>
              {{ vector.ip }}
              <div class="image-container">
-               <a data-toggle="collapse" href="#edit_ip" role="button" aria-expanded="false" aria-controls="collapseExample">
+               <a data-toggle="collapse" href="#edit_ip-{{ vector.serial }}" role="button" aria-expanded="false" aria-controls="collapseExample">
                  <img class="mb-4 mt-4"
                       src="{{ url_for('static', filename='icons/edit.svg') }}"
                       width="20px" height="20px"
                       data-toggle="tooltip" data-placement="top" title="Edit IP">
                </a>
              </div>
-             <div class="collapse" id="edit_ip">
+             <div class="collapse" id="edit_ip-{{ vector.serial }}">
                <form method="POST" action="" enctype="multipart/form-data">
                    {{ ip_form.hidden_tag() }}
                    <fieldset class="form-group">
@@ -83,6 +83,9 @@ Vectors</b></legend>
                        </div>
                        <div class="form-group text-center">
                          {{ ip_form.update(class="btn btn-dark") }}
+                       </div>
+                       <div class="form-group hidden">
+                         {{ ip_form.serial(autocomplete="off", class="form-control form-control-lg", value=vector.serial) }}
                        </div>
                   </fieldset>
                </form>

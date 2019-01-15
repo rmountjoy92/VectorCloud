@@ -1,3 +1,9 @@
+.hidden {
+  visibility: collapse;
+  height: 0px !important;
+  width: 0px !important;
+}
+
 .code-box {
   max-width: 550px !important;
   white-space: nowrap;

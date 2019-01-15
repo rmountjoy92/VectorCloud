@@ -6,6 +6,7 @@ import signal
 from flask import render_template, url_for, redirect, flash, Blueprint
 from flask_login import login_user, logout_user, current_user
 from platform import system as operating_system
+from configparser import ConfigParser
 from vectorcloud.user_system.forms import RegisterForm, LoginForm
 from vectorcloud.models import User, Application, Settings, Vectors, AnkiConf
 from vectorcloud import db, bcrypt
@@ -13,7 +14,8 @@ from vectorcloud.main.utils import public_route
 from vectorcloud.manage_vectors.utils import init_vectors
 from vectorcloud.user_system.utils import login_message
 from vectorcloud.manage_vectors.forms import AddVector
-from vectorcloud.paths import root_folder
+from vectorcloud.paths import root_folder, sdk_config_file
+
 
 user_system = Blueprint('user_system', __name__)
 
@@ -52,7 +54,18 @@ def welcome():
         cmd = py_cmd + conf_path
         out = subprocess.run(cmd, stdout=subprocess.PIPE, shell=True, encoding='utf-8')
         flash(str(out.stdout), 'success')
+
         init_vectors()
+
+        top_vector = Vectors.query.first()
+        if form.vector_serial.data == top_vector.serial:
+            config = ConfigParser()
+            config.read(sdk_config_file)
+            config[top_vector.serial]['default'] = 'True'
+
+            with open(sdk_config_file, 'w') as configfile:
+                config.write(configfile)
+
         db.session.query(AnkiConf).delete()
         db.session.commit()
         return redirect(url_for('user_system.register'))
