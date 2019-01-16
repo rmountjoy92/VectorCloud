@@ -4,7 +4,7 @@ import os
 from sys import exit as sys_exit
 from time import sleep, time
 from grpc._channel import _Rendezvous
-from flask import flash, redirect, url_for
+from flask import flash
 from configparser import ConfigParser
 from vectorcloud.models import Command, Output, Status, ApplicationStore,\
     Settings
@@ -38,31 +38,31 @@ config = ConfigParser()
 # it clears the table at the begining of the function and leaves the data there
 # until it is called again.
 def get_stats(force=False):
-    try:
-        status = Status.query.first()
-        timestamp = time()
+    status = Status.query.first()
+    timestamp = time()
 
-        if status is None:
-            new_stamp = timestamp - 20
-            status = Status(timestamp=new_stamp)
-            db.session.add(status)
-            db.session.commit()
+    if status is None:
+        new_stamp = timestamp - 20
+        status = Status(timestamp=new_stamp)
+        db.session.add(status)
+        db.session.commit()
 
-        elif timestamp - status.timestamp > 15 or force is True:
+    elif timestamp - status.timestamp > 15 or force is True:
 
-            # get robot name and ip from config file
-            f = open(sdk_config_file)
-            serial = f.readline()
-            serial = serial.replace(']', '')
-            serial = serial.replace('[', '')
-            serial = serial.replace('\n', '')
-            f.close()
-            config.read(sdk_config_file)
-            ip = config.get(serial, 'ip')
-            name = config.get(serial, 'name')
+        # get robot name and ip from config file
+        f = open(sdk_config_file)
+        serial = f.readline()
+        serial = serial.replace(']', '')
+        serial = serial.replace('[', '')
+        serial = serial.replace('\n', '')
+        f.close()
+        config.read(sdk_config_file)
+        ip = config.get(serial, 'ip')
+        name = config.get(serial, 'name')
 
-            # get results from battery state and version state,
-            # save to database
+        # get results from battery state and version state,
+        # save to database
+        try:
             args = anki_vector.util.parse_command_args()
             with anki_vector.Robot(args.serial,
                                    requires_behavior_control=False,
@@ -81,45 +81,76 @@ def get_stats(force=False):
                                 cube_id=battery_state.cube_battery.factory_id,
                                 cube_battery_volts=battery_state.
                                 cube_battery.battery_volts,
-                                timestamp=timestamp,
                                 ip=ip,
                                 name=name,
                                 serial=serial)
                 db.session.add(status)
                 db.session.commit()
 
-        else:
-            status.timestamp = timestamp
+        except _Rendezvous:
+            sleep(3)
+            get_stats(force=True)
+
+        except anki_vector.exceptions.VectorNotFoundException:
+            status = Status.query.first()
+            status.timestamp = time()
             db.session.merge(status)
             db.session.commit()
+            return 'vector_not_found'
 
-    except _Rendezvous:
-        sleep(3)
-        get_stats(force=True)
+        except anki_vector.exceptions.VectorControlTimeoutException:
+            status = Status.query.first()
+            status.timestamp = time()
+            db.session.merge(status)
+            db.session.commit()
+            return 'vector_stuck'
 
-    except anki_vector.exceptions.VectorNotFoundException:
-        return 'vector_not_found'
+        except anki_vector.exceptions.VectorInvalidVersionException:
+            status = Status.query.first()
+            status.timestamp = time()
+            db.session.merge(status)
+            db.session.commit()
+            return 'invalid_sdk_version'
 
-    except anki_vector.exceptions.VectorControlTimeoutException:
-        return 'vector_stuck'
+        except anki_vector.exceptions.VectorNotReadyException:
+            status = Status.query.first()
+            status.timestamp = time()
+            db.session.merge(status)
+            db.session.commit()
+            return 'vector_not_ready'
 
-    except anki_vector.exceptions.VectorInvalidVersionException:
-        return 'invalid_sdk_version'
+        except anki_vector.exceptions.VectorTimeoutException:
+            status = Status.query.first()
+            status.timestamp = time()
+            db.session.merge(status)
+            db.session.commit()
+            return 'vector_timed_out'
 
-    except anki_vector.exceptions.VectorNotReadyException:
-        return 'vector_not_ready'
+        except anki_vector.exceptions.VectorUnavailableException:
+            status = Status.query.first()
+            status.timestamp = time()
+            db.session.merge(status)
+            db.session.commit()
+            return 'vector_unavailable'
 
-    except anki_vector.exceptions.VectorTimeoutException:
-        return 'vector_timed_out'
+        except anki_vector.exceptions.VectorUnimplementedException:
+            status = Status.query.first()
+            status.timestamp = time()
+            db.session.merge(status)
+            db.session.commit()
+            return 'vector_unimplemented'
 
-    except anki_vector.exceptions.VectorUnavailableException:
-        return 'vector_unavailable'
+        except Exception:
+            status = Status.query.first()
+            status.timestamp = time()
+            db.session.merge(status)
+            db.session.commit()
+            return 'general_error'
 
-    except anki_vector.exceptions.VectorUnimplementedException:
-        return 'vector_unimplemented'
-
-    except Exception:
-        return 'general_error'
+    status = Status.query.first()
+    status.timestamp = time()
+    db.session.merge(status)
+    db.session.commit()
 
 
 # robot_do(): this function executes all commands in the command table in order
