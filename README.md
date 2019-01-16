@@ -1,7 +1,8 @@
 # VectorCloud
-![alt text](https://i.imgur.com/yQ6QaWD.png)
+![alt text](https://i.imgur.com/EHWi6R3.png)
 ![alt text](https://i.imgur.com/AMQkLEW.png)
-![alt text](https://i.imgur.com/wMgj8X9.png)
+![alt text](https://i.imgur.com/JoB45zZ.png)
+![alt text](https://i.imgur.com/NSWr7W6.png)
 
 My goal with this project is to create a web interface using Flask for controlling vector, displaying information, and organizing (and possibly scheduling) sdk programs to run. My inspiration for this project comes from https://octoprint.org/ which is a web interface for controlling my 3d printer.
 
@@ -33,6 +34,7 @@ py run.py
 * Do not update vectorcloud with git pull, use the built-in update system, as it makes the necessary changes to the database file.
 
 ## Current Features
+* configure your Vector to use the SDK
 * view information exposed by Vector on a webpage - battery level, ip, name, and much more!
 * Install and manage applications for Vector by installing a VectorCloud package or uploading a script
 * Install sample applications from an App Store
