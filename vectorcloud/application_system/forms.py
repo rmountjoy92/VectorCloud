@@ -33,6 +33,8 @@ class UploadScript(FlaskForm):
 
     run_in_bkrd = BooleanField('Run in Background?')
 
+    hex_id = StringField('Hex')
+
 
 class AppSettings(FlaskForm):
     variable = TextAreaField('Enter settings variables', validators=[DataRequired()])
@@ -40,3 +42,5 @@ class AppSettings(FlaskForm):
     value = StringField('Value')
 
     save = SubmitField('Save')
+
+    hex_id = StringField('Hex')

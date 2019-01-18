@@ -47,11 +47,37 @@
       <img class="store-icon" src="{{ url_for('static', filename='icons/edit.svg') }}" width="24px" height="24px" data-toggle="tooltip" data-placement="top" title="Create Application">
       </a>
     </div>
-    <div class="column">
-      <a href="{{ url_for('application_store.upload_package') }}">
-      <img class="store-icon" src="{{ url_for('static', filename='icons/upload.svg') }}" width="24px" height="24px" data-toggle="tooltip" data-placement="top" title="Install Local Package">
-      </a>
+
+    <a data-toggle="collapse" href="#install-pkg" role="button" aria-expanded="false" aria-controls="collapseExample">
+      <img class="store-icon column"
+           src="{{ url_for('static', filename='icons/upload.svg') }}"
+           width="24px" height="24px" data-toggle="tooltip" data-placement="top" title="Install Local Package">
+    </a>
+  </div>
+  <div class="collapse mt-4" id="install-pkg">
+    <div class="image-container">
+      <div class="content-section vector-box">
+        <form method="POST" action="" enctype="multipart/form-data">
+          {{ install_form.hidden_tag() }}
+          <fieldset class="form-group">
+            <div class="form-group">
+              <h3 class="text-center">{{ install_form.package.label() }}</h3>
+                {{ install_form.package(class="form-control-file") }}
+              </div>
+              <div class="form-group">
+                {{ install_form.install(class="btn btn-dark") }}
+              </div>
+              <div class="image-container">
+                <a data-toggle="collapse" href="#install-pkg" role="button" aria-expanded="false" aria-controls="collapseExample">
+                  <img src="{{ url_for('static', filename='icons/close.svg') }}"
+                       width="32px" height="32px" class="close-icon">
+                </a>
+              </div>
+          </fieldset>
+        </form>
+      </div>
     </div>
+
   </div>
   <p></p>
   <div class="content-section">

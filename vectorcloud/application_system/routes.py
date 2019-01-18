@@ -167,83 +167,6 @@ def kill_process(pid):
     return redirect(url_for('main.home'))
 
 
-# edit application page
-@application_system.route("/edit_application/<script_id>",
-                          methods=['GET', 'POST'])
-def edit_application(script_id):
-    err_msg = get_stats()
-    if err_msg:
-        flash('No Vector is Connected. Error message: ' + err_msg, 'warning')
-
-    vector_status = Status.query.first()
-    form = UploadScript()
-    application = Application.query.filter_by(id=script_id).first()
-    support_files = AppSupport.query.filter_by(hex_id=application.hex_id)
-    support_files_first = AppSupport.query.\
-        filter_by(hex_id=application.hex_id).first()
-    script_hex_id = application.hex_id
-
-    if form.validate_on_submit():
-
-        if form.script.data:
-            scriptn = script_hex_id + '.py'
-            script_path = os.path.join(root_folder, scriptn)
-            os.remove(script_path)
-            form.script.data.save(script_path)
-
-        if form.script_helpers.data:
-            for helper in form.script_helpers.data:
-                is_in_db = save_script_helpers(helper, script_hex_id)
-                if is_in_db is True:
-                    flash("Helper File Already in Lib!", 'warning')
-                    return redirect(
-                        url_for('application_system.edit_application',
-                                script_id=script_id))
-
-        if form.icon.data:
-            if application.icon != 'default.png':
-                icon_path = os.path.join(app.root_path,
-                                         'static/app_icons', application.icon)
-                os.remove(icon_path)
-
-            icon_fn = save_icon(form.icon.data, script_hex_id)
-            application.icon = icon_fn
-
-        application.run_in_bkrd = form.run_in_bkrd.data
-        application.script_name = form.script_name.data
-        application.author = form.author.data
-        application.website = form.website.data
-        application.description = form.description.data
-        db.session.merge(application)
-        db.session.commit()
-        flash('Application Edited!', 'success')
-        return redirect(url_for('application_system.edit_application',
-                                script_id=script_id))
-
-    elif request.method == 'GET':
-        form.script_name.data = application.script_name
-        form.author.data = application.author
-        form.website.data = application.website
-        form.description.data = application.description
-        form.run_in_bkrd.data = application.run_in_bkrd
-
-    settings_file = application.hex_id + '.ini'
-    helper_list = []
-    for file in support_files:
-        helper_list.append(file.file_name)
-    return render_template('applications/edit_application.html',
-                           title='Edit Application',
-                           form=form,
-                           script_id=script_id,
-                           support_files=support_files,
-                           support_files_first=support_files_first,
-                           application=application,
-                           vector_status=vector_status,
-                           sdk_version=sdk_version,
-                           settings_file=settings_file,
-                           helper_list=helper_list)
-
-
 # this deletes an application by it's unique key (id column). This will delete:
 # 1. the main python file
 # 2. image file (if not default)
@@ -291,53 +214,13 @@ def delete_application(script_id):
                           methods=['GET', 'POST'])
 def delete_support_file(file_id):
     support_file = AppSupport.query.filter_by(id=file_id).first()
-    application = Application.query.\
-        filter_by(hex_id=support_file.hex_id).first()
     support_file_path = os.path.\
         join(lib_folder, support_file.file_name)
     os.remove(support_file_path)
     AppSupport.query.filter_by(id=file_id).delete()
     db.session.commit()
     flash(support_file.file_name + ' Deleted!', 'success')
-    return redirect(url_for('application_system.edit_application',
-                            script_id=application.id))
-
-
-@application_system.route("/edit_app_settings_file/<hex_id>",
-                          methods=['GET', 'POST'])
-def edit_app_settings_file(hex_id):
-    form = AppSettings()
-
-    err_msg = get_stats()
-    if err_msg:
-        flash('No Vector is Connected. Error message: ' + err_msg, 'warning')
-    vector_status = Status.query.first()
-    application = Application.query.filter_by(hex_id=hex_id).first()
-    settings_file_fn = os.path.join(lib_folder, hex_id + '.ini')
-    f = open(settings_file_fn)
-    settings = []
-
-    for line in f.readlines():
-        settings.append(line)
-
-    if form.validate_on_submit():
-        settings_file = open(settings_file_fn, "w")
-        settings_file.write(form.variable.data)
-        settings_file.close()
-        flash('Settings saved!', 'success')
-        return redirect(url_for('main.home',
-                                script_id=application.id))
-
-    elif request.method == 'GET':
-        form.variable.data = ''.join(settings)
-
-    return render_template(
-        'applications/edit_app_settings_file.html',
-        title='Edit Application',
-        form=form,
-        vector_status=vector_status,
-        sdk_version=sdk_version,
-        application=application)
+    return redirect(url_for('main.home'))
 
 
 @application_system.route("/duplicate_application/<script_id>")

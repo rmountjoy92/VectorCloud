@@ -132,3 +132,18 @@ def run_script_func(script_hex_id):
         t.start()
         out = 'Process Started!'
         return out
+
+
+def set_db_settings(hex_id, settings_file):
+    settings_file_fn = os.path.join(lib_folder, hex_id + '.ini')
+    f = open(settings_file_fn)
+    settings = []
+
+    for line in f.readlines():
+        settings.append(line)
+
+    settings_file.settings = ''.join(settings)
+
+    db.session.merge(settings_file)
+    db.session.commit()
+    return settings_file_fn

@@ -62,6 +62,23 @@ a:hover {
   margin: 10px 0px 0px 5px;
 }
 
+.close-icon {
+  padding: 5px;
+  border: 0px solid #29353B;
+  border-radius: 20px;
+  background-color: #29353B;
+}
+
+.close-icon:hover {
+  padding: 5px;
+  border: 0px solid #222D32;
+  border-radius: 20px;
+  background-color: #222D32;
+  -webkit-box-shadow: 0px 0px 2px 2px rgba(0,0,0,0.2);
+  -moz-box-shadow: 0px 0px 2px 2px rgba(0,0,0,0.2);
+  box-shadow: 0px 0px 2px 2px rgba(0,0,0,0.2);
+}
+
 .legend-icon {
   margin: 6px 0px 0px 10px;
 }
@@ -72,7 +89,12 @@ a:hover {
 }
 
 .border-top {
-  border:1px solid #222D32 !important;
+  border: 1px solid #222D32 !important;
+}
+
+.darker {
+  background: #222D32 !important;
+  border: 0px !important;
 }
 
 .grey-text {
@@ -88,6 +110,10 @@ a:hover {
 .grey-text-small {
   color: #898F91 !important;
   font-size: 12px;
+}
+
+.app-description {
+  height: 250px;
 }
 
 .form-control-file {

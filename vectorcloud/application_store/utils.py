@@ -89,7 +89,7 @@ def install_package(form_package,
                 flash('Application named "' + application.script_name +
                       '" already exists, please rename the existing \
                       application and try again.', 'warning')
-                return redirect(url_for('application_store.upload_package'))
+                return redirect(url_for('application_store.app_store'))
 
     helper_string = config.get(name, 'helper_files')
 

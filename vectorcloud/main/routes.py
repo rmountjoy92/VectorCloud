@@ -6,12 +6,15 @@ import platform
 from flask import render_template, url_for, redirect, flash, request, Blueprint
 from flask_login import current_user
 from vectorcloud.main.forms import CommandForm, SearchForm
+from vectorcloud.application_system.forms import UploadScript, AppSettings
+from vectorcloud.application_system.utils import set_db_settings, save_icon,\
+    save_script, save_script_helpers
 from vectorcloud.models import Command, User, Status, Application, Output,\
-    ApplicationStore, Settings
+    ApplicationStore, Settings, AppSupport
 from vectorcloud.main.utils import execute_db_commands, get_stats,\
     undock_robot, dock_robot, robot_connect_cube
 from vectorcloud.application_store.utils import clear_temp_folder
-from vectorcloud.paths import temp_folder
+from vectorcloud.paths import temp_folder, lib_folder, root_folder
 from vectorcloud import db, app
 
 try:
@@ -105,8 +108,17 @@ def home():
             else:
                 store_app.installed = False
 
+    app_support = AppSupport.query.all()
+
+    for main_app in app_list:
+        for settings_file in app_support:
+            if main_app.hex_id in settings_file.file_name:
+                set_db_settings(main_app.hex_id, settings_file)
+
     form = CommandForm()
     search_form = SearchForm()
+    edit_form = UploadScript()
+    settings_form = AppSettings()
 
     if form.validate_on_submit():
         robot_command = Command(command=form.command.data)
@@ -143,6 +155,51 @@ def home():
         apps_searched = set(apps_searched)
         num_results = len(apps_searched)
 
+    if settings_form.validate_on_submit():
+        hex_id = settings_form.hex_id.data
+        settings_file_fn = os.path.join(lib_folder, hex_id + '.ini')
+        settings_file = open(settings_file_fn, "w")
+        settings_file.write(settings_form.variable.data)
+        settings_file.close()
+        flash('Settings saved!', 'success')
+        return redirect(url_for('main.home'))
+
+    if edit_form.validate_on_submit():
+        script_hex_id = edit_form.hex_id.data
+        application = Application.query.filter_by(hex_id=script_hex_id).first()
+
+        if edit_form.script.data:
+            scriptn = script_hex_id + '.py'
+            script_path = os.path.join(root_folder, scriptn)
+            os.remove(script_path)
+            edit_form.script.data.save(script_path)
+
+        if edit_form.script_helpers.data:
+            for helper in edit_form.script_helpers.data:
+                is_in_db = save_script_helpers(helper, script_hex_id)
+                if is_in_db is True:
+                    flash("Helper File Already in Lib!", 'warning')
+                    return redirect(url_for('main.home'))
+
+        if edit_form.icon.data:
+            if application.icon != 'default.png':
+                icon_path = os.path.join(app.root_path,
+                                         'static/app_icons', application.icon)
+                os.remove(icon_path)
+
+            icon_fn = save_icon(edit_form.icon.data, script_hex_id)
+            application.icon = icon_fn
+
+        application.run_in_bkrd = edit_form.run_in_bkrd.data
+        application.script_name = edit_form.script_name.data
+        application.author = edit_form.author.data
+        application.website = edit_form.website.data
+        application.description = edit_form.description.data
+        db.session.merge(application)
+        db.session.commit()
+        flash('Application Edited!', 'success')
+        return redirect(url_for('main.home'))
+
     elif request.method == 'GET':
         search_form.by_name.data = settings.search_by_name
         search_form.by_description.data = settings.search_by_description
@@ -155,6 +212,7 @@ def home():
         flash('No Vector is Connected. Error message: ' + err_msg, 'warning')
 
     vector_status = Status.query.first()
+    support_files = AppSupport.query.all()
 
     return render_template('home.html',
                            vector_status=vector_status,
@@ -163,7 +221,10 @@ def home():
                            sdk_version=sdk_version,
                            search_form=search_form,
                            search_term=search_term,
-                           num_results=num_results)
+                           num_results=num_results,
+                           edit_form=edit_form,
+                           support_files=support_files,
+                           settings_form=settings_form)
 
 
 # executes all commmands in the command table(if present), redirects to home.

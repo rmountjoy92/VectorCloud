@@ -3,7 +3,7 @@
 import os
 import subprocess
 from platform import system as operating_system
-from flask import render_template, url_for, redirect, flash, Blueprint, request
+from flask import render_template, url_for, redirect, flash, Blueprint
 from configparser import ConfigParser
 import anki_vector
 from vectorcloud.manage_vectors.forms import AddVector, ChangeIP

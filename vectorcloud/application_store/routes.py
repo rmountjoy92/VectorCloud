@@ -50,6 +50,7 @@ def app_store():
     vector_status = Status.query.first()
 
     search_form = SearchForm()
+    install_form = UploadPackage()
     settings = Settings.query.first()
 
     if search_form.validate_on_submit():
@@ -81,6 +82,14 @@ def app_store():
         apps_searched = set(apps_searched)
         num_results = len(apps_searched)
 
+    if install_form.validate_on_submit():
+        if install_form.package.data:
+            install_package(install_form.package.data)
+
+        else:
+            flash('No Package Uploaded!', 'warning')
+        return redirect(url_for('application_store.app_store'))
+
     if request.method == 'GET':
         search_form.by_name.data = settings.search_by_name
         search_form.by_description.data = settings.search_by_description
@@ -93,24 +102,8 @@ def app_store():
                            app_list=store_app_list,
                            search_form=search_form,
                            search_term=search_term,
-                           num_results=num_results)
-
-
-@application_store.route("/upload_package", methods=['GET', 'POST'])
-def upload_package():
-    form = UploadPackage()
-
-    if form.validate_on_submit():
-        if form.package.data:
-            install_package(form.package.data)
-
-        else:
-            flash('No Package Uploaded!', 'warning')
-        return redirect(url_for('application_store.upload_package'))
-
-    return render_template('applications/install_package.html',
-                           title='Install Package',
-                           form=form)
+                           num_results=num_results,
+                           install_form=install_form)
 
 
 @application_store.route("/install_store_application/<script_id>",

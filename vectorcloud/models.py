@@ -55,6 +55,7 @@ class AppSupport(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     hex_id = db.Column(db.Text)
     file_name = db.Column(db.Text)
+    settings = db.Column(db.Text)
 
     def __repr__(self):
         return [self.id, self.hex_id, self.file_name]
