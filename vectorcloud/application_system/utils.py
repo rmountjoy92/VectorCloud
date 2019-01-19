@@ -35,13 +35,9 @@ def save_script(form_script):
 # package and if it doesn't, it adds the file to the lib package and registers
 # it in the database.
 def save_script_helpers(helper, random_hex):
-    helper_name = str(helper)
+    helper_name = str(helper.filename)
 
     if len(helper_name) > 1:
-        helper_name = helper_name.replace("<FileStorage: '", '')
-        helper_name = helper_name.replace("' ('text/x-python')>", '')
-        helper_name = helper_name.replace("' ('image/jpeg')>", '')
-        helper_name = helper_name.replace("' ('image/png')>", '')
         fn = os.path.join(lib_folder, helper_name)
         find_helper = AppSupport.query.filter_by(file_name=helper_name).first()
 

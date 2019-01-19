@@ -160,23 +160,23 @@
                 </a>
               {% endif %}
 
-              <a data-toggle="collapse" href="#{{ app.script_name }}" role="button" aria-expanded="false" aria-controls="collapseExample">
+              <a data-toggle="collapse" href="#{{ app.hex_id }}" role="button" aria-expanded="false" aria-controls="collapseExample">
                 <img class="list-view-spinner column"
                      src="{{ url_for('static', filename='icons/arrow-down.svg') }}"
                      width="24px" height="24px">
               </a>
             </div>
-            <div class="collapse" id="{{ app.script_name }}">
+            <div class="collapse" id="{{ app.hex_id }}">
               <div class="border-top border-dark mt-4"></div>
               <div class="row mt-4 image-container">
                 <div class="column store-icon-main">
-                  <a data-toggle="collapse" href="#edit-{{ app.script_name }}" role="button" aria-expanded="false" aria-controls="collapseExample">
+                  <a data-toggle="collapse" href="#edit-{{ app.hex_id }}" role="button" aria-expanded="false" aria-controls="collapseExample">
                     <img src="{{ url_for('static', filename='icons/edit.svg') }}"
                          width="24px" height="24px" data-toggle="tooltip" data-placement="top" title="Edit Application">
                   </a>
                 </div>
                 <div class="column store-icon-main">
-                  <a data-toggle="collapse" href="#settings-{{ app.script_name }}" role="button" aria-expanded="false" aria-controls="collapseExample">
+                  <a data-toggle="collapse" href="#settings-{{ app.hex_id }}" role="button" aria-expanded="false" aria-controls="collapseExample">
                     <img src="{{ url_for('static', filename='icons/settings.svg') }}"
                          width="24px" height="24px" data-toggle="tooltip" data-placement="top" title="Application Settings">
                   </a>
@@ -198,7 +198,7 @@
                 </div>
               </div>
 
-              <div class="collapse" id="edit-{{ app.script_name }}">
+              <div class="collapse" id="edit-{{ app.hex_id }}">
                 <div class="border-top border-dark mt-4 mb-4"></div>
                 <form method="POST" action="" enctype="multipart/form-data">
                     {{ form.hidden_tag() }}
@@ -347,7 +347,7 @@
                 </form>
               </div>
 
-              <div class="collapse" id="settings-{{ app.script_name }}">
+              <div class="collapse" id="settings-{{ app.hex_id }}">
                 <div class="border-top border-dark mt-4 mb-4"></div>
                 <form method="POST" action="" enctype="multipart/form-data">
                   {{ settings_form.hidden_tag() }}
@@ -357,7 +357,7 @@
                         <h3 class="text-center">{{ app.script_name }} Settings</h3>
                       </div>
                       {% for file in support_files %}
-                        {% if app.hex_id == file.hex_id %}
+                        {% if app.hex_id in file.file_name %}
                           {% set f = settings_form.variable.process_data(file.settings) %}
                         {% endif %}
                       {% endfor %}

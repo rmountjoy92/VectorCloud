@@ -95,6 +95,7 @@ def upload():
 
             else:
                 icon_fn = 'default.png'
+
             application = Application(hex_id=random_hex,
                                       script_name=form.script_name.data,
                                       description=form.description.data,
