@@ -1,0 +1,4 @@
+version: "3.7"
+services:
+  vectorcloud:
+    command: pip install --target=.pythonpath -r requirements.txt
