@@ -28,6 +28,9 @@ def check_needed():
         needed = False
         return needed
 
+    elif str(out.stdout).find("Your branch is up-to-date") > -1:
+        needed = False
+        return needed
     else:
         needed = True
         return needed
