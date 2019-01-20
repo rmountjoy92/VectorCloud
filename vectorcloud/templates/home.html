@@ -334,7 +334,7 @@
                         </div>
 
                         <div class="image-container">
-                          <a data-toggle="collapse" href="#edit-{{ app.script_name }}" role="button" aria-expanded="false" aria-controls="collapseExample">
+                          <a data-toggle="collapse" href="#edit-{{ app.hex_id }}" role="button" aria-expanded="false" aria-controls="collapseExample">
                             <img src="{{ url_for('static', filename='icons/close.svg') }}"
                                  width="32px" height="32px" class="close-icon">
                           </a>
@@ -379,7 +379,7 @@
                         {{ settings_form.save(class="btn btn-dark") }}
                       </div>
                       <div class="image-container">
-                        <a data-toggle="collapse" href="#settings-{{ app.script_name }}" role="button" aria-expanded="false" aria-controls="collapseExample">
+                        <a data-toggle="collapse" href="#settings-{{ app.hex_id }}" role="button" aria-expanded="false" aria-controls="collapseExample">
                           <img src="{{ url_for('static', filename='icons/close.svg') }}"
                                width="32px" height="32px" class="close-icon">
                         </a>
