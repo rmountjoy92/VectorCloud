@@ -2,3 +2,6 @@
 .directory
 vectorcloud/site.db
 *.py[cod]
+.anki_vector/
+.cache/
+.pythonpath/

@@ -1,0 +1,13 @@
+version: "3.7"
+services:
+  vectorcloud:
+    image: python:3
+    volumes:
+      - .:/vectorcloud
+    working_dir: /vectorcloud
+    environment:
+      HOME: '/vectorcloud'
+      PYTHONPATH: '/vectorcloud/.pythonpath'
+    ports:
+      - 5000:5000
+    command: python3 run.py
