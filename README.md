@@ -8,23 +8,6 @@ My goal with this project is to create a web interface using Flask for controlli
 
 Please feel free to contribute.
 
-## Run in Docker
-
-One-time installation:
-```
-docker-compose \
-  -f docker-compose.yml \
-  -f docker-compose-setup.yml \
-  run --rm vectorcloud
-```
-
-Run VectorCloud:
-```
-docker-compose up vectorcloud
-```
-
-Open a browser and go to http://localhost:5000
-
 ## How to run
 * make sure git is installed on your machine
 * (recommended) create a virtual environment https://www.pythonforbeginners.com/basics/how-to-use-python-virtualenv/
@@ -49,6 +32,24 @@ py run.py
 
 ## Notes
 * Do not update vectorcloud with git pull, use the built-in update system, as it makes the necessary changes to the database file.
+
+## Run in Docker
+
+One-time installation:
+```
+docker-compose \
+  -f docker-compose.yml \
+  -f docker-compose-setup.yml \
+  run --rm vectorcloud
+```
+
+Run VectorCloud:
+```
+docker-compose up vectorcloud
+```
+
+Open a browser and go to http://localhost:5000
+
 
 ## Current Features
 * configure your Vector to use the SDK
