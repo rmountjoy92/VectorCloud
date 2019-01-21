@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
 
+import os
 from flask import request
 from flask_restful import Resource
+from configparser import ConfigParser
 from vectorcloud import db
 from vectorcloud.models import Status, Command, Application
 from vectorcloud.main.utils import undock_robot, dock_robot,\
     robot_connect_cube, robot_dock_cube, get_stats,\
     execute_db_commands
 from vectorcloud.application_system.utils import run_script_func
+from vectorcloud.paths import lib_folder
 
 
 class UndockRobot(Resource):
@@ -103,6 +106,49 @@ class RunApplication(Resource):
             output = 'Application not found.'
 
         else:
+            output = run_script_func(application.hex_id)
+
+        return {'Output': output}
+
+
+class ModRunApplication(Resource):
+    def get(self, app_name, options):
+        config = ConfigParser()
+
+        app_name = app_name.replace('-', ' ')
+        application = Application.query.filter_by(script_name=app_name).first()
+
+        if not application:
+            output = 'Application not found.'
+
+        else:
+            config_path = os.path.join(lib_folder, application.hex_id + '.ini')
+            config.read(config_path)
+            num_options = options.count('%')
+            options_index = 0
+            options_list = []
+            for i in range(num_options):
+                end = options.find('%', options_index) + 1
+                full_option = options[options_index:end]
+                equal_sign = full_option.find('=') + 1
+                option_name = full_option[0:equal_sign - 1]
+                option_value = full_option[equal_sign:]
+                option_value = option_value.replace('%', '')
+                options_list.append({option_name: option_value})
+                options_index = end
+
+            for option in options_list:
+                keys = option.keys()
+                values = option.values()
+                for key in keys:
+                    option_name = key
+                for value in values:
+                    option_value = value
+                    option_value = option_value.replace('-', ' ')
+                config[application.script_name][option_name] = option_value
+                with open(config_path, 'w') as configfile:
+                    config.write(configfile)
+
             output = run_script_func(application.hex_id)
 
         return {'Output': output}
