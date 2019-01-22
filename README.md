@@ -9,20 +9,18 @@ My goal with this project is to create a web interface using Flask for controlli
 Please feel free to contribute.
 
 ## How to run
+* make sure python>=3.6 is installed
 * make sure git is installed on your machine
 * (recommended) create a virtual environment https://www.pythonforbeginners.com/basics/how-to-use-python-virtualenv/
 * (recommended) navigate to your virtual environment.
 * In a terminal, enter:
 ```
 git clone https://github.com/rmountjoy92/VectorCloud
-pip3 install flask flask-sqlalchemy flask-bcrypt flask-login flask-wtf flask-bootstrap flask-migrate flask-script flask-restful anki-vector
-```
-* navigate to the VectorCloud folder, make sure run.py is executable and enter:
-On Linux or Mac:
-```
+cd VectorCloud
+pip3 install -r requirements.txt
 ./run.py
 ```
-On Windows:
+* Note - on Windows you have to use:
 ```
 py run.py
 ```
