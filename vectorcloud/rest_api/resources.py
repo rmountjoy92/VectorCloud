@@ -152,3 +152,51 @@ class ModRunApplication(Resource):
             output = run_script_func(application.hex_id)
 
         return {'Output': output}
+
+
+class ApplicationSettings(Resource):
+    def get(self, app_name, options):
+        config = ConfigParser()
+
+        app_name = app_name.replace('-', ' ')
+        application = Application.query.filter_by(script_name=app_name).first()
+        options_list = []
+        settings_list = []
+
+        if not application:
+            output = 'Application not found.'
+            options_list.append(output)
+
+        else:
+            config_path = os.path.join(lib_folder, application.hex_id + '.ini')
+            config.read(config_path)
+            num_options = options.count('%')
+            options_index = 0
+            for i in range(num_options):
+                end = options.find('%', options_index) + 1
+                full_option = options[options_index:end]
+                equal_sign = full_option.find('=') + 1
+                option_name = full_option[0:equal_sign - 1]
+                option_value = full_option[equal_sign:]
+                option_value = option_value.replace('%', '')
+                options_list.append({option_name: option_value})
+                options_index = end
+
+            for option in options_list:
+                keys = option.keys()
+                values = option.values()
+                for key in keys:
+                    option_name = key
+                for value in values:
+                    option_value = value
+                    option_value = option_value.replace('-', ' ')
+                config[application.script_name][option_name] = option_value
+                with open(config_path, 'w') as configfile:
+                    config.write(configfile)
+
+            config.read(config_path)
+            for option in config.options(application.script_name):
+                pair = {option: config.get(application.script_name, option)}
+                settings_list.append(pair)
+
+        return settings_list

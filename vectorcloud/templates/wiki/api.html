@@ -16,9 +16,10 @@ API</b></legend>
 
 <div class="border-bottom border-dark">
 
-  <div class="mt-4">
-    <h4>UndockRobot, '/api/undock'</h4>
-    <div class="code-box grey-text-md mb-4">
+  <div class="code-box mt-4">
+    <h4>UndockRobot</h4>
+    <h5>'/api/undock'</h5>
+    <div class="grey-text-md mb-4">
       <p>Undock robot from charger</p>
       <code>
       get('http://localhost:5000/api/undock').json() <p></p>
@@ -27,9 +28,10 @@ API</b></legend>
   </div>
 
   <div class="border-top border dark"></div>
-  <div class="mt-4">
-    <h4>DockRobot, '/api/dock'</h4>
-    <div class="code-box grey-text-md mb-4">
+  <div class="code-box mt-4">
+    <h4>DockRobot</h4>
+    <h5>'/api/dock'</h5>
+    <div class="grey-text-md mb-4">
       <p>Dock robot on charger</p>
       <code>
       get('http://localhost:5000/api/dock').json() <p></p>
@@ -38,9 +40,10 @@ API</b></legend>
   </div>
 
   <div class="border-top border dark"></div>
-  <div class="mt-4">
-    <h4>ConnectCube, '/api/connect_cube'</h4>
-    <div class="code-box grey-text-md mb-4">
+  <div class="code-box mt-4">
+    <h4>ConnectCube</h4>
+    <h5>'/api/connect_cube'</h5>
+    <div class="grey-text-md mb-4">
       <p>Connect to cube</p>
       <code>
       get('http://localhost:5000/api/connect_cube').json() <p></p>
@@ -49,9 +52,10 @@ API</b></legend>
   </div>
 
   <div class="border-top border dark"></div>
-  <div class="mt-4">
-    <h4>DockCube, '/api/dock_cube'</h4>
-    <div class="code-box grey-text-md mb-4">
+  <div class="code-box mt-4">
+    <h4>DockCube</h4>
+    <h5>'/api/dock_cube'</h5>
+    <div class="grey-text-md mb-4">
       <p>Dock cube and pick it up</p>
       <code>
       get('http://localhost:5000/api/dock_cube').json() <p></p>
@@ -60,9 +64,10 @@ API</b></legend>
   </div>
 
   <div class="border-top border dark"></div>
-  <div class="mt-4">
-    <h4>GetStatus, '/api/status'</h4>
-    <div class="code-box grey-text-md mb-4">
+  <div class="code-box mt-4">
+    <h4>GetStatus</h4>
+    <h5>'/api/status'</h5>
+    <div class="grey-text-md mb-4">
       <p>Get the data from the Status table</p>
       <code>
       get('http://localhost:5000/api/status').json() <p></p>
@@ -71,29 +76,27 @@ API</b></legend>
   </div>
 
   <div class="border-top border dark"></div>
-  <div class="mt-4">
-    <h4>AddCommand, '/api/add_command'</h4>
-    <div class="code-box grey-text-md mb-2">
+  <div class="code-box mt-4">
+    <h4>AddCommand</h4>
+    <h5>'/api/add_command'</h5>
+    <div class="grey-text-md mb-2">
       <p>Get the data from the Command table</p>
       <code>
       get('http://localhost:5000/api/add_command').json() <p></p>
       </code>
+      <p></p>
+      <p>Add a command to the Command table</p>
+      <code>
+      put('http://localhost:5000/api/add_command', data={'data': 'robot.behavior.drive_off_charger()'}).json() <p></p>
+      </code>
     </div>
   </div>
 
-  <div class="code-box grey-text-md mb-4">
-    <p></p>
-    <p>Add a command to the Command table</p>
-    <code>
-    put('http://localhost:5000/api/add_command', data={'data': 'robot.behavior.drive_off_charger()'}).json() <p></p>
-    </code>
-  </div>
-
   <div class="border-top border dark"></div>
-  <div class="mt-4">
-    <h4>ExecuteCommands, '/api/execute'</h4>
-
-    <div class="code-box grey-text-md mb-4">
+  <div class="code-box mt-4">
+    <h4>ExecuteCommands</h4>
+    <h5>'/api/execute'</h5>
+    <div class="grey-text-md mb-4">
       <p>Execute all commands in the Command table</p>
       <code>
       get('http://localhost:5000/api/execute').json() <p></p>
@@ -102,9 +105,10 @@ API</b></legend>
   </div>
 
   <div class="border-top border dark"></div>
-  <div class="mt-4">
-    <h4>ClearCommands, '/api/clear_commands'</h4>
-    <div class="code-box grey-text-md mb-4">
+  <div class="code-box mt-4">
+    <h4>ClearCommands</h4>
+    <h5>'/api/clear_commands'</h5>
+    <div class="grey-text-md mb-4">
       <p>Clear all commands in the Command table</p>
       <code>
       get('http://localhost:5000/api/clear_commands').json() <p></p>
@@ -112,26 +116,40 @@ API</b></legend>
   </div>
 
   <div class="border-top border dark"></div>
-  <div class="mt-4">
-    <h4>RunApplication, '/api/app/app_name'</h4>
-    <div class="code-box grey-text-md mb-4">
+  <div class="mt-4 code-box">
+    <h4>RunApplication</h4>
+    <h5>'/api/run/app_name'</h5>
+    <div class="grey-text-md mb-4">
       <p>If application Hello World is installed,</p>
       <p>you can run it with:</p>
       <code>
-      get('http://localhost:5000/api/app/Hello-World').json() </code><p></p>
+      get('http://localhost:5000/api/run/Hello-World').json() </code><p></p>
       *Note: All dashes are replaced with spaces. Hello-World will be Hello World
     </div>
   </div>
 
   <div class="border-top border dark"></div>
-  <div class="mt-4">
-    <h4>ModRunApplication,</h4>
-    <h5>'/api/modapp/app_name/option=value%'</h5>
-    <div class="code-box grey-text-md mb-4">
+  <div class="mt-4 code-box">
+    <h4>ModRunApplication</h4>
+    <h5>'/api/modrun/app_name/option=value%'</h5>
+    <div class="grey-text-md mb-4">
       <p>If application Display Text is installed,</p>
       <p>you can modify its settings file and run it with:</p>
       <code>
-      get('http://localhost:5000/api/modapp/Display-Text/text_to_show=VectorCloud%font_size=20%').json() </code><p></p>
+      get('http://localhost:5000/api/modrun/Display-Text/text_to_show=VectorCloud%font_size=20%').json() </code><p></p>
+      *Note: All dashes are replaced with spaces. Hello-World will be Hello World
+    </div>
+  </div>
+
+  <div class="border-top border dark"></div>
+  <div class="mt-4 code-box">
+    <h4>ApplicationSettings</h4>
+    <h5>'/api/appset/app_name/option=value%'</h5>
+    <div class="grey-text-md mb-4">
+      <p>If application Display Text is installed,</p>
+      <p>you can modify its settings file with:</p>
+      <code>
+      get('http://localhost:5000/api/appset/Display-Text/text_to_show=VectorCloud%font_size=20%').json() </code><p></p>
       *Note: All dashes are replaced with spaces. Hello-World will be Hello World
     </div>
   </div>
