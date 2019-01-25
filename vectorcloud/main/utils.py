@@ -342,4 +342,4 @@ def execute_db_commands():
             return err_msg
 
     else:
-        flash('No command staged!', 'warning')
+        return 'No command staged!'

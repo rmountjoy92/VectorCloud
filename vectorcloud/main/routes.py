@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 
 import os
-import sys
 import platform
+import anki_vector
 from flask import render_template, url_for, redirect, flash, request, Blueprint
 from flask_login import current_user
 from vectorcloud.main.forms import CommandForm, SearchForm
 from vectorcloud.application_system.forms import UploadScript, AppSettings
 from vectorcloud.application_system.utils import set_db_settings, save_icon,\
-    save_script, save_script_helpers
+    save_script_helpers
 from vectorcloud.models import Command, User, Status, Application, Output,\
     ApplicationStore, Settings, AppSupport
 from vectorcloud.main.utils import execute_db_commands, get_stats,\
@@ -17,12 +17,9 @@ from vectorcloud.application_store.utils import clear_temp_folder
 from vectorcloud.paths import temp_folder, lib_folder, root_folder
 from vectorcloud import db, app
 
-try:
-    import anki_vector
-except ImportError:
-    sys.exit("Cannot import from anki_vector: Install per Anki instructions")
 
 main = Blueprint('main', __name__)
+
 
 # ------------------------------------------------------------------------------
 # intial routes and functions (before/after request)
@@ -39,8 +36,6 @@ db.create_all()
 
 # blocks access to all pages (except public routes) unless the user is
 # signed in.
-
-
 @main.before_request
 def check_valid_login():
     user = db.session.query(User).first()
