@@ -5,7 +5,7 @@ from flask import request
 from flask_restful import Resource
 from configparser import ConfigParser
 from vectorcloud import db
-from vectorcloud.models import Status, Command, Application
+from vectorcloud.models import Status, Command, Application, Vectors
 from vectorcloud.main.utils import undock_robot, dock_robot,\
     robot_connect_cube, robot_dock_cube, get_stats,\
     execute_db_commands
@@ -200,3 +200,23 @@ class ApplicationSettings(Resource):
                 settings_list.append(pair)
 
         return settings_list
+
+
+class GetVectors(Resource):
+    def get(self):
+        vectors = Vectors.query.all()
+        vectors_list = []
+
+        if not vectors:
+            return 'No Vectors configured!'
+
+        else:
+            for vector in vectors:
+                vectors_list.append({'serial': vector.serial,
+                                     'cert': vector.cert,
+                                     'name': vector.name,
+                                     'guid': vector.guid,
+                                     'default': vector.default
+                                     })
+
+        return vectors_list
