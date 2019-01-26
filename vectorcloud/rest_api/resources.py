@@ -54,7 +54,8 @@ class GetStatus(Resource):
                 'cube_battery_volts': status.cube_battery_volts,
                 'timestamp': status.timestamp,
                 'ip': status.ip,
-                'name': status.name
+                'name': status.name,
+                'serial': status.serial
                 }
 
 
