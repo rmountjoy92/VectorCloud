@@ -65,16 +65,19 @@ Open a browser and go to http://localhost:5000
 ## How to contribute to the App Store
 https://goo.gl/forms/OXI4jWu7hEDRAKd23
 
+## Known Bugs
+* That pesky white line on the battery and cube popovers.
+* I have no idea what's going on with mobile icons right now. They like disappear  and reappear. I think it has something to do with my fix for not caching images, so I could have the application icons change when the user changes them without clearing the cache. If you know how to fix this please let me know!
+
+
 ## Features I'm currently working on
-* production server
 * create more store apps
 * fix bugs
 * add network state and pose to status
 
 
 ## Features I plan to do in the future
-* set up uWSGI, or some other production server
-* create a Raspberry Pi image - once someone figures out how to run the sdk on it.
+* create a Raspberry Pi image with production server
 * plugin manager
 * manage photos and videos
 * learn the 'events' module and integrate it in some way
