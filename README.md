@@ -67,7 +67,6 @@ https://goo.gl/forms/OXI4jWu7hEDRAKd23
 
 ## Known Bugs
 * That pesky white line on the battery and cube popovers.
-* I have no idea what's going on with mobile icons right now. They like disappear  and reappear. I think it has something to do with my fix for not caching images, so I could have the application icons change when the user changes them without clearing the cache. If you know how to fix this please let me know!
 
 
 ## Features I'm currently working on

@@ -59,7 +59,6 @@ def check_valid_login():
 def add_header(response):
     if 'Cache-Control' not in response.headers:
         response.headers['Cache-Control'] = 'no-store'
-    return response
     clear_temp_folder()
     return response
 
