@@ -18,7 +18,7 @@
 
     <!-- static/css/main.css -->
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}?version=1.1">
-
+    <!-- <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/white-theme.css') }}?version=1.1"> -->
 
     {% if title %}
         <title>VectorCloud - {{ title }}</title>
@@ -130,20 +130,19 @@
                 </div>
               {% endif %}
               </div>
-
-            <div class="fixed">
-              <div class="navbar-text" align="right">
-                <p>
-                  <text><b>{{ vector_status.name }}</b></text>
-                </p>
-                <p>
-                  <text><b>IP:</b> {{ vector_status.ip }}</text>
-                </p>
-                <p>
-                  <text><b>OS Version:</b> {{ vector_status.version }}</text>
-                </p>
-                  <text><b>SDK Version:</b> {{ sdk_version }}</text>
-              </div>
+          </div>
+          <div class="fixed">
+            <div class="grey-text-md" align="right">
+              <p>
+                <text><b>{{ vector_status.name }}</b></text>
+              </p>
+              <p>
+                <text><b>IP:</b> {{ vector_status.ip }}</text>
+              </p>
+              <p>
+                <text><b>OS Version:</b> {{ vector_status.version }}</text>
+              </p>
+                <text><b>SDK Version:</b> {{ sdk_version }}</text>
             </div>
           </div>
         </div>

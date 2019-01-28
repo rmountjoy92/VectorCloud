@@ -1,0 +1,145 @@
+h1, h2, h3, h4, h5, h6 {
+  color: #222D32;
+}
+
+body {
+  background: #EEE;
+  color: #222D32;
+}
+
+a {
+  color: #898F91;
+}
+
+a:hover {
+  color: #222D32;
+}
+
+div.fixed {
+    font-color: #898F91;
+    border: 1px solid #fff;
+    background-color: #fff;
+}
+
+.bg-steel {
+  background-color: #fff;
+}
+
+.btn-dark {
+  color: #898F91;
+  background-color: #fff;
+  border: 0px;
+}
+
+.btn-dark:hover {
+  color: #222D32;
+  background-color: #fff;
+  border: 0px;
+}
+
+.content-section {
+  background: #fff;
+  border: 0px;
+}
+
+.form-control-file {
+  color: #222D32;
+  background: #EEE;
+  border: 0px solid #EEE;
+}
+
+.form-control-file:focus {
+  color: #222D32;
+  background: #EEE;
+  border: 0px solid #00EE93;
+}
+
+.custom-upload {
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+}
+
+.form-control {
+  color: #222D32;
+  background: #EEE;
+  border: 0px solid #EEE;
+}
+
+.form-control:focus {
+  color: #222D32;
+  background: #EEE;
+  border: 0px solid #00EE93;
+}
+
+.darker {
+  background: #fff !important;
+}
+
+.border-bottom {
+  background: #eee;
+  border: 0px !important;
+  -webkit-box-shadow: 0px 0px 2px 2px rgba(0,0,0,0.2);
+  -moz-box-shadow: 0px 0px 2px 2px rgba(0,0,0,0.2);
+  box-shadow: 0px 0px 2px 2px rgba(0,0,0,0.2);
+}
+
+.border-top {
+  border: 1px solid #898F91 !important;
+}
+
+
+/* Popover Header */
+.popover-header {
+  background-color: #eee;
+  color: #222D32;
+}
+/* Popover Body */
+.popover-body {
+  background-color: #fff;
+  color: #222D32;
+}
+
+.close {
+    margin: 5px 0px 0px 5px;
+    color: #222D32;
+}
+
+.close:hover {
+    margin: 5px 0px 0px 5px;
+    color: #222D32;
+}
+
+.wiki-list {
+  color: #898F91;
+}
+
+.wiki-list:hover {
+  color: #222D32;
+}
+
+.wiki-list:active {
+  color: #222D32;
+}
+
+.wiki-title {
+  color: #898F91;
+}
+
+.wiki-title:hover {
+  color: #222D32;
+}
+
+.wiki-icon {
+  position: fixed;
+  background-color: #eee;
+  border: 2px solid #eee;
+}
+
+.list-group-item {
+  background-color: #eee;
+}
+
+div#loading {
+    background: #898F91 url(/static/icons/ajax-loader.gif) center no-repeat;
+}

@@ -80,10 +80,6 @@ def home():
                You are using ' + sdk_version + ' VectorCloud is using ' +
               vectorcloud_sdk_version, 'warning')
 
-    temp_exists = os.path.isdir(temp_folder)
-    if temp_exists is False:
-        os.mkdir(temp_folder)
-
     output = Output.query.all()
     for out in output:
         flash(out, 'success')
