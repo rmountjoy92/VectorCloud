@@ -2,44 +2,55 @@
 {% block content %}
 <div class="container">
   <h3 class="text-center">App Store</h3> <p></p>
-    <form method="POST" action="">
-        {{ search_form.hidden_tag() }}
-        <fieldset class="form-group">
-          <div class="content-section">
-            <div class="row image-container">
-              <div class="form-group column search-bar">
-                {{ search_form.search(autocomplete="off", class="form-control form-control-lg") }}
-              </div>
-              <div class="column search-icon">
-                {{ search_form.go(class="btn btn-dark") }}
-              </div>
+  <form method="POST" action="/app_store">
+      {{ search_form.hidden_tag() }}
+      <fieldset class="form-group">
+        <div class="content-section">
+          <div class="row image-container">
+            <div class="form-group column search-bar">
+                {% if search_form.search.errors %}
+                    {{ search_form.search(class="form-control form-control-lg is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in search_form.search.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                  <div onsubmit="loading();">
+                    {{ search_form.search(autocomplete="off", class="form-control form-control-lg") }}
+                  </div>
+                {% endif %}
             </div>
-            <div class="row image-container">
-              <div class="form-check column">
-                  {{ search_form.by_name(class="form-check-input") }}
-                  {{ search_form.by_name.label(class="form-check-label") }}
-              </div>
-              <div class="form-check column">
-                  {{ search_form.by_description(class="form-check-input") }}
-                  {{ search_form.by_description.label(class="form-check-label") }}
-              </div>
-              <div class="form-check column" >
-                  {{ search_form.by_author(class="form-check-input") }}
-                  {{ search_form.by_author.label(class="form-check-label") }}
-              </div>
+            <div class="column search-icon">
+              {{ search_form.go(class="btn btn-dark", value='Search') }}
             </div>
-            {% if search_term %}
-            <p></p>
-            <div class="border-bottom border-dark grey-text">
-              <b>Searching: </b>{{ search_term }} | {{ num_results }} results
-              <a href="{{ url_for('application_store.app_store') }}">
-              <img class="store-icon" align="right" src="{{ url_for('static', filename='icons/close.svg') }}" width="16px" height="16px">
-              </a>
-            </div>
-            {% endif %}
           </div>
-        </fieldset>
-    </form>
+          <div class="row image-container">
+            <div class="form-check column">
+                {{ search_form.by_name(class="form-check-input") }}
+                {{ search_form.by_name.label(class="form-check-label") }}
+            </div>
+            <div class="form-check column">
+                {{ search_form.by_description(class="form-check-input") }}
+                {{ search_form.by_description.label(class="form-check-label") }}
+            </div>
+            <div class="form-check column" >
+                {{ search_form.by_author(class="form-check-input") }}
+                {{ search_form.by_author.label(class="form-check-label") }}
+            </div>
+          </div>
+          {% if search_term %}
+          <p></p>
+          <div class="border-bottom border-dark grey-text">
+            <b>Searching: </b>{{ search_term }} | {{ num_results }} results
+            <a href="{{ url_for('application_store.app_store') }}">
+            <img class="store-icon" align="right" src="{{ url_for('static', filename='icons/close.svg') }}" width="16px" height="16px">
+            </a>
+          </div>
+          {% endif %}
+        </div>
+      </fieldset>
+  </form>
   </div>
   <div class="row image-container">
     <div class="column">
@@ -54,6 +65,7 @@
            width="24px" height="24px" data-toggle="tooltip" data-placement="top" title="Install Local Package">
     </a>
   </div>
+
   <div class="collapse mt-4" id="install-pkg">
     <div class="image-container">
       <div class="content-section vector-box">
@@ -65,7 +77,7 @@
                 {{ install_form.package(class="form-control-file") }}
               </div>
               <div class="form-group image-container">
-                {{ install_form.install(class="btn btn-dark") }}
+                {{ install_form.install(class="btn btn-dark", value='Install') }}
               </div>
               <div class="image-container">
                 <a data-toggle="collapse" href="#install-pkg" role="button" aria-expanded="false" aria-controls="collapseExample">

@@ -14,7 +14,7 @@ from vectorcloud.models import Command, User, Status, Application, Output,\
 from vectorcloud.main.utils import execute_db_commands, get_stats,\
     undock_robot, dock_robot, robot_connect_cube
 from vectorcloud.application_store.utils import clear_temp_folder
-from vectorcloud.paths import temp_folder, lib_folder, root_folder
+from vectorcloud.paths import lib_folder, root_folder
 from vectorcloud import db, app
 
 

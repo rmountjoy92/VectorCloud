@@ -7,8 +7,8 @@ from vectorcloud import db
 from vectorcloud.models import Status, ApplicationStore, Application, Settings
 from vectorcloud.main.utils import get_stats
 from vectorcloud.main.routes import sdk_version
-from vectorcloud.application_store.forms import UploadPackage
 from vectorcloud.main.forms import SearchForm
+from vectorcloud.application_store.forms import UploadPackage
 from vectorcloud.application_store.utils import install_package,\
     export_package, clear_temp_folder
 
@@ -53,7 +53,7 @@ def app_store():
     install_form = UploadPackage()
     settings = Settings.query.first()
 
-    if search_form.validate_on_submit():
+    if search_form.go.data:
         settings.search_by_name = search_form.by_name.data
         settings.search_by_description = search_form.by_description.data
         settings.search_by_author = search_form.by_author.data
@@ -82,7 +82,7 @@ def app_store():
         apps_searched = set(apps_searched)
         num_results = len(apps_searched)
 
-    if install_form.validate_on_submit():
+    if install_form.install.data:
         if install_form.package.data:
             install_package(install_form.package.data)
 
