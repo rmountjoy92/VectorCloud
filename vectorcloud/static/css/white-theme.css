@@ -143,3 +143,13 @@ div.fixed {
 div#loading {
     background: #898F91 url(/static/icons/ajax-loader.gif) center no-repeat;
 }
+
+.icon {
+  background-color: #898F91;
+  border: 0px;
+}
+
+.icon:hover {
+  background-color: #222D32;
+  border: 0px;
+}

@@ -15,6 +15,7 @@ from vectorcloud.main.utils import execute_db_commands, get_stats,\
     undock_robot, dock_robot, robot_connect_cube
 from vectorcloud.application_store.utils import clear_temp_folder
 from vectorcloud.paths import lib_folder, root_folder
+from vectorcloud.errors import errors
 from vectorcloud import db, app
 
 
@@ -220,10 +221,10 @@ def home():
 # executes all commmands in the command table(if present), redirects to home.
 @main.route("/execute_commands", methods=['GET', 'POST'])
 def execute_commands():
-    err_msg = execute_db_commands()
+    func_out = execute_db_commands()
 
-    if err_msg:
-        flash('No Vector is Connected. Error message: ' + err_msg, 'warning')
+    if func_out in errors:
+        flash('SDK Error. Message: ' + func_out, 'warning')
 
     return redirect(url_for('main.home'))
 
