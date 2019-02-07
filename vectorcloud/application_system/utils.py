@@ -35,7 +35,10 @@ def save_script(form_script):
 # package and if it doesn't, it adds the file to the lib package and registers
 # it in the database.
 def save_script_helpers(helper, random_hex):
-    helper_name = str(helper.filename)
+    try:
+        helper_name = str(helper.filename)
+    except AttributeError:
+        return
 
     if len(helper_name) > 1:
         fn = os.path.join(lib_folder, helper_name)

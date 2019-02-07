@@ -118,6 +118,9 @@ def upload():
         else:
             flash("No script uploaded", 'warning')
         return redirect(url_for('application_system.upload'))
+    elif request.method == 'GET':
+        form.script_helpers.data = None
+
     return render_template(
         'applications/upload.html',
         title='Upload',

@@ -189,7 +189,7 @@ def home():
                 os.remove(script_path)
                 edit_form.script.data.save(script_path)
 
-            elif edit_form.icon.data:
+            if edit_form.icon.data:
                 if application.icon != 'default.png':
                     icon_path = os.path.join(app.root_path,
                                              'static/app_icons', application.icon)
@@ -198,7 +198,7 @@ def home():
                 icon_fn = save_icon(edit_form.icon.data, script_hex_id)
                 application.icon = icon_fn
 
-            elif edit_form.script_helpers.data:
+            if edit_form.script_helpers.data:
                 for helper in edit_form.script_helpers.data:
                     is_in_db = save_script_helpers(helper, script_hex_id)
                     if is_in_db is True:
