@@ -136,3 +136,13 @@ class AnkiConf(db.Model):
     def __repr__(self):
         return [self.id, self.email, self.password,
                 self.serial, self.ip, self.name]
+
+
+class AppPrompt(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    question = db.Column(db.Text)
+    answer = db.Column(db.Text)
+    output = db.Column(db.Text)
+
+    def __repr__(self):
+        return [self.id, self.question, self.answer, self.hex_id]

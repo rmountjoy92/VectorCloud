@@ -22,3 +22,9 @@ class SearchForm(FlaskForm):
     by_author = BooleanField('By Author')
 
     go = SubmitField('Search')
+
+
+class PromptForm(FlaskForm):
+    answer = StringField('Input', validators=[DataRequired()])
+
+    send = SubmitField('Send')

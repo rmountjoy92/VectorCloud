@@ -5,12 +5,12 @@ import platform
 import anki_vector
 from flask import render_template, url_for, redirect, flash, request, Blueprint
 from flask_login import current_user
-from vectorcloud.main.forms import CommandForm, SearchForm
+from vectorcloud.main.forms import CommandForm, SearchForm, PromptForm
 from vectorcloud.application_system.forms import UploadScript, AppSettings
 from vectorcloud.application_system.utils import set_db_settings, save_icon,\
     save_script_helpers
 from vectorcloud.models import Command, User, Status, Application, Output,\
-    ApplicationStore, Settings, AppSupport
+    ApplicationStore, Settings, AppSupport, AppPrompt
 from vectorcloud.main.utils import execute_db_commands, get_stats,\
     undock_robot, dock_robot, robot_connect_cube
 from vectorcloud.application_store.utils import clear_temp_folder
@@ -72,6 +72,13 @@ def add_header(response):
 @main.route("/")
 @main.route("/home", methods=['GET', 'POST'])
 def home():
+    prompt = AppPrompt.query.first()
+    if prompt:
+        if prompt.output:
+            flash(prompt.output, 'success')
+        if prompt.question:
+            return redirect(url_for('main.prompt'))
+
     settings = Settings.query.first()
     search_term = None
     num_results = 0
@@ -111,85 +118,94 @@ def home():
     edit_form = UploadScript()
     settings_form = AppSettings()
 
-    if form.validate_on_submit():
-        robot_command = Command(command=form.command.data)
-        db.session.add(robot_command)
-        db.session.commit()
-        return redirect(url_for('main.home'))
+    if request.method == 'POST':
+        form_name = request.form['form-name']
 
-    if search_form.validate_on_submit():
-        settings.search_by_name = search_form.by_name.data
-        settings.search_by_description = search_form.by_description.data
-        settings.search_by_author = search_form.by_author.data
-        db.session.merge(settings)
-        db.session.commit()
-        search_term = search_form.search.data
-        apps_searched = []
+        if form_name == 'command-form':
+            robot_command = Command(command=form.command.data)
+            db.session.add(robot_command)
+            db.session.commit()
+            return redirect(url_for('main.home'))
 
-        if search_form.by_name.data is True:
-            for application in app_list:
-                if search_term.lower() in application.script_name.lower():
-                    apps_searched.append(application.script_name)
+        elif form_name == 'search-form':
+            settings.search_by_name = search_form.by_name.data
+            settings.search_by_description = search_form.by_description.data
+            settings.search_by_author = search_form.by_author.data
+            db.session.merge(settings)
+            db.session.commit()
+            search_term = search_form.search.data
+            apps_searched = []
 
-        if search_form.by_description.data is True:
-            for application in app_list:
-                if search_term.lower() in application.description.lower():
-                    apps_searched.append(application.script_name)
+            if search_form.by_name.data is True:
+                for application in app_list:
+                    if search_term.lower() in application.script_name.lower():
+                        apps_searched.append(application.script_name)
 
-        if search_form.by_author.data is True:
-            for application in app_list:
-                if search_term.lower() in application.author.lower():
-                    apps_searched.append(application.script_name)
+            if search_form.by_description.data is True:
+                for application in app_list:
+                    if search_term.lower() in application.description.lower():
+                        apps_searched.append(application.script_name)
 
-        app_list = Application.query\
-            .filter(Application.script_name.in_(apps_searched))
-        apps_searched = set(apps_searched)
-        num_results = len(apps_searched)
+            if search_form.by_author.data is True:
+                for application in app_list:
+                    if search_term.lower() in application.author.lower():
+                        apps_searched.append(application.script_name)
 
-    if settings_form.validate_on_submit():
-        hex_id = settings_form.hex_id.data
-        settings_file_fn = os.path.join(lib_folder, hex_id + '.ini')
-        settings_file = open(settings_file_fn, "w")
-        settings_file.write(settings_form.variable.data)
-        settings_file.close()
-        flash('Settings saved!', 'success')
-        return redirect(url_for('main.home'))
+            app_list = Application.query\
+                .filter(Application.script_name.in_(apps_searched))
+            apps_searched = set(apps_searched)
+            num_results = len(apps_searched)
 
-    if edit_form.validate_on_submit():
-        script_hex_id = edit_form.hex_id.data
-        application = Application.query.filter_by(hex_id=script_hex_id).first()
+        elif form_name == 'settings-form':
+            hex_id = settings_form.hex_id.data
+            settings_file_fn = os.path.join(lib_folder, hex_id + '.ini')
+            settings_file = open(settings_file_fn, "w")
+            settings_file.write(settings_form.variable.data)
+            settings_file.close()
+            flash('Settings saved!', 'success')
+            return redirect(url_for('main.home'))
 
-        if edit_form.script.data:
-            scriptn = script_hex_id + '.py'
-            script_path = os.path.join(root_folder, scriptn)
-            os.remove(script_path)
-            edit_form.script.data.save(script_path)
+        elif form_name == 'edit-form':
+            script_hex_id = edit_form.hex_id.data
+            application = Application.query.filter_by(hex_id=script_hex_id).first()
 
-        if edit_form.script_helpers.data:
-            for helper in edit_form.script_helpers.data:
-                is_in_db = save_script_helpers(helper, script_hex_id)
-                if is_in_db is True:
-                    flash("Helper File Already in Lib!", 'warning')
-                    return redirect(url_for('main.home'))
+            application.run_in_bkrd = edit_form.run_in_bkrd.data
+            application.script_name = edit_form.script_name.data
+            application.author = edit_form.author.data
+            application.website = edit_form.website.data
+            application.description = edit_form.description.data
+            db.session.merge(application)
+            db.session.commit()
+            flash('Application Edited!', 'success')
+            return redirect(url_for('main.home'))
 
-        if edit_form.icon.data:
-            if application.icon != 'default.png':
-                icon_path = os.path.join(app.root_path,
-                                         'static/app_icons', application.icon)
-                os.remove(icon_path)
+        elif form_name == 'files-form':
+            script_hex_id = edit_form.hex_id.data
+            application = Application.query.filter_by(hex_id=script_hex_id).first()
 
-            icon_fn = save_icon(edit_form.icon.data, script_hex_id)
-            application.icon = icon_fn
+            if edit_form.script.data:
+                scriptn = script_hex_id + '.py'
+                script_path = os.path.join(root_folder, scriptn)
+                os.remove(script_path)
+                edit_form.script.data.save(script_path)
 
-        application.run_in_bkrd = edit_form.run_in_bkrd.data
-        application.script_name = edit_form.script_name.data
-        application.author = edit_form.author.data
-        application.website = edit_form.website.data
-        application.description = edit_form.description.data
-        db.session.merge(application)
-        db.session.commit()
-        flash('Application Edited!', 'success')
-        return redirect(url_for('main.home'))
+            elif edit_form.icon.data:
+                if application.icon != 'default.png':
+                    icon_path = os.path.join(app.root_path,
+                                             'static/app_icons', application.icon)
+                    os.remove(icon_path)
+
+                icon_fn = save_icon(edit_form.icon.data, script_hex_id)
+                application.icon = icon_fn
+
+            elif edit_form.script_helpers.data:
+                for helper in edit_form.script_helpers.data:
+                    is_in_db = save_script_helpers(helper, script_hex_id)
+                    if is_in_db is True:
+                        flash("Helper File Already in Lib!", 'warning')
+                        return redirect(url_for('main.home'))
+
+            flash('Files Edited!', 'success')
 
     elif request.method == 'GET':
         search_form.by_name.data = settings.search_by_name
@@ -256,3 +272,27 @@ def dock():
 def connect_cube():
     robot_connect_cube()
     return redirect(url_for('main.home'))
+
+
+@main.route("/prompt", methods=['GET', 'POST'])
+def prompt():
+    err_msg = get_stats()
+    if err_msg:
+        flash('No Vector is Connected. Error message: ' + err_msg, 'warning')
+
+    vector_status = Status.query.first()
+    prompt = AppPrompt.query.first()
+    form = PromptForm()
+
+    if form.answer.data:
+        flash('data', 'warning')
+        prompt.answer = form.answer.data
+        db.session.merge(prompt)
+        db.session.commit()
+        form.answer.data = None
+
+    return render_template('prompt.html',
+                           vector_status=vector_status,
+                           sdk_version=sdk_version,
+                           form=form,
+                           prompt=prompt)

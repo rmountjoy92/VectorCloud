@@ -8,7 +8,10 @@
             </p>
             <p></p>
           {% endfor %}
-          <form method="POST" action="/home">
+
+          <!-- Command Form -->
+          <form method="POST" action="{{ url_for('main.home') }}">
+              <input type="hidden" name="form-name" value="command-form">
               {{ form.hidden_tag() }}
               <fieldset class="form-group">
                   <legend class="border-bottom border-dark text-center"><b>Vector Commands</b>
@@ -58,6 +61,9 @@
                   </div>
               </fieldset>
           </form>
+
+
+
           <div class="image-container row">
             {% if command_list %}
                 <a href="{{ url_for('main.execute_commands') }}">
@@ -80,7 +86,11 @@
       <legend class="text-left border-dark mb-4">Applications</legend>
     </div>
     {% if app_list %}
-    <form method="POST" action="/home">
+
+
+    <!-- Search Form -->
+    <form method="POST" action="{{ url_for('main.home') }}">
+        <input type="hidden" name="form-name" value="search-form">
         {{ search_form.hidden_tag() }}
         <fieldset class="form-group">
           <div class="content-section">
@@ -129,6 +139,8 @@
           </div>
         </fieldset>
     </form>
+
+
     {% endif %}
     {% if not app_list %}
       <p></p>
@@ -172,7 +184,13 @@
                 <div class="column store-icon-main">
                   <a data-toggle="collapse" href="#edit-{{ app.hex_id }}" role="button" aria-expanded="false" aria-controls="collapseExample">
                     <img src="{{ url_for('static', filename='icons/edit.svg') }}"
-                         width="24px" height="24px" data-toggle="tooltip" data-placement="top" title="Edit Application">
+                         width="24px" height="24px" data-toggle="tooltip" data-placement="top" title="Edit Metadata">
+                  </a>
+                </div>
+                <div class="column store-icon-main">
+                  <a data-toggle="collapse" href="#files-{{ app.hex_id }}" role="button" aria-expanded="false" aria-controls="collapseExample">
+                    <img src="{{ url_for('static', filename='icons/files.svg') }}"
+                         width="24px" height="24px" data-toggle="tooltip" data-placement="top" title="Edit Files">
                   </a>
                 </div>
                 <div class="column store-icon-main">
@@ -200,8 +218,12 @@
 
               <div class="collapse" id="edit-{{ app.hex_id }}">
                 <div class="border-top border-dark mt-4 mb-4"></div>
-                <form method="POST" action="" enctype="multipart/form-data">
-                    {{ form.hidden_tag() }}
+
+
+                <!-- Edit Form -->
+                <form method="POST" action="{{ url_for('main.home') }}" enctype="multipart/form-data">
+                    <input type="hidden" name="form-name" value="edit-form">
+                    {{ edit_form.hidden_tag() }}
                     <fieldset class="form-group">
                         <legend class="border-bottom border-dark darker text-center">Editing: {{ app.script_name }}
                           <img align="right"
@@ -278,6 +300,85 @@
                                 {{ edit_form.website(autocomplete="off", class="form-control darker form-control-lg", value=app.website) }}
                             {% endif %}
                         </div>
+                    {% set f = edit_form.run_in_bkrd.process_data(app.run_in_bkrd) %}
+                    <div class="form-check">
+                      <p>
+                        {{ edit_form.run_in_bkrd(class="form-check-input") }}
+                        {{ edit_form.run_in_bkrd.label(class="form-check-label") }}
+                      </p>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="mt-4 mb-4 image-container">
+                          {{ edit_form.update(class="btn btn-dark") }}
+                        </div>
+
+                        <div class="image-container">
+                          <a data-toggle="collapse" href="#edit-{{ app.hex_id }}" role="button" aria-expanded="false" aria-controls="collapseExample">
+                            <img src="{{ url_for('static', filename='icons/close.svg') }}"
+                                 width="32px" height="32px" class="close-icon">
+                          </a>
+                        </div>
+
+                        <div class="form-group hidden">
+                          {{ edit_form.hex_id(autocomplete="off", class="form-control form-control-lg", value=app.hex_id) }}
+                        </div>
+                    </div>
+                  </fieldset>
+                </form>
+
+
+
+              </div>
+
+
+              <div class="collapse" id="files-{{ app.hex_id }}">
+                <div class="border-top border-dark mt-4 mb-4"></div>
+
+
+                <!-- Files Form -->
+                <form method="POST" action="{{ url_for('main.home') }}" enctype="multipart/form-data">
+                    <input type="hidden" name="form-name" value="files-form">
+                    {{ edit_form.hidden_tag() }}
+                    <fieldset class="form-group">
+                        <legend class="border-bottom border-dark darker text-center">Editing Files: {{ app.script_name }}
+                          <img align="right"
+                               class="legend-icon"
+                               src="{{ url_for('static', filename='icons/info.svg') }}"
+                               width="24px"
+                               height="24px"
+                               data-toggle="popover"
+                               data-placement="left"
+                               title="Editing an SDK Application <a href='#' class='close' data-dismiss='alert'>&times;</a>"
+                               data-html="true"
+                               data-content="
+                          <p><b>Set Main Python File:</b> (optional) Change your main python file for running your application. This deletes the old main file. This must have the extension '.py'</p>
+                          <p><b>Add Support File:</b> (optional) Add supporting python files for your application. These files are placed in the lib package. Be sure your main python application imports support files from 'lib'.
+                            E.g. <p><code>from lib import <i>your_file</i></code></p> These file must all also have the extension '.py' Support file names must be unique. </p>
+                          <p><b>Add Icon Image:</b> (optional) Give your application an icon. Custom icons should be 125px x 125px </p>
+                          ">
+                          <div class="grey-text">
+                            <p>Hex ID: {{ app.hex_id }}</p>
+                          </div>
+                        </legend>
+
+                        <div class="form-group mb-4">
+                          <h5>Support Files</h5>
+                          <p></p>
+                          {% for file in support_files %}
+                            {% if '.ini' in file.file_name %}
+                            {% elif app.hex_id == file.hex_id %}
+                              <p><font color="#898F91">
+                                {{ file.file_name }}
+                                <a href="{{ url_for('application_system.delete_support_file', file_id=file.id) }}">
+                                <img class="" align="right" src="{{ url_for('static', filename='icons/trash.svg') }}" width="18px" height="18px" data-toggle="tooltip" data-placement="top" title="Delete {{ file.file_name }}">
+                                </a>
+                              </p>
+                            {% endif %}
+                          {% endfor %}
+                          <div class="border-top border-dark mt-4 mb-4"></div>
+                        </div>
+
                         <div class="form-group">
                             {{ edit_form.script.label() }}
                             {{ edit_form.script(class="form-control-file darker") }}
@@ -305,36 +406,13 @@
                               {% endfor %}
                             {% endif %}
                           </div>
-                    </fieldset>
-                    <div class="form-check">
-                      <p>
-                        {{ edit_form.run_in_bkrd(class="form-check-input") }}
-                        {{ edit_form.run_in_bkrd.label(class="form-check-label") }}
-                      </p>
-                    </div>
-                    <div class="form-group mb-4">
-                      <h5>Support Files</h5>
-                      <p></p>
-                      {% for file in support_files %}
-                        {% if '.ini' in file.file_name %}
-                        {% elif app.hex_id == file.hex_id %}
-                          <p><font color="#898F91">
-                            {{ file.file_name }}
-                            <a href="{{ url_for('application_system.delete_support_file', file_id=file.id) }}">
-                            <img class="" align="right" src="{{ url_for('static', filename='icons/trash.svg') }}" width="18px" height="18px" data-toggle="tooltip" data-placement="top" title="Delete {{ file.file_name }}">
-                            </a>
-                          </p>
-                        {% endif %}
-                      {% endfor %}
-                    <div class="border-top border-dark mt-4 mb-4"></div>
-                    </div>
                     <div class="form-group">
                         <div class="mt-4 mb-4 image-container">
                           {{ edit_form.update(class="btn btn-dark") }}
                         </div>
 
                         <div class="image-container">
-                          <a data-toggle="collapse" href="#edit-{{ app.hex_id }}" role="button" aria-expanded="false" aria-controls="collapseExample">
+                          <a data-toggle="collapse" href="#files-{{ app.hex_id }}" role="button" aria-expanded="false" aria-controls="collapseExample">
                             <img src="{{ url_for('static', filename='icons/close.svg') }}"
                                  width="32px" height="32px" class="close-icon">
                           </a>
@@ -344,12 +422,20 @@
                           {{ edit_form.hex_id(autocomplete="off", class="form-control form-control-lg", value=app.hex_id) }}
                         </div>
                     </div>
+                  </fieldset>
                 </form>
+
+
+
               </div>
 
               <div class="collapse" id="settings-{{ app.hex_id }}">
                 <div class="border-top border-dark mt-4 mb-4"></div>
-                <form method="POST" action="" enctype="multipart/form-data">
+
+
+                <!-- Settings Form -->
+                <form method="POST" action="{{ url_for('main.home') }}" enctype="multipart/form-data">
+                  <input type="hidden" name="form-name" value="settings_form">
                   {{ settings_form.hidden_tag() }}
                   <fieldset class="form-group">
                     <div class="form-group">
@@ -389,6 +475,9 @@
                       </div>
                   </fieldset>
                 </form>
+
+
+
               </div>
 
               <div class="border-top border-dark mt-4"></div>
