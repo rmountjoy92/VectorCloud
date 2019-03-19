@@ -74,8 +74,6 @@ def add_header(response):
 def home():
     prompt = AppPrompt.query.first()
     if prompt:
-        if prompt.output:
-            flash(prompt.output, 'success')
         if prompt.question:
             return redirect(url_for('main.prompt'))
 
@@ -167,7 +165,8 @@ def home():
 
         elif form_name == 'edit-form':
             script_hex_id = edit_form.hex_id.data
-            application = Application.query.filter_by(hex_id=script_hex_id).first()
+            application = Application.query.filter_by(
+                hex_id=script_hex_id).first()
 
             application.run_in_bkrd = edit_form.run_in_bkrd.data
             application.script_name = edit_form.script_name.data
@@ -181,7 +180,8 @@ def home():
 
         elif form_name == 'files-form':
             script_hex_id = edit_form.hex_id.data
-            application = Application.query.filter_by(hex_id=script_hex_id).first()
+            application = Application.query.filter_by(
+                hex_id=script_hex_id).first()
 
             if edit_form.script.data:
                 scriptn = script_hex_id + '.py'
@@ -192,7 +192,8 @@ def home():
             if edit_form.icon.data:
                 if application.icon != 'default.png':
                     icon_path = os.path.join(app.root_path,
-                                             'static/app_icons', application.icon)
+                                             'static/app_icons',
+                                             application.icon)
                     os.remove(icon_path)
 
                 icon_fn = save_icon(edit_form.icon.data, script_hex_id)
@@ -284,8 +285,10 @@ def prompt():
     prompt = AppPrompt.query.first()
     form = PromptForm()
 
+    if prompt.output:
+        flash(prompt.output, 'success')
+
     if form.answer.data:
-        flash('data', 'warning')
         prompt.answer = form.answer.data
         db.session.merge(prompt)
         db.session.commit()

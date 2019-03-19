@@ -6,7 +6,7 @@ import secrets
 from sqlalchemy import func
 from shutil import copyfile
 from flask import render_template, url_for, redirect, flash, request, Blueprint
-from vectorcloud.application_system.forms import UploadScript, AppSettings
+from vectorcloud.application_system.forms import UploadScript
 from vectorcloud.models import Application, AppSupport, Status,\
     ApplicationStore
 from vectorcloud import app, db

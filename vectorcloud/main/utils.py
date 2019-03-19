@@ -73,17 +73,19 @@ def get_stats(force=False):
                 battery_state = robot.get_battery_state()
 
                 db.session.query(Status).delete()
-                status = Status(version=version_state.os_version,
-                                battery_voltage=battery_state.battery_volts,
-                                battery_level=battery_state.battery_level,
-                                status_charging=battery_state.is_on_charger_platform,
-                                cube_battery_level=battery_state.cube_battery.level,
-                                cube_id=battery_state.cube_battery.factory_id,
-                                cube_battery_volts=battery_state.
-                                cube_battery.battery_volts,
-                                ip=ip,
-                                name=name,
-                                serial=serial)
+                status = Status(
+                    version=version_state.os_version,
+                    battery_voltage=battery_state.battery_volts,
+                    battery_level=battery_state.battery_level,
+                    status_charging=battery_state.is_on_charger_platform,
+                    cube_battery_level=battery_state.cube_battery.level,
+                    cube_id=battery_state.cube_battery.factory_id,
+                    cube_battery_volts=battery_state.
+                    cube_battery.battery_volts,
+                    ip=ip,
+                    name=name,
+                    serial=serial
+                )
                 db.session.add(status)
                 db.session.commit()
 

@@ -226,23 +226,6 @@
                     {{ edit_form.hidden_tag() }}
                     <fieldset class="form-group">
                         <legend class="border-bottom border-dark darker text-center">Editing: {{ app.script_name }}
-                          <img align="right"
-                               class="legend-icon"
-                               src="{{ url_for('static', filename='icons/info.svg') }}"
-                               width="24px"
-                               height="24px"
-                               data-toggle="popover"
-                               data-placement="left"
-                               title="Editing an SDK Application <a href='#' class='close' data-dismiss='alert'>&times;</a>"
-                               data-html="true"
-                               data-content="
-                          <p><b>Name:</b> (optional) Change your application's name</p>
-                          <p><b>Description:</b> (optional) Change your application's description</p>
-                          <p><b>Set Main Python File:</b> (optional) Change your main python file for running your application. This deletes the old main file. This must have the extension '.py'</p>
-                          <p><b>Add Support File:</b> (optional) Add supporting python files for your application. These files are placed in the lib package. Be sure your main python application imports support files from 'lib'.
-                            E.g. <p><code>from lib import <i>your_file</i></code></p> These file must all also have the extension '.py' Support file names must be unique. </p>
-                          <p><b>Add Icon Image:</b> (optional) Give your application an icon. Custom icons should be 125px x 125px </p>
-                          ">
                           <div class="grey-text">
                             <p>Hex ID: {{ app.hex_id }}</p>
                           </div>
@@ -349,13 +332,13 @@
                                height="24px"
                                data-toggle="popover"
                                data-placement="left"
-                               title="Editing an SDK Application <a href='#' class='close' data-dismiss='alert'>&times;</a>"
+                               title="Editing Application Files <a href='#' class='close' data-dismiss='alert'>&times;</a>"
                                data-html="true"
                                data-content="
-                          <p><b>Set Main Python File:</b> (optional) Change your main python file for running your application. This deletes the old main file. This must have the extension '.py'</p>
-                          <p><b>Add Support File:</b> (optional) Add supporting python files for your application. These files are placed in the lib package. Be sure your main python application imports support files from 'lib'.
-                            E.g. <p><code>from lib import <i>your_file</i></code></p> These file must all also have the extension '.py' Support file names must be unique. </p>
-                          <p><b>Add Icon Image:</b> (optional) Give your application an icon. Custom icons should be 125px x 125px </p>
+                          <p><b>Set Main Python File:</b> Change your main python file for running your application. This deletes the old main file. This must have the extension '.py'</p>
+                          <p><b>Add Support File:</b> Add supporting python files for your application. These files are placed in the lib package. Be sure your main python application imports support files from 'lib'.
+                            E.g. <p><code>from lib import <i>your_file</i></code></p>Support file names must be unique. </p>
+                          <p><b>Add Icon Image:</b> Give your application an icon. Custom icons should be 125px x 125px </p>
                           ">
                           <div class="grey-text">
                             <p>Hex ID: {{ app.hex_id }}</p>

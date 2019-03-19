@@ -52,7 +52,10 @@ def welcome():
         else:
             py_cmd = 'python3 '
         cmd = py_cmd + conf_path
-        out = subprocess.run(cmd, stdout=subprocess.PIPE, shell=True, encoding='utf-8')
+        out = subprocess.run(cmd,
+                             stdout=subprocess.PIPE,
+                             shell=True,
+                             encoding='utf-8')
         flash(str(out.stdout), 'success')
 
         init_vectors()
@@ -104,7 +107,8 @@ def register():
 
         err_msg = login_message()
         if err_msg:
-            flash('No Vector is Connected. Error message: ' + err_msg, 'warning')
+            flash('No Vector is Connected. \
+                Error message: ' + err_msg, 'warning')
 
         return redirect(url_for('user_system.login'))
 
@@ -136,7 +140,8 @@ def login():
 
             err_msg = login_message()
             if err_msg:
-                flash('No Vector is Connected. Error message: ' + err_msg, 'warning')
+                flash('No Vector is Connected. \
+                    Error message: ' + err_msg, 'warning')
 
             flash("Login Successful!", 'success')
             return redirect(url_for('main.home'))

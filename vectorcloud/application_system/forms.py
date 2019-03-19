@@ -37,7 +37,8 @@ class UploadScript(FlaskForm):
 
 
 class AppSettings(FlaskForm):
-    variable = TextAreaField('Enter settings variables', validators=[DataRequired()])
+    variable = TextAreaField('Enter settings variables',
+                             validators=[DataRequired()])
 
     value = StringField('Value')
 
