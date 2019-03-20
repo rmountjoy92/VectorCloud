@@ -2,7 +2,7 @@
 
 import os
 import signal
-import secrets
+from secrets import token_hex
 from sqlalchemy import func
 from shutil import copyfile
 from flask import render_template, url_for, redirect, flash, request, Blueprint
@@ -238,7 +238,7 @@ def duplicate_application(script_id):
     icon_path = os.path.join(app.root_path,
                              'static/app_icons', application.icon)
 
-    new_hex = secrets.token_hex(8)
+    new_hex = token_hex(8)
     new_script_fn = new_hex + '.py'
     new_config_fn = new_hex + '.ini'
     new_script_path = os.path.join(root_folder, new_script_fn)

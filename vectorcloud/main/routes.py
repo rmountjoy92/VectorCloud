@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
-import os
-import platform
 import anki_vector
+from os.path import join
+from os import remove
 from flask import render_template, url_for, redirect, flash, request, Blueprint
 from flask_login import current_user
 from vectorcloud.main.forms import CommandForm, SearchForm, PromptForm
@@ -29,7 +29,6 @@ main = Blueprint('main', __name__)
 # get the operating system & SDK version
 vectorcloud_sdk_version = "0.5.1"
 sdk_version = anki_vector.__version__
-operating_system = platform.system()
 
 # create all tables in the database if they don't exist
 db.create_all()
@@ -156,7 +155,7 @@ def home():
 
         elif form_name == 'settings-form':
             hex_id = settings_form.hex_id.data
-            settings_file_fn = os.path.join(lib_folder, hex_id + '.ini')
+            settings_file_fn = join(lib_folder, hex_id + '.ini')
             settings_file = open(settings_file_fn, "w")
             settings_file.write(settings_form.variable.data)
             settings_file.close()
@@ -185,16 +184,16 @@ def home():
 
             if edit_form.script.data:
                 scriptn = script_hex_id + '.py'
-                script_path = os.path.join(root_folder, scriptn)
-                os.remove(script_path)
+                script_path = join(root_folder, scriptn)
+                remove(script_path)
                 edit_form.script.data.save(script_path)
 
             if edit_form.icon.data:
                 if application.icon != 'default.png':
-                    icon_path = os.path.join(app.root_path,
-                                             'static/app_icons',
-                                             application.icon)
-                    os.remove(icon_path)
+                    icon_path = join(app.root_path,
+                                     'static/app_icons',
+                                     application.icon)
+                    remove(icon_path)
 
                 icon_fn = save_icon(edit_form.icon.data, script_hex_id)
                 application.icon = icon_fn

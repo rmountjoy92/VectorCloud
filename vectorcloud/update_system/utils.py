@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 
-import platform
 import os
 import subprocess
 from flask import flash
+from platform import system as operating_system
 from vectorcloud.paths import root_folder
 
-operating_system = platform.system()
 migrate_fn = os.path.join(root_folder, 'manage_db.py db migrate')
 upgrade_fn = os.path.join(root_folder, 'manage_db.py db upgrade')
 

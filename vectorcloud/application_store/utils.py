@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 
 import os
-import zipfile
-import secrets
-import shutil
 from PIL import Image
-from shutil import copyfile
+from shutil import copyfile, make_archive
+from zipfile import ZipFile
+from secrets import token_hex
 from configparser import ConfigParser
 from flask import flash, redirect, url_for
 from vectorcloud import db
@@ -49,14 +48,14 @@ def install_package(form_package,
     package_fn = os.path.join(temp_folder, 'temp.zip')
     store_package_fn = os.path.join(packages_folder, store_package)
 
-    if store_package is 'False':
+    if store_package == 'False':
         form_package.save(package_fn)
 
     else:
         copyfile(store_package_fn, package_fn)
 
     # extract package to temp folder
-    with zipfile.ZipFile(package_fn, 'r') as zip_ref:
+    with ZipFile(package_fn, 'r') as zip_ref:
         zip_ref.extractall(temp_folder)
 
     os.remove(package_fn)
@@ -113,7 +112,7 @@ def install_package(form_package,
 
     is_in_db = False
     existing_helpers = []
-    random_hex = secrets.token_hex(8)
+    random_hex = token_hex(8)
 
     for helper in helper_files:
         find_helper = AppSupport.query.filter_by(file_name=helper).first()
@@ -278,7 +277,7 @@ def export_package(script_id):
 
     zip_name = application.script_name
     zip_name = zip_name.replace(' ', '_')
-    shutil.make_archive(zip_name, 'zip', temp_folder)
+    make_archive(zip_name, 'zip', temp_folder)
     zip_fn = os.path.join(root_folder, zip_name + '.zip')
     new_zip_fn = os.path.join(temp_folder, zip_name + '.zip')
     os.rename(zip_fn, new_zip_fn)

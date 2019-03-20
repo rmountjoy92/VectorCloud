@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import os
+from os.path import dirname, join, realpath
 from flask import render_template, url_for, redirect, Blueprint, flash,\
     request, send_file
 from vectorcloud import db
@@ -14,9 +14,9 @@ from vectorcloud.application_store.utils import install_package,\
 
 application_store = Blueprint('application_store', __name__)
 
-curr_folder = os.path.dirname(os.path.realpath(__file__))
-app_store_folder = os.path.join(curr_folder, 'application_store')
-packages_folder = os.path.join(app_store_folder, 'packages')
+curr_folder = dirname(realpath(__file__))
+app_store_folder = join(curr_folder, 'application_store')
+packages_folder = join(app_store_folder, 'packages')
 
 
 @application_store.after_request
