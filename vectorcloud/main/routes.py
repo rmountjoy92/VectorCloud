@@ -12,7 +12,8 @@ from vectorcloud.application_system.utils import set_db_settings, save_icon,\
 from vectorcloud.models import Command, User, Status, Application, Output,\
     ApplicationStore, Settings, AppSupport, AppPrompt
 from vectorcloud.main.utils import execute_db_commands, get_stats,\
-    undock_robot, dock_robot, robot_connect_cube
+    undock_robot, dock_robot, robot_connect_cube, server_reboot_func,\
+    server_shutdown_func
 from vectorcloud.application_store.utils import clear_temp_folder
 from vectorcloud.paths import lib_folder, root_folder
 from vectorcloud.errors import errors
@@ -298,3 +299,15 @@ def prompt():
                            sdk_version=sdk_version,
                            form=form,
                            prompt=prompt)
+
+
+@main.route("/server_shutdown")
+def server_shutdown():
+    server_shutdown_func()
+    return redirect(url_for('main.home'))
+
+
+@main.route("/server_reboot")
+def server_reboot():
+    server_reboot_func()
+    return redirect(url_for('main.home'))

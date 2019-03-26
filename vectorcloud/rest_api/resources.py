@@ -8,7 +8,7 @@ from vectorcloud import db
 from vectorcloud.models import Status, Command, Application, Vectors
 from vectorcloud.main.utils import undock_robot, dock_robot,\
     robot_connect_cube, robot_dock_cube, get_stats,\
-    execute_db_commands
+    execute_db_commands, server_reboot_func, server_shutdown_func
 from vectorcloud.application_system.utils import run_script_func
 from vectorcloud.paths import lib_folder
 
@@ -221,3 +221,15 @@ class GetVectors(Resource):
                                      })
 
         return vectors_list
+
+
+class ServerShutdown(Resource):
+    def get(self):
+        server_shutdown_func()
+        return {'Server is': 'Shutting down'}
+
+
+class ServerReboot(Resource):
+    def get(self):
+        server_reboot_func()
+        return {'Server is': 'Rebooting'}

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+from platform import system as operating_system
 from sys import exit as sys_exit
 from time import sleep, time
 from grpc._channel import _Rendezvous
@@ -345,3 +346,21 @@ def execute_db_commands():
 
     else:
         return 'No command staged!'
+
+
+def server_shutdown_func():
+    if operating_system == 'Windows':
+        shutdown_cmd = 'shutdown /s'
+    else:
+        shutdown_cmd = 'shutdown now'
+
+    os.system(shutdown_cmd)
+
+
+def server_reboot_func():
+    if operating_system == 'Windows':
+        reboot_cmd = 'shutdown /r'
+    else:
+        reboot_cmd = 'reboot'
+
+    os.system(reboot_cmd)
