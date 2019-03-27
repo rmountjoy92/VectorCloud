@@ -19,8 +19,6 @@ except ImportError:
     sys_exit("Cannot import from anki_vector: Install per Anki instructions")
 
 
-operating_system = system()
-
 # establishes routes decorated w/ @public_route as accessible while not signed
 # in. See login and register routes for usage
 
@@ -353,6 +351,7 @@ def execute_db_commands():
 
 
 def server_shutdown_func():
+    operating_system = system()
     if operating_system == 'Windows':
         shutdown_cmd = 'shutdown /s'
     else:
@@ -362,6 +361,7 @@ def server_shutdown_func():
 
 
 def server_reboot_func():
+    operating_system = system()
     if operating_system == 'Windows':
         reboot_cmd = 'shutdown /r'
     else:
