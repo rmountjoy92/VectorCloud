@@ -357,6 +357,7 @@ def server_shutdown_func():
     else:
         shutdown_cmd = 'shutdown now'
 
+    flash('Server shutdown in progress', 'success')
     os.system(shutdown_cmd)
 
 
@@ -367,4 +368,5 @@ def server_reboot_func():
     else:
         reboot_cmd = 'reboot'
 
+    flash('Server reboot in progress', 'success')
     os.system(reboot_cmd)
