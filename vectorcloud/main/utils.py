@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import os
-from platform import system as operating_system
+from platform import system
 from sys import exit as sys_exit
 from time import sleep, time
 from grpc._channel import _Rendezvous
@@ -19,8 +19,12 @@ except ImportError:
     sys_exit("Cannot import from anki_vector: Install per Anki instructions")
 
 
+operating_system = system()
+
 # establishes routes decorated w/ @public_route as accessible while not signed
 # in. See login and register routes for usage
+
+
 def public_route(decorated_function):
     decorated_function.is_public = True
     return decorated_function
