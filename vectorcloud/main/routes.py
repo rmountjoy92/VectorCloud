@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import anki_vector
+from time import sleep
 from os.path import join
 from os import remove
 from flask import render_template, url_for, redirect, flash, request, Blueprint
@@ -281,24 +282,46 @@ def prompt():
     if err_msg:
         flash('No Vector is Connected. Error message: ' + err_msg, 'warning')
 
-    vector_status = Status.query.first()
-    prompt = AppPrompt.query.first()
     form = PromptForm()
 
-    if prompt.output:
-        flash(prompt.output, 'success')
+    vector_status = Status.query.first()
 
-    if form.answer.data:
-        prompt.answer = form.answer.data
-        db.session.merge(prompt)
-        db.session.commit()
-        form.answer.data = None
+    prompt = AppPrompt.query.first()
+
+    if prompt:
+        if form.validate_on_submit():
+            prompt.answer = form.answer.data
+            db.session.merge(prompt)
+            db.session.commit()
+            form.answer.data = None
+            while True:
+                db.session.expire_all()
+                prompt = AppPrompt.query.first()
+                if prompt.output:
+                    flash(prompt.output, 'success')
+                    prompt.output = None
+                    db.session.merge(prompt)
+                    db.session.commit()
+                    break
+                else:
+                    pass
+
+    else:
+        return redirect(url_for('main.home'))
 
     return render_template('prompt.html',
                            vector_status=vector_status,
                            sdk_version=sdk_version,
                            form=form,
                            prompt=prompt)
+
+
+@main.route("/cancel_prompt")
+def cancel_prompt():
+    db.session.query(AppPrompt).delete()
+    db.session.commit()
+    sleep(1)
+    return redirect(url_for('main.home'))
 
 
 @main.route("/server_shutdown")

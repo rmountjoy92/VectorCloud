@@ -2,13 +2,14 @@
 
 import os
 import signal
+from time import sleep
 from secrets import token_hex
 from sqlalchemy import func
 from shutil import copyfile
 from flask import render_template, url_for, redirect, flash, request, Blueprint
 from vectorcloud.application_system.forms import UploadScript
 from vectorcloud.models import Application, AppSupport, Status,\
-    ApplicationStore
+    ApplicationStore, AppPrompt
 from vectorcloud import app, db
 from vectorcloud.main.utils import get_stats
 from vectorcloud.main.routes import sdk_version
@@ -140,7 +141,11 @@ def run_script(script_hex_id):
 
     out = run_script_func(script_hex_id)
 
-    if out != 'error':
+    prompt = AppPrompt.query.first()
+    if prompt:
+        pass
+
+    elif out != 'error':
         flash(application.script_name + ' ran succussfully! Output: ' + out,
               'success')
 

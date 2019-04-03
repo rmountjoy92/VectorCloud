@@ -4,6 +4,7 @@ import os
 import sys
 import subprocess
 import secrets
+from time import sleep
 from multiprocessing import Process
 from platform import system as operating_system
 from vectorcloud import db
@@ -130,6 +131,7 @@ def run_script_func(script_hex_id):
                     args=(py_cmd, script_path, application))
         t.start()
         out = 'Process Started!'
+        sleep(2)
         return out
 
 

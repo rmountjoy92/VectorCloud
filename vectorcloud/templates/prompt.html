@@ -21,8 +21,14 @@
                 </div>
               {% endif %}
           </div>
+          <div class="image-container mb-4">
+            {{ form.send(class="btn btn-dark", onclick="loading();") }}
+          </div>
           <div class="image-container">
-            {{ form.send(class="btn btn-dark") }}
+            <a href="{{url_for('main.cancel_prompt')}}" role="button" data-toggle="tooltip" data-placement="top" title="Cancel">
+              <img src="{{ url_for('static', filename='icons/close.svg') }}"
+                   width="32px" height="32px" class="close-icon">
+            </a>
           </div>
         </div>
       </fieldset>
