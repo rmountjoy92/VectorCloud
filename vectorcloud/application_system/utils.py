@@ -131,7 +131,7 @@ def run_script_func(script_hex_id):
                     args=(py_cmd, script_path, application))
         t.start()
         out = 'Process Started!'
-        sleep(2)
+        sleep(3)
         return out
 
 
