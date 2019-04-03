@@ -61,6 +61,7 @@ Open a browser and go to http://localhost:5000
 * Customizable login message
 * Update system that uses git to detect changes in the repository, updates using git pull and upgrades database using flask-migrate (alembic)
 * REST API
+* Interactive apps that communicate to the user through a prompt system
 
 ## How to contribute to the App Store
 https://goo.gl/forms/OXI4jWu7hEDRAKd23
