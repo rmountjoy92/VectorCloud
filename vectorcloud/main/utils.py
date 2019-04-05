@@ -233,7 +233,14 @@ def database_init():
     if not status:
         timestamp = time()
         new_stamp = timestamp - 20
-        status = Status(id=1, timestamp=new_stamp)
+        status = Status(id=1,
+                        timestamp=new_stamp,
+                        battery_voltage=0.0,
+                        battery_level=0,
+                        status_charging=0,
+                        cube_battery_level=0,
+                        cube_id='None',
+                        cube_battery_volts=0.0)
         db.session.add(status)
         db.session.commit()
 
