@@ -146,20 +146,11 @@ def get_stats(force=False):
             return 'vector_unimplemented'
 
         except Exception:
-            status = Status(
-                version='None',
-                battery_voltage=0.0,
-                battery_level=0,
-                status_charging=0,
-                cube_battery_level=0,
-                cube_id='None',
-                cube_battery_volts=0.0,
-                ip=ip,
-                name=name,
-                serial=serial
-            )
-            db.session.add(status)
+            status = Status.query.first()
+            status.timestamp = time()
+            db.session.merge(status)
             db.session.commit()
+            return 'general_error'
             return 'general_error'
 
     status = Status.query.first()
