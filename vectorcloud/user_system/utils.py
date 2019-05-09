@@ -21,7 +21,7 @@ def login_message():
             args = anki_vector.util.parse_command_args()
             with anki_vector.Robot(args.serial) as robot:
                 robot.behavior.set_eye_color(hue=0.0, saturation=0.0)
-                robot.say_text(robot_msg)
+                robot.behavior.say_text(robot_msg)
 
     except anki_vector.exceptions.VectorNotFoundException:
         return 'vector_not_found'

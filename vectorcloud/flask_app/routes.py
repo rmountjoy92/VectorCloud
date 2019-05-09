@@ -6,7 +6,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License in the file LICENSE.txt or at
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
+#     https://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,6 +24,7 @@ import io
 import json
 import sys
 import time
+from enum import Enum
 from io import BytesIO
 try:
     from flask import make_response, Response, send_file, Blueprint
@@ -36,13 +37,14 @@ except ImportError:
     sys.exit("Cannot import from flask: Do `pip3 install --user flask` to install")
 
 try:
-    from PIL import Image
+    from PIL import Image, ImageDraw
 except ImportError:
     sys.exit("Cannot import from PIL: Do `pip3 install --user Pillow` to install")
 
 try:
     import anki_vector
     from anki_vector import util
+    from anki_vector import annotate
 except ImportError:
     sys.exit("Cannot import anki_vector: Do `pip3 install -e .` in the vector home folder to install")
 
@@ -115,10 +117,48 @@ def remap_to_range(x, x_min, x_max, out_min, out_max):
     return out_min + ratio * (out_max - out_min)
 
 
+class DebugAnnotations(Enum):
+    DISABLED = 0
+    ENABLED_VISION = 1
+    ENABLED_ALL = 2
+
+
+# Annotator for displaying RobotState (position, etc.) on top of the camera feed
+class RobotStateDisplay(annotate.Annotator):
+    def apply(self, image, scale):
+        d = ImageDraw.Draw(image)
+
+        bounds = [3, 0, image.width, image.height]
+
+        def print_line(text_line):
+            text = annotate.ImageText(text_line, position=annotate.AnnotationPosition.TOP_LEFT, outline_color='black', color='lightblue')
+            text.render(d, bounds)
+            TEXT_HEIGHT = 11
+            bounds[1] += TEXT_HEIGHT
+
+        robot = self.world.robot  # type: robot.Robot
+
+        # Display the Pose info for the robot
+        pose = robot.pose
+        print_line('Pose: Pos = <%.1f, %.1f, %.1f>' % pose.position.x_y_z)
+        print_line('Pose: Rot quat = <%.1f, %.1f, %.1f, %.1f>' % pose.rotation.q0_q1_q2_q3)
+        print_line('Pose: angle_z = %.1f' % pose.rotation.angle_z.degrees)
+        print_line('Pose: origin_id: %s' % pose.origin_id)
+
+        # Display the Accelerometer and Gyro data for the robot
+        print_line('Accelmtr: <%.1f, %.1f, %.1f>' % robot.accel.x_y_z)
+        print_line('Gyro: <%.1f, %.1f, %.1f>' % robot.gyro.x_y_z)
+
+
 class RemoteControlVector:
 
     def __init__(self, robot):
         self.vector = robot
+
+        # don't send motor messages if it matches the last setting
+        self.last_lift = None
+        self.last_head = None
+        self.last_wheels = None
 
         self.drive_forwards = 0
         self.drive_back = 0
@@ -170,6 +210,19 @@ class RemoteControlVector:
             self.anim_index_for_key[kI] = anim_idx
             kI += 1
 
+        all_anim_trigger_names = self.vector.anim.anim_trigger_list
+        self.anim_trigger_names = []
+
+        bad_anim_trigger_names = [
+            "InvalidAnimTrigger",
+            "UnitTestAnim"]
+
+        for anim_trigger_name in all_anim_trigger_names:
+            if anim_trigger_name not in bad_anim_trigger_names:
+                self.anim_trigger_names.append(anim_trigger_name)
+
+        self.selected_anim_trigger_name = self.anim_trigger_names[0]
+
         self.action_queue = []
         self.text_to_say = "Hi I'm Vector"
 
@@ -189,6 +242,9 @@ class RemoteControlVector:
             desired_head_angle = remap_to_range(mouse_y, 0.0, 1.0, 45, -25)
             head_angle_delta = desired_head_angle - util.radians(self.vector.head_angle_rad).degrees
             head_vel = head_angle_delta * 0.03
+            if self.last_head and head_vel == self.last_head:
+                return
+            self.last_head = head_vel
             self.vector.motors.set_head_motor(head_vel)
 
     def set_mouse_look_enabled(self, is_mouse_look_enabled):
@@ -275,7 +331,9 @@ class RemoteControlVector:
                 anim_name = self.key_code_to_anim_name(key_code)
                 self.queue_action((self.vector.anim.play_animation, anim_name))
             elif key_code == ord(' '):
-                self.queue_action((self.vector.say_text, self.text_to_say))
+                self.queue_action((self.vector.behavior.say_text, self.text_to_say))
+            elif key_code == ord('X'):
+                self.queue_action((self.vector.anim.play_animation_trigger, self.selected_anim_trigger_name))
 
     def key_code_to_anim_name(self, key_code):
         key_num = key_code - ord('0')
@@ -284,7 +342,7 @@ class RemoteControlVector:
         return anim_name
 
     def func_to_name(self, func):
-        if func == self.vector.say_text:
+        if func == self.vector.behavior.say_text:
             return "say_text"
         if func == self.vector.anim.play_animation:
             return "play_anim"
@@ -325,12 +383,18 @@ class RemoteControlVector:
     def update_lift(self):
         lift_speed = self.pick_speed(8, 4, 2)
         lift_vel = (self.lift_up - self.lift_down) * lift_speed
+        if self.last_lift and lift_vel == self.last_lift:
+            return
+        self.last_lift = lift_vel
         self.vector.motors.set_lift_motor(lift_vel)
 
     def update_head(self):
         if not self.is_mouse_look_enabled:
             head_speed = self.pick_speed(2, 1, 0.5)
             head_vel = (self.head_up - self.head_down) * head_speed
+            if self.last_head and head_vel == self.last_head:
+                return
+            self.last_head = head_vel
             self.vector.motors.set_head_motor(head_vel)
 
     def update_mouse_driving(self):
@@ -347,8 +411,11 @@ class RemoteControlVector:
         l_wheel_speed = (drive_dir * forward_speed) + (turn_speed * turn_dir)
         r_wheel_speed = (drive_dir * forward_speed) - (turn_speed * turn_dir)
 
-        self.vector.motors.set_wheel_motors(
-            l_wheel_speed, r_wheel_speed, l_wheel_speed * 4, r_wheel_speed * 4)
+        wheel_params = (l_wheel_speed, r_wheel_speed, l_wheel_speed * 4, r_wheel_speed * 4)
+        if self.last_wheels and wheel_params == self.last_wheels:
+            return
+        self.last_wheels = wheel_params
+        self.vector.motors.set_wheel_motors(*wheel_params)
 
 
 def get_anim_sel_drop_down(selectorIndex):
@@ -373,6 +440,13 @@ def get_anim_sel_drop_downs():
         html_text += str(key) + """: """ + get_anim_sel_drop_down(key) + """<br>"""
     return html_text
 
+def get_anim_trigger_sel_drop_down():
+    html_text = "x: " # Add keyboard selector
+    html_text += """<select onchange="handleAnimTriggerDropDownSelect(this)" name="animTriggerSelector">"""
+    for anim_trigger_name in flask_app.remote_control_vector.anim_trigger_names:
+        html_text += """<option value=""" + anim_trigger_name + """>""" + anim_trigger_name + """</option>"""
+    html_text += """</select>"""
+    return html_text
 
 def to_js_bool_string(bool_value):
     return "true" if bool_value else "false"
@@ -381,11 +455,12 @@ def to_js_bool_string(bool_value):
 @flask_app.route("/control", methods=['POST', 'GET'])
 def control():
     args = util.parse_command_args()
-    robot = anki_vector.AsyncRobot(args.serial, enable_camera_feed=True)
+    robot = anki_vector.AsyncRobot(args.serial)
     robot.connect()
     robot.behavior.drive_off_charger()
+    robot.camera.init_camera_feed()
     flask_app.remote_control_vector = RemoteControlVector(robot)
-
+    flask_app.display_debug_annotations = DebugAnnotations.ENABLED_ALL.value
     return """
     <html>
         <head>
@@ -445,15 +520,18 @@ def control():
                         <b>Shift</b> : Hold to Move Faster (Driving, Head and Lift)<br>
                         <b>Alt</b> : Hold to Move Slower (Driving, Head and Lift)<br>
                         <b>P</b> : Toggle Free Play mode: <button id="freeplayId" onClick=onFreeplayButtonClicked(this) style="font-size: 14px">Default</button><br>
+                        <b>O</b> : Toggle Debug Annotations: <button id="debugAnnotationsId" onClick=onDebugAnnotationsButtonClicked(this) style="font-size: 14px">Default</button><br>
                         <h3>Play Animations</h3>
                         <b>0 .. 9</b> : Play Animation mapped to that key<br>
                         <h3>Talk</h3>
-                        <b>Space</b> : Say <input type="text" name="sayText" id="sayTextId" value="""" + flask_app.remote_control_vector.text_to_say + """" onchange=handleTextInput(this)>
+                        <b>Space</b> : Say <input type="text" name="sayText" id="sayTextId" value=\"""" + flask_app.remote_control_vector.text_to_say + """\" onchange=handleTextInput(this)>
                     </td>
                     <td width=30></td>
                     <td valign=top>
                     <h2>Animation key mappings:</h2>
                     """ + get_anim_sel_drop_downs() + """<br>
+                    <h2>Animation Triggers:</h2>
+                    """ + get_anim_trigger_sel_drop_down() + """<br><br>
                     </td>
                 </tr>
             </table>
@@ -462,6 +540,7 @@ def control():
                 var gLastClientX = -1
                 var gLastClientY = -1
                 var gIsMouseLookEnabled = """ + to_js_bool_string(_is_mouse_look_enabled_by_default) + """
+                var gAreDebugAnnotationsEnabled = """+ str(flask_app.display_debug_annotations) + """
                 var gIsFreeplayEnabled = false
                 var gUserAgent = window.navigator.userAgent;
                 var gIsMicrosoftBrowser = gUserAgent.indexOf('MSIE ') > 0 || gUserAgent.indexOf('Trident/') > 0 || gUserAgent.indexOf('Edge/') > 0;
@@ -514,6 +593,37 @@ def control():
                     postHttpRequest("setMouseLookEnabled", {isMouseLookEnabled})
                 }
 
+                function updateDebugAnnotationButtonEnabledText(button, isEnabled)
+                {
+                    switch(gAreDebugAnnotationsEnabled)
+                    {
+                    case 0:
+                        button.firstChild.data = "Disabled";
+                        break;
+                    case 1:
+                        button.firstChild.data = "Enabled (vision)";
+                        break;
+                    case 2:
+                        button.firstChild.data = "Enabled (all)";
+                        break;
+                    default:
+                        button.firstChild.data = "ERROR";
+                        break;
+                    }
+                }
+
+                function onDebugAnnotationsButtonClicked(button)
+                {
+                    gAreDebugAnnotationsEnabled += 1;
+                    if (gAreDebugAnnotationsEnabled > 2)
+                    {
+                        gAreDebugAnnotationsEnabled = 0
+                    }
+                    updateDebugAnnotationButtonEnabledText(button, gAreDebugAnnotationsEnabled)
+                    areDebugAnnotationsEnabled = gAreDebugAnnotationsEnabled
+                    postHttpRequest("setAreDebugAnnotationsEnabled", {areDebugAnnotationsEnabled})
+                }
+
                 function onFreeplayButtonClicked(button)
                 {
                     gIsFreeplayEnabled = !gIsFreeplayEnabled;
@@ -524,12 +634,19 @@ def control():
 
                 updateButtonEnabledText(document.getElementById("mouseLookId"), gIsMouseLookEnabled);
                 updateButtonEnabledText(document.getElementById("freeplayId"), gIsFreeplayEnabled);
+                updateDebugAnnotationButtonEnabledText(document.getElementById("debugAnnotationsId"), gAreDebugAnnotationsEnabled);
 
                 function handleDropDownSelect(selectObject)
                 {
                     selectedIndex = selectObject.selectedIndex
                     itemName = selectObject.name
                     postHttpRequest("dropDownSelect", {selectedIndex, itemName});
+                }
+
+                function handleAnimTriggerDropDownSelect(selectObject)
+                {
+                    animTriggerName = selectObject.value
+                    postHttpRequest("animTriggerDropDownSelect", {animTriggerName});
                 }
 
                 function handleKeyActivity (e, actionType)
@@ -541,7 +658,12 @@ def control():
 
                     if (actionType=="keyup")
                     {
-                        if (keyCode == 80) // 'P'
+                        if (keyCode == 79) // 'O'
+                        {
+                            // Simulate a click of the debug annotations button
+                            onDebugAnnotationsButtonClicked(document.getElementById("debugAnnotationsId"))
+                        }
+                        else if (keyCode == 80) // 'P'
                         {
                             // Simulate a click of the freeplay button
                             onFreeplayButtonClicked(document.getElementById("freeplayId"))
@@ -608,12 +730,10 @@ def control():
 
 
 def get_annotated_image():
-    # TODO: Update to use annotated image (add annotate module)
     image = flask_app.remote_control_vector.vector.camera.latest_image
-    if image is None:
-        return _default_camera_image
-
-    return image
+    if flask_app.display_debug_annotations != DebugAnnotations.DISABLED.value:
+        return image.annotate_image()
+    return image.raw_image
 
 
 def streaming_video():
@@ -675,8 +795,20 @@ def handle_setMouseLookEnabled():
     """Called from Javascript whenever mouse-look mode is toggled"""
     message = json.loads(request.data.decode("utf-8"))
     if flask_app.remote_control_vector:
-        flask_app.remote_control_vector.set_mouse_look_enabled(
-            is_mouse_look_enabled=message['isMouseLookEnabled'])
+        flask_app.remote_control_vector.set_mouse_look_enabled(is_mouse_look_enabled=message['isMouseLookEnabled'])
+    return ""
+
+
+@flask_app.route('/setAreDebugAnnotationsEnabled', methods=['POST'])
+def handle_setAreDebugAnnotationsEnabled():
+    """Called from Javascript whenever debug-annotations mode is toggled"""
+    message = json.loads(request.data.decode("utf-8"))
+    flask_app.display_debug_annotations = message['areDebugAnnotationsEnabled']
+    if flask_app.remote_control_vector:
+        if flask_app.display_debug_annotations == DebugAnnotations.ENABLED_ALL.value:
+            flask_app.remote_control_vector.vector.camera.image_annotator.enable_annotator('robotState')
+        else:
+            flask_app.remote_control_vector.vector.camera.image_annotator.disable_annotator('robotState')
     return ""
 
 
@@ -684,10 +816,13 @@ def handle_setMouseLookEnabled():
 def handle_setFreeplayEnabled():
     """Called from Javascript whenever freeplay mode is toggled on/off"""
     message = json.loads(request.data.decode("utf-8"))
+    isFreeplayEnabled = message['isFreeplayEnabled']
     if flask_app.remote_control_vector:
-        isFreeplayEnabled = message['isFreeplayEnabled']
         connection = flask_app.remote_control_vector.vector.conn
-        connection.request_control(enable=(not isFreeplayEnabled))
+        if isFreeplayEnabled:
+            connection.release_control()
+        else:
+            connection.request_control()
     return ""
 
 
@@ -717,6 +852,13 @@ def handle_dropDownSelect():
 
     return ""
 
+@flask_app.route('/animTriggerDropDownSelect', methods=['POST'])
+def handle_animTriggerDropDownSelect():
+    """Called from Javascript whenever the animTriggerSelector dropdown menu is selected (i.e. modified)"""
+    message = json.loads(request.data.decode("utf-8"))
+    selected_anim_trigger_name = message['animTriggerName']
+    flask_app.remote_control_vector.selected_anim_trigger_name = selected_anim_trigger_name
+    return ""
 
 @flask_app.route('/sayText', methods=['POST'])
 def handle_sayText():
