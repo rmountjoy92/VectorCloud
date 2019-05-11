@@ -1,10 +1,11 @@
 # VectorCloud
+
+* Discord Server - https://discord.gg/dtxBbwp
+
 ![alt text](https://i.imgur.com/EHWi6R3.png)
 ![alt text](https://i.imgur.com/AMQkLEW.png)
 ![alt text](https://i.imgur.com/JoB45zZ.png)
 ![alt text](https://i.imgur.com/NSWr7W6.png)
-
-* Discord Server - https://discord.gg/dtxBbwp
 
 My goal with this project is to create a web interface using Flask for controlling vector, displaying information, and organizing (and possibly scheduling) sdk programs to run. My inspiration for this project comes from https://octoprint.org/ which is a web interface for controlling my 3d printer.
 
