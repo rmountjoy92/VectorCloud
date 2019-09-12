@@ -1,7 +1,5 @@
 # VectorCloud
 
-* Discord Server - https://discord.gg/dtxBbwp
-
 ![alt text](https://i.imgur.com/EHWi6R3.png)
 ![alt text](https://i.imgur.com/AMQkLEW.png)
 ![alt text](https://i.imgur.com/JoB45zZ.png)
