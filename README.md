@@ -1,3 +1,6 @@
+This project is no longer being developed. Feel free to fork it. 
+
+
 # VectorCloud
 
 * Discord Server - https://discord.gg/dtxBbwp
