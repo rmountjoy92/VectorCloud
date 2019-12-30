@@ -168,8 +168,8 @@ def robot_do(override_output=None):
     robot_commands = Command.query.all()
     try:
         args = anki_vector.util.parse_command_args()
-        with anki_vector.Robot(args.serial, enable_camera_feed=True) as robot:
-
+        with anki_vector.Robot(args.serial) as robot:
+            robot.camera.init_camera_feed()
             for command in robot_commands:
                 command_string = str(command)
                 robot_output_string = str(eval(command_string))

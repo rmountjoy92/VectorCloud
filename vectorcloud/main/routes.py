@@ -29,7 +29,7 @@ main = Blueprint('main', __name__)
 # ------------------------------------------------------------------------------
 
 # get the operating system & SDK version
-vectorcloud_sdk_version = "0.5.1"
+vectorcloud_sdk_version = "0.6.0"
 sdk_version = anki_vector.__version__
 
 # create all tables in the database if they don't exist
