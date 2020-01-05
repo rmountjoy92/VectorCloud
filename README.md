@@ -1,4 +1,6 @@
-This project is no longer being developed. Feel free to fork it. 
+# In light of news about Digital Dream Labs continuing development of Vector, I plan to revive this project with a version 2.0 Stay tuned for details!
+
+https://www.kickstarter.com/projects/anki/vector-by-anki-a-giant-roll-forward-for-robot-kind/posts/2724085
 
 
 # VectorCloud
